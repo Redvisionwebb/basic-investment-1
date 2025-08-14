@@ -1,0 +1,25 @@
+.patner-section-one {
+    background-color: var(--rv-grey);
+}
+
+.partner-slide-item-one {
+    border-left: 1px solid rgba(0, 0, 0, 0.2);
+    height: 100%;
+    display: flex !important;
+    justify-content: center;
+    height: 170px;
+    align-items: center;
+    border-bottom: 1px solid rgba(0, 0, 0, 0.2);
+}
+
+.patner-slide-item-one img {
+    filter: brightness(0.5) grayscale(1);
+}
+
+.patner-slide-item-one img {
+    transition: all 0.5s;
+}
+
+.partner-slide-item-one :hover img {
+    filter: brightness(1);
+}

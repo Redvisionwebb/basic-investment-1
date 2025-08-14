@@ -1,0 +1,10 @@
+.footerpage p {
+  margin-bottom: 15px;
+}
+.footerpage ul {
+  padding-left: 30px;
+}
+.footerpage ul li {
+  padding-bottom: 10px;
+  list-style: disc;
+}

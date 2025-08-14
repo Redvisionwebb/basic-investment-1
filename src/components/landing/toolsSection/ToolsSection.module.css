@@ -1,0 +1,40 @@
+.wrapper {
+  background: #fff;
+}
+
+.heading{
+  font-size: 50px;
+  font-weight: 700;
+  margin-bottom: 1rem;
+}
+.toolCard {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+  text-align: left;
+  margin: 10px;
+  padding: 5px;
+}
+
+.icon {
+  width: 40px;
+  height: 40px;
+}
+
+.toolTitle {
+  font-weight: 700;
+  font-size: 24px;
+  color: var(--rv-black);
+}
+
+.toolDesc {
+  font-size: 1rem;
+  color: var(--rv-black);
+}
+
+.toolswrapper{
+    padding: 25px;
+    background: var(--rv-primary-light);
+    border-radius: 20px;
+}
+

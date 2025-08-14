@@ -1,0 +1,203 @@
+.diffrentFunds {
+    position: relative;
+}
+.heading {
+  font-size: 50px;
+  font-weight: 700;
+  text-align: center;
+}
+
+
+.innerDiffrance{
+    background-color: var(--rv-primary-light);
+    border-radius: 25px;
+    padding: 25px 25px  50px ;
+}
+
+.fundGrid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+    gap: 20px;
+    margin: 40px 0;
+}
+
+.card {
+    background: #fff;
+    border-radius: 12px;
+    padding: 20px;
+    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.08);
+    text-align: center;
+    transition: transform 0.3s ease;
+}
+
+.card:hover {
+    transform: translateY(-5px);
+}
+
+.fundName {
+    font-size: 20px;
+    color: var(--rv-primary);
+    font-weight: 700;
+    margin-bottom: 10px;
+}
+
+.amount {
+    font-size: 22px;
+    font-weight: 700;
+    margin: 10px 0;
+    color: #111;
+}
+
+.rate {
+    color: #666;
+}
+
+/* Note */
+.note {
+    font-style: italic;
+    color: #333;
+    margin: 30px auto;
+    max-width: 800px;
+    text-align: center;
+}
+
+/* Button Wrapper */
+.btnWrap {
+    display: flex;
+    justify-content: center;
+    margin-top: 20px;
+}
+
+/* Controls (Slider + Number Input) */
+.controlsGrid {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 20px;
+    justify-content: space-between;
+    margin-top: 30px;
+}
+
+.sliderBox {
+    flex: 1 1 48%;
+    padding: 20px;
+    border-radius: 12px;
+}
+
+/* Slider label + input row */
+.labelRow {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    font-weight: 600;
+    font-size: 16px;
+    margin-bottom: 12px;
+}
+
+/* Label Text */
+.label {
+    font-weight: 600;
+    font-size: 16px;
+}
+
+/* Input Box */
+.valueInput {
+    width: 100px;
+    text-align: right;
+    font-weight: bold;
+    font-size: 16px;
+    border: none;
+    background-color: #ffffff;
+    color: var(--rv-primary);
+    border-radius: 10px;
+    padding: 5px 10px;
+    box-shadow: 0 0 5px rgba(0, 0, 0, 0.05);
+    transition: box-shadow 0.2s ease-in-out;
+}
+
+.valueInput:focus {
+    outline: none;
+    border-bottom: 2px solid var(--rv-primary);
+    box-shadow: 0 0 5px rgba(20, 83, 45, 0.3);
+}
+
+/* Slider Track */
+.rangeSlider {
+    width: 100%;
+    height: 10px;
+    appearance: none;
+    border-radius: 999px;
+    background: linear-gradient(to right, var(--rv-primary) 0%, #d1d5db 0%);
+    transition: background 0.3s ease-in-out;
+    outline: none;
+}
+
+/* WebKit Thumb */
+.rangeSlider::-webkit-slider-thumb {
+    appearance: none;
+    width: 22px;
+    height: 22px;
+    border-radius: 50%;
+    background: #ffffff;
+    border: 3px solid var(--rv-primary);
+    cursor: pointer;
+    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.2);
+    transition: transform 0.2s ease;
+}
+
+.rangeSlider::-webkit-slider-thumb:hover {
+    transform: scale(1.1);
+}
+
+/* Firefox Thumb */
+.rangeSlider::-moz-range-thumb {
+    width: 22px;
+    height: 22px;
+    border-radius: 50%;
+    background: #ffffff;
+    border: 3px solid var(--rv-primary);
+    cursor: pointer;
+    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.2);
+    transition: transform 0.2s ease;
+}
+
+.rangeSlider::-moz-range-thumb:hover {
+    transform: scale(1.1);
+}
+
+@media (max-width: 768px) {
+    .controlsGrid {
+        flex-direction: column;
+    }
+
+    .sliderBox {
+        flex: 1 1 100%;
+    }
+
+    .labelRow {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 8px;
+    }
+
+    .valueInput {
+        width: 100%;
+        text-align: left;
+    }
+
+    .fundGrid {
+        grid-template-columns: 1fr;
+    }
+}
+.iconWithText {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  margin-bottom: 8px;
+}
+
+.fundIcon {
+  width: 24px;
+  height: 24px;
+  object-fit: contain;
+}

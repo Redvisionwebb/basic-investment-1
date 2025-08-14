@@ -1,0 +1,114 @@
+.loginContainer {
+    box-shadow: 0 0 10px -8px;
+}
+
+.loginSection {
+    position: relative;
+    padding: 100px;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    color: white;
+    background-image: url('/images/login.webp');
+    background-size: cover;
+    background-position: center;
+}
+
+.overlayBox {
+    background-color: rgba(0, 0, 0, 0.5);
+    padding: 1.5rem;
+    border-radius: 1rem;
+    backdrop-filter: blur(4px);
+    text-align: center;
+}
+
+.subtitle {
+    text-transform: uppercase;
+    font-size: 0.875rem;
+    font-weight: 500;
+    letter-spacing: 0.05em;
+    text-align: center;
+}
+
+.mainTitle {
+    font-size: 2.25rem;
+    font-weight: 700;
+    margin-top: 1rem;
+    line-height: 1.2;
+    text-align: center;
+}
+
+.tagline {
+    font-size: 1.5rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    margin-top: 1rem;
+    text-align: center;
+}
+
+.loginPrompt {
+    margin-top: 1.25rem;
+    text-align: center;
+    color: #d1d5db;
+    /* text-gray-200 */
+}
+
+.createLink {
+    margin-top: 0.25rem;
+    text-align: center;
+    text-decoration: underline;
+    color: white;
+    font-weight: 500;
+    display: inline-block;
+}
+
+/* Responsive Styles */
+@media (max-width: 1024px) {
+    .loginSection {
+        padding: 80px;
+    }
+
+    .mainTitle {
+        font-size: 2rem;
+    }
+
+    .tagline {
+        font-size: 1.25rem;
+    }
+}
+
+@media (max-width: 768px) {
+    .loginSection {
+        padding: 60px 30px;
+    }
+
+    .mainTitle {
+        font-size: 1.75rem;
+    }
+
+    .tagline {
+        font-size: 1.125rem;
+    }
+
+    .overlayBox {
+        padding: 1rem;
+    }
+}
+
+@media (max-width: 480px) {
+    .loginSection {
+        padding: 40px 20px;
+    }
+
+    .mainTitle {
+        font-size: 1.5rem;
+    }
+
+    .tagline {
+        font-size: 1rem;
+    }
+
+    .subtitle {
+        font-size: 0.75rem;
+    }
+}

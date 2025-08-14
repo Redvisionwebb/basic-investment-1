@@ -1,0 +1,18 @@
+.navbar {
+  transition: all 0.3s ease;
+}
+
+.loginBtn {
+  background-color: var(--rv-secondary);
+  color: white;
+  padding: 0.5rem 1rem;
+  border-radius: 0.375rem;
+  font-weight: 600;
+  transition: background-color 0.3s ease;
+  border: none;
+  cursor: pointer;
+}
+
+.loginBtn:hover {
+  background-color: var(--rv-secondary-dark);
+}

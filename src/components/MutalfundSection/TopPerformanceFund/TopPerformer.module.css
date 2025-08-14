@@ -1,0 +1,102 @@
+.sectionWrapper {
+  background: #fff;
+}
+
+.heading {
+  font-size: 50px;
+  font-weight: 700;
+  text-align: center;
+}
+.fundContainer{
+  background-color: var(--rv-primary-light);
+  border-radius: 25px;
+  padding: 25px 25px;
+  
+}
+.tableWrapper table {
+  border-collapse: separate;
+  border-spacing: 0 16px; /* vertical spacing between rows */
+}
+
+.tabButton {
+  font-size: 1.5rem;
+  padding: 0.75rem 1.5rem;
+  border: none;
+  border-radius: 6px 6px 0 0;
+  background-color: transparent;
+  cursor: pointer;
+  font-weight: 400;
+}
+
+.activeTab {
+  background-color: var(--rv-primary-light);
+  color: var(--rv-primary);
+  
+}
+
+.inactiveTab {
+  background-color: transparent;
+}
+
+.inactiveTab:hover {
+  background-color: var(--rv-primary-light);
+}
+
+.tableHeader {
+  color: var(--rv-primary);
+  font-weight: 500;
+  font-size: 20px;
+}
+
+.tabelContetn {
+  background-color: #f5f7ff;
+}
+
+.row {
+  background-color: #fff;
+  border-radius: 8px;
+  margin-bottom: 10px !important;
+  transition: all 0.3s ease;
+}
+
+.row:hover {
+  background-color: var(--rv-primary);
+  color: var(--rv-white);
+}
+
+.row:hover .schemeName {
+  color: var(--rv-white);
+}
+
+.row:hover .returnValue {
+  color: var(--rv-white);
+}
+
+.schemeName {
+  font-weight: 600;
+  color: #1a1a40;
+  font-size: 1rem;
+}
+
+.schemeCategory {
+  font-size: 1rem;
+}
+
+.returnValue {
+  font-weight: 600;
+  color: var(--rv-black);
+}
+
+.ctaButton {
+  background-color: #3f51b5;
+  color: white;
+  padding: 0.75rem 1.5rem;
+  font-size: 1rem;
+  border-radius: 6px;
+  font-weight: 600;
+  transition: background 0.3s ease;
+}
+
+.ctaButton:hover {
+  background-color: #2c3ca1;
+}

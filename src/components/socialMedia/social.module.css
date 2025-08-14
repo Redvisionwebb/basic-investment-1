@@ -1,0 +1,29 @@
+.social_midia_f{
+    position: fixed;
+    bottom: 0%;
+    transform: translateY(-50%);
+    right: 0%;
+    overflow: hidden;
+    z-index: 99;
+    background: transparent;
+}
+
+
+
+.social_midia_f ul li {
+    list-style: none;
+    /* background: #ddd; */
+    padding: 5px;
+    margin-bottom: 5px;
+    border-radius: 50px 0 0 50px;
+    /* border: 1px solid #ddd; */
+    transition: 0.5s;
+}
+
+
+.social_midia_f ul li a {
+    display: flex;
+    justify-content: flex-start;
+    align-items: center;
+    transition: 0.5s;
+}

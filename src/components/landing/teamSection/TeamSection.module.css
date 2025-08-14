@@ -1,0 +1,73 @@
+
+
+.wrapper {
+  width: 100%;
+  background-color: white;
+}
+
+.topSection {
+  background-color: var(--rv-primary-dark);
+  padding: 4rem 1rem 8rem; /* Extra bottom padding to allow card overlap */
+  text-align: center;
+}
+
+.heading {
+  font-size: 50px;
+  font-weight: 700;
+  color: #ffffff;
+  line-height: 1.2;
+}
+
+.subtext {
+  margin-top: 1rem;
+  color: #ffffff;
+  font-size: 1rem;
+  max-width: 600px;
+  margin-left: auto;
+  margin-right: auto;
+}
+
+.bottomSection {
+  margin-top: -6rem; /* Pull cards up into the dark section */
+  padding-bottom: 4rem;
+  position: relative;
+  z-index: 10;
+}
+
+.card {
+  background: #ffffff;
+  border-radius: 16px;
+  overflow: hidden;
+  box-shadow: 0 6px 16px rgba(0, 0, 0, 0.08);
+  text-align: center;
+  padding: 1.25rem 1rem;
+  border: 1px solid #eaeaea;
+  transition: transform 0.3s ease;
+}
+
+.card:hover {
+  transform: translateY(-4px);
+}
+
+.image {
+  width: 100%;
+  aspect-ratio: 1 / 1;
+  object-fit: cover;
+  border-radius: 12px;
+  margin-bottom: 1rem;
+}
+.cardContent{
+  
+}
+
+.cardContent h3 {
+  font-size: 1.1rem;
+  font-weight: 600;
+  color: #000;
+  margin-bottom: 0.25rem;
+}
+
+.cardContent p {
+  font-size: 1rem;
+  color: #000000;
+}

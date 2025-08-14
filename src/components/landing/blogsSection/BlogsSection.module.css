@@ -1,0 +1,142 @@
+/* BlogSection.module.css */
+.blogContainer {
+    position: relative;
+    width: 100%;
+    background-color: var(--rv-third);
+    padding: 60px 0px;
+    margin-top: 10px;
+}
+
+.gridBackground {
+    position: absolute;
+    bottom: 10px;
+    left: 0;
+    width: 30rem;
+    height: 54rem;
+    background-image: url('/images/Clip path group-01.svg');
+    background-size: contain;
+    background-position: bottom;
+    z-index: 0;
+    background-repeat: no-repeat;
+}
+
+/* Blog ma Container */
+.cardsContainer {
+    display: flex;
+    justify-content: center;
+    gap: 2rem;
+    flex-wrap: wrap;
+    z-index: 1;
+    position: relative;
+}
+
+/* Large Card (First Card) */
+.cardLarge {
+    background-color: white;
+    border-radius: 15px;
+    overflow: hidden;
+    width: 500px;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+}
+
+.cardImageLarge {
+    width: 100%;
+    /* min-height: 320px; */
+    object-fit: cover;
+    border-radius: 30px;
+
+}
+
+/* Small Cards Container (Second and Third Cards) */
+
+
+/* Small Card (Second and Third Cards) */
+.cardSmall {
+    display: flex;
+    background-color: white;
+    border-radius: 30px;
+    min-height: 250px;
+    overflow: hidden;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    padding: 20px;
+}
+
+.cardImageSmall {
+    width: 620px;
+    height: auto;
+    object-fit: cover;
+    border-radius: 30px;
+}
+
+.cardContent {
+    padding: 1.5rem;
+}
+
+.cardContentSmall {
+    padding: 1rem;
+    flex: 1;
+}
+
+.cardTitle {
+    font-size: 1.25rem;
+    font-weight: 600;
+    color: #000;
+    margin-bottom: 1rem;
+    line-height: 1.4;
+}
+
+.cardTitleSmall {
+    font-size: 1.1rem;
+    font-weight: 600;
+    color: #000;
+    margin-bottom: 0.5rem;
+    line-height: 1.4;
+}
+
+.cardMeta {
+    display: flex;
+    gap: 1.5rem;
+    font-size: 0.9rem;
+    color: #666;
+}
+
+.metaItem {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+}
+
+.metaIcon {
+    width: 16px;
+    height: 16px;
+}
+
+
+@media (max-width: 1024px) {
+    .blogContainer {
+        padding: 30px 0px;
+    }
+    .cardSmall {
+        display: flex;
+        flex-direction: column;
+    }
+    .cardImageSmall {
+        width: 100%;
+        height: auto;
+        object-fit: cover;
+        border-radius: 20px;
+    }
+    .gridBackground{
+        display: none;
+    }
+}
+
+/* Mobile (max-width: 768px) */
+@media (max-width: 768px) {
+    
+}
+
+/* Small Mobile (max-width: 480px) */
+@media (max-width: 480px) {
+   
+}

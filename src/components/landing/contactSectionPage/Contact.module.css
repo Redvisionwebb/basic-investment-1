@@ -1,0 +1,129 @@
+/* ConsultationSection.module.css */
+.consultationContainer {
+    border-radius: 15px;
+    overflow: hidden;
+}
+
+/* Left Side: Image */
+.imageContainer {
+    flex: 1;
+}
+
+.consultationImage {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+
+/* Right Side: Form */
+.formContainer {
+    flex: 1;
+    background-color: var(--rv-third);
+    padding: 3rem;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+}
+
+.heading {
+    font-size: 2.5rem;
+    font-weight: 700;
+    color: white;
+    margin-bottom: 2rem;
+    line-height: 1.2;
+}
+
+.form {
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+    margin-top: 40px;
+}
+
+.inputGroup {
+    display: flex;
+    gap: 1rem;
+}
+
+.input {
+    flex: 1;
+    padding: 0.75rem;
+    background-color: var(--rv-white);
+    border: none;
+    color: rgb(126, 126, 126);
+    font-size: 1rem;
+    border-bottom: solid 1px rgb(126, 126, 126);
+}
+
+.input::placeholder {
+    color: #a0a0a0;
+}
+
+.textarea {
+    padding: 0.75rem;
+    background-color: var(--rv-white);
+    border: none;
+    border-radius: 5px;
+    color: BLACK;
+    font-size: 1rem;
+    height: 100px;
+    resize: none;
+}
+
+.textarea::placeholder {
+    color: #a0a0a0;
+}
+
+.submitButton {
+    background-color: var(--rv-primary);
+    color: white;
+    padding: 0.75rem 2rem;
+    border: none;
+    border-radius: 5px;
+    font-size: 1rem;
+    font-weight: 500;
+    cursor: pointer;
+    align-self: flex-start;
+    width: 10px;
+}
+
+@media (max-width: 1024px) {
+    .formContainer {
+        flex: 1;
+        background-color: var(--rv-secondary);
+        padding: 1rem;
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+    }
+
+    .textarea {
+        padding: 0;
+
+    }
+
+    .inputGroup {
+        display: flex;
+        flex-direction: column;
+        gap: 1rem;
+    }
+
+    .form .inputGroup .btnLight {
+        background-color: var(--rv-primary);
+        color: var(--rv-white);
+    }
+
+    .form .inputGroup .btnPrimary {
+        color: var(--rv-white);
+    }
+
+    .form .inputGroup .btnPrimary:hover {
+        color: var(--rv-white);
+    }
+}
+
+/* Mobile (max-width: 768px) */
+@media (max-width: 768px) {}
+
+/* Small Mobile (max-width: 480px) */
+@media (max-width: 480px) {}

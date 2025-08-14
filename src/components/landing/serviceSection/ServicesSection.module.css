@@ -1,0 +1,152 @@
+.ServiceSection {
+  background: #fff;
+}
+
+.heading {
+  font-size: 40px;
+  font-weight: 700;
+  margin-bottom: 1rem;
+}
+
+.sliderWrapper {
+  position: relative;
+  padding: 1rem 0;
+}
+
+.sliderContainer {
+  display: flex;
+  gap: 1.5rem;
+  overflow-x: auto;
+  scroll-snap-type: x mandatory;
+  scroll-behavior: smooth;
+  padding: 1rem 0;
+  scrollbar-width: none;
+  -ms-overflow-style: none;
+}
+
+.sliderContainer::-webkit-scrollbar {
+  display: none;
+}
+
+.slide {
+  flex: 0 0 calc(33.333% - 1rem);
+  scroll-snap-align: start;
+  transition: transform 0.3s ease;
+}
+
+.card {
+  display: block;
+  border-radius: 16px;
+  height: 300px;
+  overflow: hidden;
+  position: relative;
+  text-decoration: none;
+  color: #fff;
+  margin: 10px;
+}
+
+.cardInner {
+  height: 100%;
+  width: 100%;
+  border-radius: 16px;
+  overflow: hidden;
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.15);
+  position: relative;
+}
+
+.cardBg {
+  background-size: cover;
+  background-position: center;
+  height: 100%;
+  width: 100%;
+  position: absolute;
+  z-index: 1;
+}
+
+.overlay {
+  position: absolute;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.55);
+  z-index: 2;
+}
+
+.cardContent {
+  position: absolute;
+  z-index: 3;
+  inset: 0;
+  padding: 1.5rem;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  text-align: center;
+  gap: 1rem;
+}
+
+.cardContent h3 {
+  font-size: 24px;
+  font-weight: 700;
+  color: #fff;
+}
+
+.cardContent p {
+  font-size: 16px;
+  color: #e2e2e2;
+  max-width: 90%;
+  line-height: 1.5;
+}
+
+.hoverArrow {
+  opacity: 0;
+  transition: all 0.3s ease;
+  display: inline-block;
+  color: #fff;
+}
+
+.cardInner:hover .hoverArrow {
+  opacity: 1;
+  transform: translateX(6px);
+}
+
+/* Arrows fixed on sides */
+.arrow {
+  background: var(--rv-primary, #003366);
+  color: #fff;
+  border: none;
+  padding: 0.6rem;
+  border-radius: 50%;
+  position: absolute;
+  top: 50%;
+  transform: translateY(-50%);
+  cursor: pointer;
+  z-index: 10;
+}
+
+.leftArrow {
+  left: -20px;
+}
+
+.rightArrow {
+  right: -20px;
+}
+
+/* Responsive behavior */
+@media (max-width: 1024px) {
+  .slide {
+    flex: 0 0 calc(50% - 1rem);
+  }
+}
+
+@media (max-width: 768px) {
+  .slide {
+    flex: 0 0 85%;
+  }
+
+  .arrow {
+    display: none;
+  }
+
+  .heading {
+    font-size: 28px;
+  }
+}

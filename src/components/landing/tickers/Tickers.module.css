@@ -1,0 +1,38 @@
+.tickerItem {
+    padding: 5px 15px;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    background-color: var(--rv-primary);
+    border-right: 1px solid #fff;
+    min-width: 200px;
+    color: white;
+    border-bottom: 1px solid var(--accent-color);
+}
+
+.indexName {
+    font-weight: bold;
+    font-size: 14px;
+    white-space: nowrap;
+}
+
+.figure {
+    font-weight: 600;
+    color: #ccc;
+    font-size: 12px;
+}
+
+.diffAmount {
+    font-weight: bold;
+    font-size: 12px;
+    display: flex;
+    align-items: center;
+}
+
+.positive {
+    color: #4caf50;
+}
+
+.negative {
+    color: #f44336;
+}

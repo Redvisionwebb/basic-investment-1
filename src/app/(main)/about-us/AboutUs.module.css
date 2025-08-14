@@ -1,0 +1,505 @@
+.aboutPage {}
+
+.aboutSection {}
+
+.aboutcontainer {
+    display: flex;
+    margin: 0 auto;
+    gap: 40px;
+    justify-self: center;
+    align-items: center;
+}
+
+/* Image Wrapper & Image Styling */
+.imageWrapper {
+    flex: 1 1 30%;
+    max-width: 400px;
+}
+
+.image {
+    border-radius: 20px;
+    object-fit: cover;
+    width: 100%;
+    height: auto;
+    filter: grayscale(100%);
+}
+
+.image:hover {
+    filter: grayscale(0%);
+}
+
+/* Content Wrapper */
+.content {
+    flex: 1 1 65%;
+    padding: 1rem;
+}
+
+/* Typography */
+.title {
+    font-size: 2.5rem;
+    font-weight: 700;
+    color: var(--rv-primary);
+    margin-bottom: 24px;
+    display: flex;
+    gap: 10px;
+    align-items: center;
+}
+
+.paragraph {
+    font-size: 1rem;
+    color: #333;
+    line-height: 1.7;
+    margin-bottom: 20px;
+}
+
+.subheading {
+    font-size: 1.75rem;
+    color: var(--rv-primary);
+    margin-top: 40px;
+    margin-bottom: 20px;
+    text-align: center;
+}
+
+/* Grid Layout */
+.grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+    gap: 20px;
+}
+
+/* Card Component */
+.card {
+    background: white;
+    padding: 20px;
+    border-radius: 16px;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.08);
+    text-align: center;
+    font-weight: 500;
+    transition: all 0.3s ease;
+}
+
+.card:hover {
+    box-shadow: 0 8px 25px rgba(0, 0, 0, 0.15);
+    transform: translateY(-4px);
+}
+
+
+
+
+
+
+
+.aboutsectionvalues {
+    display: flex;
+    align-items: center;
+    gap: 2rem;
+    flex-wrap: wrap;
+    padding: 30px 0;
+}
+
+.row {
+    flex-direction: row;
+}
+
+.rowReverse {
+    flex-direction: row-reverse;
+}
+
+.icon {
+    font-size: 2.5rem;
+    color: var(--rv-primary);
+}
+
+.text {
+    font-size: 1rem;
+    line-height: 1.6;
+    color: #000000;
+}
+
+/* Core Values Section */
+.coreSection {
+    text-align: center;
+    padding: 30px 0;
+}
+
+.coreTitle {
+    font-size: 2.2rem;
+    color: var(--rv-primary);
+    font-weight: bold;
+    margin-bottom: 0.5rem;
+}
+
+
+/* ---------------------------------- */
+/* Responsive Design for Tablets and Mobiles */
+/* ---------------------------------- */
+@media (max-width: 1024px) {
+    .container {
+        flex-direction: column;
+        gap: 30px;
+    }
+
+    .imageWrapper,
+    .content {
+        flex: 1 1 100%;
+        max-width: 100%;
+    }
+
+    .title {
+        font-size: 2rem;
+        text-align: center;
+    }
+
+    .subheading {
+        font-size: 1.5rem;
+    }
+
+    .coreTitle {
+        font-size: 1.8rem;
+    }
+
+    .valuesGrid {
+        grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+    }
+}
+
+@media (max-width: 600px) {
+    .title {
+        font-size: 1.75rem;
+    }
+
+    .subheading,
+    .coreTitle {
+        font-size: 1.25rem;
+    }
+
+    .paragraph,
+    .text {
+        font-size: 0.95rem;
+    }
+
+    .icon {
+        font-size: 2rem;
+    }
+
+    .valueIcon {
+        font-size: 1.5rem;
+    }
+
+    .aboutsectionvalues {
+        gap: 1.5rem;
+        padding: 20px 0;
+    }
+}
+
+.ctaSection {
+    background-color: var(--rv-secondary);
+    text-align: center;
+    padding: 60px;
+    border-radius: 25px;
+    box-shadow: inset 0 0 14px -20px, 0 0 7px -5px;
+}
+
+.contentWrapper {
+    margin: 0 auto;
+}
+
+.heading {
+    font-size: 25px;
+    font-weight: 700;
+    margin-bottom: 1rem;
+    color: var(--rv-primary);
+}
+
+@media (min-width: 768px) {
+    .heading {
+        font-size: 40PX;
+    }
+}
+
+.subtext {
+    color: #000000;
+    font-size: 20px;
+    margin-bottom: 2rem;
+}
+
+.primaryButton {
+    background-color: var(--rv-black);
+    color: rgb(255, 255, 255);
+    padding: 12px 32px;
+    font-size: 1rem;
+    border-radius: 8px;
+    border: none;
+    cursor: pointer;
+    transition: all 0.3s ease;
+}
+
+.primaryButton:hover {
+    background-color: var(--rv-gray);
+    color: var(--rv-black);
+}
+
+.coreDescription {
+    margin-bottom: 20px;
+}
+
+
+
+/* Mission, Vision, Values Section */
+.MissionVisionValuescontainer {
+    background-color: #f9f9f9;
+    border-radius: 25px;
+    padding: 30px 50px;
+    box-shadow: inset 0 0 14px -20px, 0 0 7px -5px;
+}
+
+
+.valuesGrid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
+    gap: 1.5rem;
+    margin-top: 1rem;
+}
+
+.valueCard {
+    background: #f9f9f9;
+    padding: 1.5rem;
+    border-radius: 15px;
+    box-shadow: 0 8px 16px rgba(0, 0, 0, 0.05);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    transition: transform 0.3s ease;
+}
+
+.valueCard:hover {
+    transform: translateY(-5px);
+}
+
+.valueIcon {
+    font-size: 1.8rem;
+    color: var(--rv-primary);
+    margin-bottom: 0.5rem;
+}
+
+.valueText {
+    font-weight: 600;
+    color: var(--rv-primary);
+}
+
+@media (max-width: 768px) {
+    .aboutcontainer {
+        flex-direction: column;
+        align-items: center;
+    }
+
+    .MissionVisionValuescontainer {
+        padding: 20px;
+    }
+
+    .valuesGrid {
+        grid-template-columns: 1fr;
+    }
+
+    .valueCard {
+        padding: 1rem;
+    }
+
+    .valueIcon {
+        font-size: 1.5rem;
+    }
+
+    .valueText {
+        font-size: 1rem;
+    }
+}
+
+
+.coreValuesSection {
+    text-align: center;
+}
+
+.coreValuesSection h3 {
+    font-size: 2rem;
+    font-weight: bold;
+    color: var(--rv-secondary);
+    margin-bottom: 1rem;
+}
+
+.coreValuesSection p {
+    font-size: 1rem;
+    max-width: 700px;
+    margin: 0 auto 2rem;
+    color: #555;
+}
+
+.coreValuesSection ul {
+    list-style: none;
+    margin: 0 auto;
+    padding: 0;
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    /* 3 cards per row */
+    gap: 1.5rem;
+    justify-content: center;
+    align-items: center;
+}
+
+.coreValuesSection li {
+    background: white;
+    padding: 1.5rem;
+    border-radius: 1rem;
+    box-shadow: 0 6px 12px rgba(0, 0, 0, 0.06);
+    text-align: left;
+    transition: all 0.3s ease;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+}
+
+.coreValuesSection li:hover {
+    transform: translateY(-4px);
+    box-shadow: 0 10px 20px rgba(0, 0, 0, 0.08);
+}
+
+.coreValuesSection li strong {
+    display: block;
+    font-size: 1.1rem;
+    margin-bottom: 0.4rem;
+    color: var(--rv-primary, #1e3a8a);
+}
+
+/* Responsive layout for tablets and mobile */
+@media (max-width: 992px) {
+    .coreValuesSection ul {
+        grid-template-columns: repeat(2, 1fr);
+    }
+}
+
+@media (max-width: 600px) {
+    .coreValuesSection ul {
+        grid-template-columns: 1fr;
+        justify-items: center;
+    }
+
+    .coreValuesSection li {
+        width: 100%;
+        max-width: 400px;
+    }
+}
+
+.wrapper {
+    display: flex;
+    flex-direction: column;
+    gap: 3rem;
+    margin-bottom: 4rem;
+}
+
+.card {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    background-color: var(--rv-secondary);
+    color: #fff;
+    border-radius: 24px;
+    padding: 2rem;
+    box-shadow: 0 8px 20px rgba(0, 0, 0, 0.08);
+    gap: 2rem;
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+.reverse {
+    flex-direction: row-reverse;
+}
+
+.content {
+    flex: 1;
+}
+
+.title {
+    font-size: 1.75rem;
+    font-weight: 700;
+    display: flex;
+    align-items: center;
+    margin-bottom: 1rem;
+    flex-direction: column;
+}
+
+.icon {
+    font-size: 2rem;
+    color: var(--rv-primary);
+    margin-right: 0.75rem;
+}
+
+.text {
+    font-size: 1rem;
+    line-height: 1.6;
+    color: #000000;
+}
+
+.imageWrapper {
+    flex: 1;
+}
+
+.image {
+    width: 100%;
+    height: auto;
+    border-radius: 1rem;
+    object-fit: cover;
+}
+
+/* Responsive stacking for mobile */
+@media (max-width: 768px) {
+
+    .card,
+    .reverse {
+        flex-direction: column;
+        text-align: center;
+    }
+
+    .title {
+        justify-content: center;
+    }
+
+    .icon {
+        margin-right: 0.5rem;
+    }
+
+    .imageWrapper {
+        margin-top: 1.5rem;
+    }
+}
+
+
+.legacySection {
+    display: grid;
+    grid-template-columns: repeat(12, 1fr);
+    gap: 2rem;
+    align-items: center;
+    padding: 2rem 0;
+}
+
+.legacycontent,
+.legacyImageWrapper {
+    grid-column: span 12;
+}
+
+/* Responsive (md+) */
+@media screen and (min-width: 768px) {
+    .legacycontent {
+        grid-column: span 7;
+    }
+
+    .legacyImageWrapper {
+        grid-column: span 5;
+    }
+
+    /* Reverse layout: image first, then content */
+    .reverse .legacyImageWrapper {
+        order: 1;
+    }
+
+    .reverse .legacycontent {
+        order: 2;
+    }
+}
