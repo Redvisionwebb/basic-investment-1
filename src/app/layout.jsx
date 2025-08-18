@@ -3,6 +3,7 @@ import "./globals.css";
 import RenewalPopup from "@/components/renewalPopup";
 import { SubscriptionProvider } from "@/context/SubscriptionContext";
 import { SpeedInsights } from "@vercel/speed-insights/next";
+import { getSiteData } from "@/lib/functions";
 
 // Load Poppins
 const poppins = Poppins({
@@ -22,26 +23,30 @@ const jost = Jost({
 export const dynamic = "force-dynamic";
 
 export async function generateMetadata() {
+  const siteData = await getSiteData();
+  
   return {
     title: {
-      default: "RedVision GLobal Tech",
-      template: `%s - RedVision GLobal Tech`,
+      default: siteData?.websiteName || "",
+      template: `%s - ${siteData?.websiteName || ""}`,
     },
-    description: "RedVision GLobal Tech",
+    description:
+      siteData?.websiteName || "",
     openGraph: {
-      title: "RedVision GLobal Tech",
-      description: "RedVision GLobal Tech",
+      title: siteData?.websiteName || "",
+      description: siteData?.description || "",
       type: "website",
       locale: "en_IN",
-      siteName: "RedVision GLobal Tech",
-      url: "http://mockup.com",
+      siteName: siteData?.websiteName || "",
+      url: siteData?.callbackurl || "",
+      // images: ["https://100takka.com/og.png"],
     },
     twitter: {
       card: "summary_large_image",
-      title: "RedVision GLobal Tech",
-      description: "RedVision GLobal Tech",
+      title: siteData?.websiteName || "",
+      description: siteData?.description || "",
     },
-    authors: ["RedVision GLobal Tech"],
+    authors: [siteData?.websiteName || ""] || [],
   };
 }
 
