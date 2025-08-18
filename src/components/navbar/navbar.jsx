@@ -1,5 +1,5 @@
 "use client"
-import styles from './NavBar.module.css';
+import styles from './Navbar.module.css';
 import { useEffect, useState } from 'react';
 import { FaChevronDown, FaBars } from 'react-icons/fa';
 import Link from 'next/link';
