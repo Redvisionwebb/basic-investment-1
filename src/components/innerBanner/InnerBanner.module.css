@@ -1,132 +1,28 @@
 .bannerWrapper {
     position: relative;
-    overflow: hidden;
-    background: linear-gradient(180deg, #cfcfcf, #c7c7c7, #979797);
-    /* black/gray shades */
-    height: 14rem;
-    /* background-image: url(/inner-banner.webp); */
-
-    @media (min-width: 768px) {
-        height: 16rem;
-    }
-
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    padding-top: 2.5rem;
-
-    @media (min-width: 768px) {
-        padding-top: 4rem;
-    }
-}
-
-.bannerContent {
-    position: relative;
-    z-index: 10;
     width: 100%;
-    max-width: 1280px;
-    padding: 0 1rem;
-    margin: 0 auto;
-    text-align: center;
-}
-
-.textContainer {
-    display: inline-block;
-}
-
-.heading {
-    color: var(--rv-black);
-    /* Keep white */
-    font-size: 1.875rem;
-    font-weight: 800;
-    text-shadow: 0 1px 2px rgba(0, 0, 0, 0.4);
-}
-
-@media (min-width: 768px) {
-    .heading {
-        font-size: 3rem;
-    }
-}
-
-.breadcrumb {
-    margin-top: 0.5rem;
+    height: 40vh;
+    background: url(../../../public/images/banner/banner.svg);
+    background-size: cover;
+    background-position: center;
     display: flex;
-    justify-content: center;
     align-items: center;
-    gap: 0.5rem;
-    font-size: 0.875rem;
-    color: var(--rv-black);
-    /* Use secondary for breadcrumb text */
+    justify-content: center;
 }
 
-.breadcrumbLink {
+.content {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-direction: column;
     font-weight: 500;
-    text-decoration: none;
-    color: var(--rv-black);
+    margin-top: 50px;
 }
 
-.breadcrumbLink:hover {
-    text-decoration: underline;
-}
-
-.breadcrumbSeparator {
-    color: #666666;
-    /* Dark gray */
-    font-weight: 700;
-}
-
-.breadcrumbCurrent {
-    font-weight: 600;
-    color: var(--rv-white);
-    /* Current page is highlighted in white */
-}
-
-.blobPrimary {
-    position: absolute;
-    top: 1.5rem;
-    left: 2rem;
-    width: 3.5rem;
-    height: 3.5rem;
-    background-color: #2e2e2e;
-    /* dark gray for blob */
-    border-radius: 50%;
-    opacity: 0.3;
-    filter: blur(1rem);
-}
-
-.blobThird {
-    position: absolute;
-    bottom: 1.5rem;
-    right: 2.5rem;
-    width: 5rem;
-    height: 5rem;
-    background-color: #444444;
-    /* deeper gray */
-    border-radius: 50%;
-    opacity: 0.25;
-    filter: blur(1.5rem);
-}
-
-.ring {
-    position: absolute;
-    top: 2.5rem;
-    right: 33%;
-    width: 3rem;
-    height: 3rem;
-    border: 2px solid #888888;
-    /* medium gray ring */
-    border-radius: 9999px;
-    opacity: 0.15;
-}
-
-.sparkle {
-    position: absolute;
-    bottom: 3rem;
-    left: 25%;
-    width: 0.75rem;
-    height: 0.75rem;
-    background-color: #cccccc;
-    /* light gray sparkle */
-    border-radius: 9999px;
-    opacity: 0.3;
+.title {
+    font-size: 3rem;
+    font-weight: bold;
+    text-transform: capitalize;
+    letter-spacing: 2px;
+    color: var(--rv-primary);
 }

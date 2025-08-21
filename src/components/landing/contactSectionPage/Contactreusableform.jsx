@@ -145,28 +145,30 @@ export default function ContactReusableForm({ sitedata }) {
         />
       </div>
 
-      <button
-        type="submit"
-        className={`btn ${styles.btnLight} btn-theme btn-secondary w-44 text-white`}
-        disabled={loading}
-      >
-        {loading ? "Sending..." : (
-          <>
-            <span>S</span>
-            <span>e</span>
-            <span>n</span>
-            <span>d</span>
-            <span className="space"></span>
-            <span>M</span>
-            <span>e</span>
-            <span>s</span>
-            <span>s</span>
-            <span>a</span>
-            <span>g</span>
-            <span>e</span>
-          </>
-        )}
-      </button>
+      <div className="flex items-center justify-center">
+        <button
+          type="submit"
+          className={`${styles.submitButton} `}
+          disabled={loading}
+        >
+          {loading ? "Sending..." : (
+            <>
+              <span>S</span>
+              <span>e</span>
+              <span>n</span>
+              <span>d</span>
+              <span className="space"></span>
+              <span>M</span>
+              <span>e</span>
+              <span>s</span>
+              <span>s</span>
+              <span>a</span>
+              <span>g</span>
+              <span>e</span>
+            </>
+          )}
+        </button>
+      </div>
     </form>
   );
 }
