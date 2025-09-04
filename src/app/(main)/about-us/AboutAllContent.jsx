@@ -26,7 +26,7 @@ const WhyChooseUsSection = () => {
 
     return (
         <div className="w-full relative">
-            <div className="main-section">
+            <div className="section">
                 <div className="max-w-screen-xl px-4 mx-auto flex flex-col gap-10">
                     <div className="flex items-center gap-5 flex-col md:flex-row ">
                         <div className='md:w-1/2'>
@@ -79,7 +79,7 @@ const TeamSection = () => {
     return (
 
         <div className="px-4">
-        <div className="main-section">
+        <div className="section">
             <div className="max-w-screen-xl mx-auto flex bg-[var(--rv-bg-primary-light)] rounded-xl flex-col gap-12">
                 {team.map((member, i) => (
                     <motion.div
@@ -151,7 +151,7 @@ const TopFeaturesSection = () => {
     ];
 
     return (
-        <div className="main-section">
+        <div className="section">
             <div className="max-w-screen-xl mx-auto px-4 flex flex-col gap-10 text-center">
                 <SectionHeading align="center" title1="Our Top Features" />
 

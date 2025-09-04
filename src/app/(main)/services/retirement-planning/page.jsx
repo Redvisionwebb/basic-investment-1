@@ -3,12 +3,12 @@ import React from "react";
 import Image from "next/image";
 import Link from "next/link";
 import {
+  PiggyBank,
+  Calendar,
   TrendingUp,
-  BarChart,
-  Layers,
-  Wallet,
+  Coins,
   ShieldCheck,
-  LineChart,
+  BarChart,
 } from "lucide-react";
 import { motion } from "framer-motion";
 import InnerBanner from "@/components/innerBanner/InnerBanner";
@@ -26,61 +26,61 @@ const container = {
 // ================== Data ==================
 const planTypes = [
   {
+    icon: <PiggyBank size={40} />,
+    title: "Pension Plans",
+    text: "Steady income post-retirement through annuities and savings.",
+  },
+  {
+    icon: <Calendar size={40} />,
+    title: "Deferred Annuity",
+    text: "Accumulate wealth during your working years for future payouts.",
+  },
+  {
     icon: <TrendingUp size={40} />,
-    title: "Discretionary PMS",
-    text: "The portfolio manager takes all investment decisions on behalf of the investor.",
+    title: "Guaranteed Plans",
+    text: "Assured returns with financial protection for your retirement.",
+  },
+  {
+    icon: <Coins size={40} />,
+    title: "Systematic Withdrawal Plan",
+    text: "Regular withdrawals to support your lifestyle expenses.",
   },
   {
     icon: <BarChart size={40} />,
-    title: "Non-Discretionary PMS",
-    text: "Investment decisions are made by the portfolio manager but require client approval.",
-  },
-  {
-    icon: <Layers size={40} />,
-    title: "Advisory PMS",
-    text: "The manager provides advice, but execution of decisions rests with the investor.",
-  },
-  {
-    icon: <Wallet size={40} />,
-    title: "Thematic/Focused PMS",
-    text: "Investments based on specific themes, sectors, or strategies for targeted growth.",
-  },
-  {
-    icon: <LineChart size={40} />,
-    title: "Customized PMS",
-    text: "Tailor-made portfolios designed as per your risk appetite and goals.",
+    title: "Market-Linked Plans",
+    text: "Potential for higher growth with equity & debt mix.",
   },
   {
     icon: <ShieldCheck size={40} />,
-    title: "Hybrid PMS",
-    text: "Blend of equity, debt, and other assets for risk-adjusted returns.",
+    title: "Life Cover with Retirement",
+    text: "Insurance protection along with retirement benefits.",
   },
 ];
 
 const whyChoose = [
   {
+    icon: <ShieldCheck size={40} />,
+    text: "Financial independence during retirement years",
+  },
+  {
     icon: <TrendingUp size={40} />,
-    text: "Active fund management with research-driven strategies",
+    text: "Grow wealth steadily while mitigating risks",
+  },
+  {
+    icon: <Calendar size={40} />,
+    text: "Plan early to enjoy compounding benefits",
+  },
+  {
+    icon: <PiggyBank size={40} />,
+    text: "Tax benefits on contributions under 80C & 10(10A)",
+  },
+  {
+    icon: <Coins size={40} />,
+    text: "Customizable payout options for flexible income",
   },
   {
     icon: <BarChart size={40} />,
-    text: "Tailor-made portfolios aligned with your goals & risk profile",
-  },
-  {
-    icon: <Layers size={40} />,
-    text: "Diversification across asset classes for balanced growth",
-  },
-  {
-    icon: <Wallet size={40} />,
-    text: "Transparent reporting and regular performance updates",
-  },
-  {
-    icon: <ShieldCheck size={40} />,
-    text: "Regulated by SEBI ensuring safety and compliance",
-  },
-  {
-    icon: <LineChart size={40} />,
-    text: "Potential for superior long-term wealth creation",
+    text: "Peace of mind with guaranteed income streams",
   },
 ];
 
@@ -97,8 +97,8 @@ function IntroSection() {
           className="md:h-96 overflow-hidden rounded-2xl"
         >
           <Image
-            src="/images/services/pms.png"
-            alt="Portfolio Management Services"
+            src="/images/services/insurance.png"
+            alt="Retirement Plan"
             width={500}
             height={350}
             className="w-full h-full object-cover"
@@ -113,17 +113,16 @@ function IntroSection() {
           viewport={{ once: true, amount: 0.4 }}
         >
           <h1 className="font-bold text-[var(--rv-primary)] mb-4">
-            Portfolio Management Services (PMS)
+            Retirement Plans
           </h1>
           <p className="text-lg mb-4">
-            PMS is a professional investment service where expert portfolio
-            managers create and manage customized portfolios for investors. It is
-            ideal for high-net-worth individuals (HNIs) looking for personalized
-            strategies to grow and preserve wealth.
+            A Retirement Plan helps you secure your financial future after your
+            working years. It ensures a steady income, wealth growth, and peace
+            of mind so you can live life on your terms.
           </p>
           <p className="text-lg">
-            PMS offers flexibility, transparency, and active management across
-            equity, debt, and hybrid investments.
+            Early planning allows you to benefit from compounding, tax savings,
+            and a stress-free retirement journey.
           </p>
         </motion.div>
       </div>
@@ -144,7 +143,7 @@ function PlanTypesSection() {
             transition={{ duration: 0.6 }}
             viewport={{ once: true }}
           >
-            Types of PMS
+            Types of Retirement Plans
           </motion.h2>
 
           <motion.div
@@ -185,7 +184,7 @@ function WhyChooseSection() {
           transition={{ duration: 0.6 }}
           viewport={{ once: true }}
         >
-          Why Choose PMS
+          Why Choose a Retirement Plan
         </motion.h2>
 
         <motion.div
@@ -224,13 +223,12 @@ function CTASection() {
       >
         <div className="p-10 md:p-20 text-center flex flex-col gap-10 justify-center items-center">
           <h6>
-            Take control of your investments with PMS – designed for investors
-            seeking customized solutions, expert management, and long-term wealth
-            creation.
+            Secure your golden years with the right Retirement Plan. Start today
+            and enjoy financial freedom, peace of mind, and a worry-free future.
           </h6>
           <div>
             <Link href="/contact-us" className="btn btn-primary">
-              Explore PMS Solutions
+              Plan Your Retirement Today
             </Link>
           </div>
         </div>
@@ -240,10 +238,10 @@ function CTASection() {
 }
 
 // ================== Main Page ==================
-export default function PMSLanding() {
+export default function RetirementLanding() {
   return (
     <>
-      <InnerBanner title="Portfolio Management Services (PMS)" />
+      <InnerBanner title="Retirement Plan" />
       <IntroSection />
       <PlanTypesSection />
       <WhyChooseSection />

@@ -3,12 +3,12 @@ import React from "react";
 import Image from "next/image";
 import Link from "next/link";
 import {
-  TrendingUp,
   BarChart,
+  PieChart,
   Layers,
   Wallet,
+  TrendingUp,
   ShieldCheck,
-  LineChart,
 } from "lucide-react";
 import { motion } from "framer-motion";
 import InnerBanner from "@/components/innerBanner/InnerBanner";
@@ -24,64 +24,22 @@ const container = {
 };
 
 // ================== Data ==================
-const planTypes = [
-  {
-    icon: <TrendingUp size={40} />,
-    title: "Discretionary PMS",
-    text: "The portfolio manager takes all investment decisions on behalf of the investor.",
-  },
-  {
-    icon: <BarChart size={40} />,
-    title: "Non-Discretionary PMS",
-    text: "Investment decisions are made by the portfolio manager but require client approval.",
-  },
-  {
-    icon: <Layers size={40} />,
-    title: "Advisory PMS",
-    text: "The manager provides advice, but execution of decisions rests with the investor.",
-  },
-  {
-    icon: <Wallet size={40} />,
-    title: "Thematic/Focused PMS",
-    text: "Investments based on specific themes, sectors, or strategies for targeted growth.",
-  },
-  {
-    icon: <LineChart size={40} />,
-    title: "Customized PMS",
-    text: "Tailor-made portfolios designed as per your risk appetite and goals.",
-  },
-  {
-    icon: <ShieldCheck size={40} />,
-    title: "Hybrid PMS",
-    text: "Blend of equity, debt, and other assets for risk-adjusted returns.",
-  },
+const fundTypes = [
+  { icon: <TrendingUp size={40} />, title: "Equity Funds", text: "Invest primarily in stocks for higher growth." },
+  { icon: <ShieldCheck size={40} />, title: "Debt Funds", text: "Invest in fixed income securities like bonds and govt. securities." },
+  { icon: <Layers size={40} />, title: "Hybrid Funds", text: "Combination of equity and debt for balanced risk and return." },
+  { icon: <BarChart size={40} />, title: "Index Funds", text: "Track a specific index like Nifty or Sensex for passive returns." },
+  { icon: <Wallet size={40} />, title: "Liquid Funds", text: "Invest in short-term instruments for liquidity and safety." },
+  { icon: <PieChart size={40} />, title: "ELSS (Tax Saving Funds)", text: "Tax-saving fund with a 3-year lock-in under Section 80C." },
 ];
 
-const whyChoose = [
-  {
-    icon: <TrendingUp size={40} />,
-    text: "Active fund management with research-driven strategies",
-  },
-  {
-    icon: <BarChart size={40} />,
-    text: "Tailor-made portfolios aligned with your goals & risk profile",
-  },
-  {
-    icon: <Layers size={40} />,
-    text: "Diversification across asset classes for balanced growth",
-  },
-  {
-    icon: <Wallet size={40} />,
-    text: "Transparent reporting and regular performance updates",
-  },
-  {
-    icon: <ShieldCheck size={40} />,
-    text: "Regulated by SEBI ensuring safety and compliance",
-  },
-  {
-    icon: <LineChart size={40} />,
-    text: "Potential for superior long-term wealth creation",
-  },
+const whyInvest = [
+  { icon: <ShieldCheck size={40} />, text: "Expert fund management & research-backed strategies" },
+  { icon: <BarChart size={40} />, text: "Wide range of categories aligned to goals and risk appetite" },
+  { icon: <Layers size={40} />, text: "Spreads risk through diversification across sectors" },
+  { icon: <TrendingUp size={40} />, text: "Regular tracking and performance disclosures" },
+  { icon: <Wallet size={40} />, text: "Start investing with as little as ₹500" },
+  { icon: <PieChart size={40} />, text: "Transparent, regulated, and investor-friendly" },
 ];
 
 // ================== Components ==================
@@ -97,8 +55,8 @@ function IntroSection() {
           className="md:h-96 overflow-hidden rounded-2xl"
         >
           <Image
-            src="/images/services/pms.png"
-            alt="Portfolio Management Services"
+            src="/images/services/mutual.png"
+            alt="Mutual Funds"
             width={500}
             height={350}
             className="w-full h-full object-cover"
@@ -112,18 +70,15 @@ function IntroSection() {
           transition={{ duration: 0.6 }}
           viewport={{ once: true, amount: 0.4 }}
         >
-          <h1 className="font-bold text-[var(--rv-primary)] mb-4">
-            Portfolio Management Services (PMS)
-          </h1>
+          <h1 className="font-bold text-[var(--rv-primary)] mb-4">Mutual Funds</h1>
           <p className="text-lg mb-4">
-            PMS is a professional investment service where expert portfolio
-            managers create and manage customized portfolios for investors. It is
-            ideal for high-net-worth individuals (HNIs) looking for personalized
-            strategies to grow and preserve wealth.
+            A Mutual Fund is a pooled investment vehicle managed by a professional
+            fund manager. It collects money from many investors and invests it in
+            diversified assets like stocks, bonds, or other securities.
           </p>
           <p className="text-lg">
-            PMS offers flexibility, transparency, and active management across
-            equity, debt, and hybrid investments.
+            NAVs of schemes may fluctuate depending on market conditions. Past
+            performance is not indicative of future returns.
           </p>
         </motion.div>
       </div>
@@ -131,7 +86,7 @@ function IntroSection() {
   );
 }
 
-function PlanTypesSection() {
+function FundTypesSection() {
   return (
     <div className="px-4">
       <section className="section">
@@ -144,7 +99,7 @@ function PlanTypesSection() {
             transition={{ duration: 0.6 }}
             viewport={{ once: true }}
           >
-            Types of PMS
+            Types of Mutual Funds
           </motion.h2>
 
           <motion.div
@@ -154,16 +109,16 @@ function PlanTypesSection() {
             whileInView="visible"
             viewport={{ once: true }}
           >
-            {planTypes.map((plan, idx) => (
+            {fundTypes.map((fund, idx) => (
               <motion.div
                 key={idx}
                 variants={fadeUp}
                 transition={{ duration: 0.6 }}
                 className="bg-[var(--rv-bg-primary-light)] shadow-md rounded-xl p-6 flex flex-col items-center text-center hover:scale-105"
               >
-                <div className="text-[var(--rv-primary)] mb-3">{plan.icon}</div>
-                <h5 className="font-bold mb-2">{plan.title}</h5>
-                <p className="text-base">{plan.text}</p>
+                <div className="text-[var(--rv-primary)] mb-3">{fund.icon}</div>
+                <h5 className="font-bold mb-2">{fund.title}</h5>
+                <p className="text-base">{fund.text}</p>
               </motion.div>
             ))}
           </motion.div>
@@ -173,7 +128,7 @@ function PlanTypesSection() {
   );
 }
 
-function WhyChooseSection() {
+function WhyInvestSection() {
   return (
     <section className="bg-[var(--rv-bg-primary-light)] px-4">
       <div className="max-w-screen-xl mx-auto section">
@@ -185,7 +140,7 @@ function WhyChooseSection() {
           transition={{ duration: 0.6 }}
           viewport={{ once: true }}
         >
-          Why Choose PMS
+          Why Invest in Mutual Funds
         </motion.h2>
 
         <motion.div
@@ -195,7 +150,7 @@ function WhyChooseSection() {
           whileInView="visible"
           viewport={{ once: true }}
         >
-          {whyChoose.map((item, idx) => (
+          {whyInvest.map((item, idx) => (
             <motion.div
               key={idx}
               variants={fadeUp}
@@ -224,13 +179,13 @@ function CTASection() {
       >
         <div className="p-10 md:p-20 text-center flex flex-col gap-10 justify-center items-center">
           <h6>
-            Take control of your investments with PMS – designed for investors
-            seeking customized solutions, expert management, and long-term wealth
-            creation.
+            Mutual Funds offer flexibility, convenience, and the potential to grow
+            your wealth over time. Let us help you choose the right fund to match
+            your goals and risk profile.
           </h6>
           <div>
             <Link href="/contact-us" className="btn btn-primary">
-              Explore PMS Solutions
+              Start Investing in Mutual Funds
             </Link>
           </div>
         </div>
@@ -240,13 +195,13 @@ function CTASection() {
 }
 
 // ================== Main Page ==================
-export default function PMSLanding() {
+export default function MutualFundsLanding() {
   return (
     <>
-      <InnerBanner title="Portfolio Management Services (PMS)" />
+      <InnerBanner title="Mutual Funds" />
       <IntroSection />
-      <PlanTypesSection />
-      <WhyChooseSection />
+      <FundTypesSection />
+      <WhyInvestSection />
       <CTASection />
     </>
   );

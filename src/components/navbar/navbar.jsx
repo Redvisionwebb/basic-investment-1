@@ -3,40 +3,23 @@ import { useEffect, useRef, useState } from "react";
 import { FaChevronDown, FaBars, FaTimes } from "react-icons/fa";
 import Link from "next/link";
 
-const serviceItems = [
-  { label: "Wealth Management", href: "#" },
-  { label: "Retirement Planning", href: "#" },
-  { label: "Tax Optimization", href: "#" },
-  { label: "Estate Planning", href: "#" },
-];
-
-export default function NavBar() {
+export default function NavBar({ services = [] }) {
   const [isScrolled, setIsScrolled] = useState(false);
   const [isMobileMenuOpen, setMobileMenuOpen] = useState(false);
   const [isMobileDropdownOpen, setMobileDropdownOpen] = useState(false);
-  const [isDesktopDropdownOpen, setDesktopDropdownOpen] = useState(false);
 
-  const desktopDropdownRef = useRef(null);
   const mobileDropdownRef = useRef(null);
 
   // Sticky navbar background change
   useEffect(() => {
-    const handleScroll = () => {
-      setIsScrolled(window.scrollY > 0);
-    };
+    const handleScroll = () => setIsScrolled(window.scrollY > 0);
     window.addEventListener("scroll", handleScroll);
     return () => window.removeEventListener("scroll", handleScroll);
   }, []);
 
-  // Close dropdowns if clicked outside
+  // Close mobile dropdown if clicked outside
   useEffect(() => {
     const handleClickOutside = (event) => {
-      if (
-        desktopDropdownRef.current &&
-        !desktopDropdownRef.current.contains(event.target)
-      ) {
-        setDesktopDropdownOpen(false);
-      }
       if (
         mobileDropdownRef.current &&
         !mobileDropdownRef.current.contains(event.target)
@@ -51,16 +34,15 @@ export default function NavBar() {
   const handleLinkClick = () => {
     setMobileMenuOpen(false);
     setMobileDropdownOpen(false);
-    setDesktopDropdownOpen(false);
   };
 
   return (
     <nav
-      className={`w-full top-0 left-0 z-50 transition-all duration-300 ${
+      className={`w-full top-0 left-0 z-50 transition-all duration-300 px-6 py-3 ${
         isScrolled ? "fixed shadow-md bg-white" : "absolute bg-transparent"
       }`}
     >
-      <div className="max-w-screen-xl mx-auto flex items-center justify-between px-6 py-3">
+      <div className="max-w-screen-xl mx-auto flex items-center justify-between">
         {/* Logo */}
         <div className="text-2xl lg:text-3xl font-bold text-[color:var(--rv-primary)]">
           LOGO
@@ -69,7 +51,8 @@ export default function NavBar() {
         {/* Mobile Menu Toggle */}
         <button
           className="md:hidden text-gray-800 text-2xl"
-          onClick={() => setMobileMenuOpen(!isMobileMenuOpen)}
+          onClick={() => setMobileMenuOpen((s) => !s)}
+          aria-label="Toggle menu"
         >
           {isMobileMenuOpen ? <FaTimes /> : <FaBars />}
         </button>
@@ -86,39 +69,48 @@ export default function NavBar() {
               About Us
             </Link>
           </li>
-          <li className="relative" ref={desktopDropdownRef}>
-            <div
-              className="flex items-center space-x-1 cursor-pointer"
-              onClick={() => setDesktopDropdownOpen((prev) => !prev)}
+
+          {/* Desktop dropdown (CSS-only hover) */}
+          <li className="relative group">
+            <button
+              type="button"
+              className="flex items-center space-x-1 cursor-pointer outline-none"
+              aria-haspopup="true"
+              aria-expanded="false"
             >
               <span>Services</span>
-              <FaChevronDown
-                className={`text-sm transition-transform duration-300 ${
-                  isDesktopDropdownOpen ? "rotate-180" : ""
-                }`}
-              />
-            </div>
+              <FaChevronDown className="text-sm transition-transform duration-300 group-hover:rotate-180 group-focus-within:rotate-180" />
+            </button>
 
-            {/* Desktop Dropdown */}
+            {/* Hover buffer to prevent flicker between trigger and menu */}
+            <div className="absolute left-0 top-full h-2 w-full"></div>
+
             <div
-              className={`absolute mt-3 min-w-[220px] bg-white shadow-lg rounded-lg overflow-hidden transition-all duration-300 origin-top ${
-                isDesktopDropdownOpen
-                  ? "opacity-100 scale-y-100"
-                  : "opacity-0 scale-y-0 pointer-events-none"
-              }`}
+              className="
+                absolute left-0 mt-2 min-w-[220px] bg-white shadow-lg rounded-lg
+                opacity-0 invisible translate-y-2 transition-all duration-200
+                group-hover:opacity-100 group-hover:visible group-hover:translate-y-0
+                group-focus-within:opacity-100 group-focus-within:visible group-focus-within:translate-y-0
+                pointer-events-none group-hover:pointer-events-auto group-focus-within:pointer-events-auto
+                z-[60]
+              "
+              role="menu"
             >
               <ul>
-                {serviceItems.map((item, index) => (
+                {services.map((item, index) => (
                   <li
                     key={index}
-                    className="px-5 py-3 hover:bg-gray-100 transition-colors"
+                    className="px-5 py-2 hover:bg-gray-100 transition-colors"
                   >
-                    <Link href={item.href}>{item.label}</Link>
+                    <Link href={`/services/${item.link}`} onClick={handleLinkClick}>
+                      {item.name}
+                    </Link>
                   </li>
                 ))}
               </ul>
             </div>
           </li>
+
           <li>
             <Link href="/calculators" onClick={handleLinkClick}>
               Calculators
@@ -159,11 +151,11 @@ export default function NavBar() {
             </Link>
           </li>
 
-          {/* Mobile Dropdown */}
+          {/* Mobile Dropdown (click) */}
           <li ref={mobileDropdownRef}>
             <div
               className="flex items-center space-x-1 cursor-pointer"
-              onClick={() => setMobileDropdownOpen(!isMobileDropdownOpen)}
+              onClick={() => setMobileDropdownOpen((s) => !s)}
             >
               <span>Services</span>
               <FaChevronDown
@@ -178,13 +170,13 @@ export default function NavBar() {
               }`}
             >
               <ul className="pl-4 space-y-2">
-                {serviceItems.map((item, index) => (
+                {services.map((item, index) => (
                   <li
                     key={index}
                     className="hover:text-[color:var(--rv-primary)] cursor-pointer"
                   >
-                    <Link href={item.href} onClick={handleLinkClick}>
-                      {item.label}
+                    <Link href={`/services/${item.link}`} onClick={handleLinkClick}>
+                      {item.name}
                     </Link>
                   </li>
                 ))}
@@ -206,6 +198,7 @@ export default function NavBar() {
             <Link
               href="/login"
               className="block text-center px-5 py-2 bg-[color:var(--rv-primary)] text-white rounded-lg hover:bg-opacity-90 transition"
+              onClick={handleLinkClick}
             >
               Login
             </Link>

@@ -7,7 +7,7 @@ const CommissionDisclosurePage = () => {
     return (
         <div className={`${styles.footerpage} `}>
             <InnerBanner pageName={"Commission Disclosure"} />
-            <div className="max-w-screen-xl mx-auto main-section">
+            <div className="max-w-screen-xl mx-auto section">
 
                 <h2 className="text-xl  font-bold text-[var(--primary)] mb-2 mt-2">Commission Disclosure under SEBI Circular SEBI/IMD/CIR No.4 /168230/09</h2>
                 <p className="text-md  mb-4">The details of the commission earned by us from various Asset Management Companies (AMCs) are as below:</p>

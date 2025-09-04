@@ -12,7 +12,7 @@ export default function BondsLanding() {
   return (
     <>
       <InnerBanner pageName="Bonds" />
-      <section className="main-section bg-white">
+      <section className="section bg-white">
         <div className="max-w-screen-xl mx-auto">
           {/* Heading */}
           <h1 className="font-extrabold text-center text-[var(--rv-primary)] mb-3">Bonds</h1>

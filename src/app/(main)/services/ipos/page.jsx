@@ -12,7 +12,7 @@ export default function IPOsLanding() {
   return (
     <>
       <InnerBanner pageName="Initial Public Offerings (IPOs)" />
-      <section className="main-section bg-white">
+      <section className="section bg-white">
         <div className="max-w-screen-xl mx-auto">
           {/* Heading */}
           <h1 className="font-extrabold text-center text-[var(--rv-primary)] mb-3">Initial Public Offerings (IPOs)</h1>

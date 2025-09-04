@@ -26,7 +26,7 @@ const tools = [
   },
   {
     icon: "images/icons/tools.svg",
-    title: "Risk Profile",
+    title: "Financial Health",
     description: "Lorem ipsum dolor sit amet, consectetuer adipiscing elit, sed diam nonummy.",
   },
   {

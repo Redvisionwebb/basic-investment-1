@@ -73,27 +73,27 @@ export const calculators = [
 
 export const performance = [
   {
-    link: "/performance/sip-performance",
+    route: "/performance/sip-performance",
     title: "SIP Performace",
     image: "/images/calculators/performance.svg",
   },
   // {
-  //     link: "/performance/stp-performance",
+  //     route: "/performance/stp-performance",
   //     title: "STP Performace",
   //     image: "/images/calculators/performance.svg"
   // },
   // {
-  //     link: "/performance/swp-performance",
+  //     route: "/performance/swp-performance",
   //     title: "SWP Performace",
   //     image: "/images/calculators/performance.svg"
   // },
   {
-    link: "/performance/fund-performance",
+    route: "/performance/fund-performance",
     title: "Fund Performace",
     image: "/images/calculators/performance.svg",
   },
   // {
-  //     link: "/performance/scheme-performance",
+  //     route: "/performance/scheme-performance",
   //     title: "Scheme Performace",
   //     image: "/images/calculators/performance.svg"
   // },

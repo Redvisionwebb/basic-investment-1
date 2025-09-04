@@ -14,7 +14,7 @@ import HomeHeading from "../heading/heading";
 export default function ContactUsFormSection({ sitedata }) {
 
   return (
-    <div className='main-section'>
+    <div className='section'>
       <div className="">
         <div className="max-w-screen-xl mx-auto">
           <div className="grid grid-cols-1 md:grid-cols-5 items-center">

@@ -18,6 +18,7 @@ import { toast } from "@/hooks/use-toast";
 import { useRouter } from "next/navigation";
 import HCaptcha from "@hcaptcha/react-hcaptcha";
 import Link from "next/link";
+import InnerBanner from "@/components/innerBanner/InnerBanner";
 
 const FinancialHealth = () => {
   const router = useRouter();
@@ -103,108 +104,102 @@ const FinancialHealth = () => {
       <Form {...form}>
         <form
           onSubmit={form.handleSubmit(onSubmit)}
-          className="space-y-8 rounded py-3 px-6 bg-white"
+          className="rounded-xl overflow-hidden"
         >
-          <div className="flex justify-between items-center">
-            <h1 className="font-medium text-xl">
-              Please Fill Your Details...
+          <div className="flex justify-between bg-[var(--rv-bg-primary)] p-5 gap-20 items-center text-white">
+            <h1 className="font-medium text-2xl">
+              Please fill Your Details <br /> Carefully
             </h1>
-            <Link href="/" className="text-right text-blue-500 font-medium">
+            <Link href="/" className="text-right font-medium">
               Back
             </Link>
           </div>
-          {/* Username Field */}
-          <FormField
-            control={form.control}
-            name="username"
-            render={({ field }) => (
-              <FormItem>
-                <FormControl>
-                  <Input
-                    placeholder="User Name"
-                    {...field}
-                    aria-label="User Name"
-                    className="border-2 border-gray-500"
-                  />
-                </FormControl>
-                <FormMessage />
-              </FormItem>
-            )}
-          />
-
-          {/* Mobile Field */}
-          <FormField
-            control={form.control}
-            name="mobile"
-            render={({ field }) => (
-              <FormItem>
-                <FormControl>
-                  <Input
-                    placeholder="Mobile"
-                    {...field}
-                    aria-label="Mobile Number"
-                    className="border-2 border-gray-500"
-                  />
-                </FormControl>
-                <FormMessage />
-              </FormItem>
-            )}
-          />
-
-          {/* Email Field */}
-          <FormField
-            control={form.control}
-            name="email"
-            render={({ field }) => (
-              <FormItem>
-                <FormControl>
-                  <Input
-                    type="email"
-                    placeholder="Email"
-                    {...field}
-                    aria-label="Email"
-                    className="border-2 border-gray-500"
-                  />
-                </FormControl>
-                <FormMessage />
-              </FormItem>
-            )}
-          />
-
-          {/* Message Field */}
-          <FormField
-            control={form.control}
-            name="message"
-            render={({ field }) => (
-              <FormItem>
-                <FormControl>
-                  <textarea
-                    placeholder="Message"
-                    {...field}
-                    className="w-full border-2 border-gray-500 p-1 rounded"
-                    aria-label="Message"
-                  />
-                </FormControl>
-                <FormMessage />
-              </FormItem>
-            )}
-          />
-
-          {/* hCaptcha */}
-          <div>
-            <HCaptcha
-              sitekey={process.env.NEXT_PUBLIC_RECAPTCHA_SITE_KEY}
-              onVerify={(token) => setHcaptchaToken(token)}
+          <div className="w-full  p-5 bg-white flex flex-col gap-4">
+            <FormField
+              control={form.control}
+              name="username"
+              render={({ field }) => (
+                <FormItem>
+                  <FormControl>
+                    <Input
+                      placeholder="User Name"
+                      {...field}
+                      aria-label="User Name"
+                      className="border border-[var(--rv-bg-primary)] outline-none"
+                    />
+                  </FormControl>
+                  <FormMessage />
+                </FormItem>
+              )}
             />
-            {captchaError && (
-              <p className="text-red-500 text-sm mt-2">{captchaError}</p>
-            )}
+            <FormField
+              control={form.control}
+              name="mobile"
+              render={({ field }) => (
+                <FormItem>
+                  <FormControl>
+                    <Input
+                      placeholder="Mobile"
+                      {...field}
+                      aria-label="Mobile Number"
+                      className="border border-[var(--rv-bg-primary)] outline-none"
+                    />
+                  </FormControl>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+            <FormField
+              control={form.control}
+              name="email"
+              render={({ field }) => (
+                <FormItem>
+                  <FormControl>
+                    <Input
+                      type="email"
+                      placeholder="Email"
+                      {...field}
+                      aria-label="Email"
+                      className="border border-[var(--rv-bg-primary)] outline-none"
+                    />
+                  </FormControl>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+            <FormField
+              control={form.control}
+              name="message"
+              render={({ field }) => (
+                <FormItem>
+                  <FormControl>
+                    <textarea
+                      placeholder="Message"
+                      {...field}
+                      className="w-full border border-[var(--rv-bg-primary)] outline-none p-1 rounded"
+                      aria-label="Message"
+                    />
+                  </FormControl>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+            <div>
+              <HCaptcha
+                sitekey={process.env.NEXT_PUBLIC_RECAPTCHA_SITE_KEY}
+                onVerify={(token) => setHcaptchaToken(token)}
+              />
+              {captchaError && (
+                <p className="text-red-500 text-sm mt-2">{captchaError}</p>
+              )}
+            </div>
+            <div>
+              <Button className="text-white" type="submit" disabled={loading}>
+                {!loading ? "Submit" : "Loading..."}
+              </Button>
+            </div>
           </div>
 
-          {/* Submit Button */}
-          <Button className="text-white" type="submit" disabled={loading}>
-            {!loading ? "Submit" : "Loading..."}
-          </Button>
         </form>
       </Form>
     );
@@ -220,7 +215,6 @@ const FinancialHealth = () => {
       selectedAnswerMarks: selectedAnswer,
     };
 
-    // Update score
     setScore(score + selectedAnswer);
 
     const nextQuestionIndex = currentQuestionIndex + 1;
@@ -322,135 +316,138 @@ Here are the answers you provided:
     return { message: "Excellent", color: "text-green-500" };
   };
   return (
-    <div className="h-screen main_section">
-      <div className="max-w-3xl mx-auto p-6 bg-white shadow-lg rounded-lg">
-        <Toaster />
-        {isModalOpen && (
-          <div className="fixed inset-0 bg-[#0e314da3] bg-opacity-60 z-[5000] flex justify-center">
-            <div className="p-3 rounded-lg shadow-lg w-[30rem] bg-white mt-10 mb-2 max-h-[600px]">
-              <InquiryForm />
+    <>
+      <InnerBanner title={'Financial Health'} />
+      <div className=" section bg-white">
+        <div className="max-w-6xl mx-auto p-6 bg-[var(--rv-bg-primary-light)]  shadow-lg rounded-lg">
+          <Toaster />
+          {isModalOpen && (
+            <div className="fixed inset-0 bg-[#0e314da3] bg-opacity-60 z-[5000] flex items-center justify-center">
+              <div className="">
+                <InquiryForm />
+              </div>
             </div>
-          </div>
-        )}
+          )}
 
-        {isQuizCompleted ? (
-          <div className="flex flex-col items-center text-center">
-            <h2 className="text-3xl font-bold mb-4 text-gray-800">
-              Your Total Score: {score}
-            </h2>
-            <div
-              className={`text-4xl font-semibold mb-4 ${getResultMessage().color
-                }`}
-            >
-              {getResultMessage().message}
-            </div>
-            <div className="bg-gray-100 p-4 rounded-lg shadow-inner">
-              <p className="text-lg">Here’s what your score means:</p>
-              <ul className="mt-2 text-left">
-                <li className="mb-3 text-gray-600">
-                  <span className="text-bold text-lg text-gray-900">
-                    Critical:{" "}
-                  </span>{" "}
-                  Your financial situation is at a very critical level and you
-                  need to get some professional help before its too late. We will
-                  soon send you a thorough analysis of your financial health.
-                </li>
-                <li className="mb-3 text-gray-600">
-                  <span className="text-bold text-lg text-gray-900">Weak: </span>
-                  Your financial situation is weak. There are certain basic areas
-                  that you have taken care of but a majority of them needs to be
-                  worked upon. We will soon send you a thorough analysis of your
-                  financial health.
-                </li>
-                <li className="mb-3 text-gray-600">
-                  <span className="text-bold text-lg text-gray-900">
-                    Border Line:{" "}
-                  </span>
-                  We can see that you have put in effort to plan your finances.
-                  But at the same time there certain areas that have been
-                  completely ignored. A correct direction along with proper risk
-                  profiling and asset allocation is what you might need.
-                </li>
-                <li className="mb-3 text-gray-600">
-                  <span className="text-bold text-lg text-gray-900">Fit: </span>
-                  Good care has been taken in planning your financial life. A good
-                  asset allocation and portfolio rebalancing may be required. It
-                  will show help in maximising returns by minimizing the risk. We
-                  will soon send you a thorough analysis of your financial health.
-                </li>
-                <li className="mb-3 text-gray-600">
-                  <span className="text-bold text-lg text-gray-900">
-                    Excellent:
-                  </span>{" "}
-                  We appreciate the effort you have put into financial planning.
-                  You are in the correct direction. Make sure you rebalance your
-                  portfolio regularly. We will soon send you a thorough analysis
-                  of your financial health.
-                </li>
-              </ul>
-            </div>
-            <button
-              onClick={() => {
-                // Reset the quiz
-                setCurrentQuestionIndex(0);
-                setScore(0);
-                setIsQuizCompleted(false);
-                setSelectedAnswer(null);
-                router.push("/");
-              }}
-              className="mt-6 bg-gray-800 text-white px-4 py-2 rounded-lg hover:bg-gray-900"
-            >
-              Back Home
-            </button>
-          </div>
-        ) : (
-          <div className="flex flex-col">
-            <h2 className="text-2xl font-semibold mb-4 text-gray-800">
-              {currentQuestionIndex + 1}.{" "}
-              {questions[currentQuestionIndex]?.question}
-            </h2>
-            <div className="mb-4">
-              <div className="flex items-center mb-2">
-                <input
-                  type="radio"
-                  id={"answer"}
-                  name="answer"
-                  value={1}
-                  checked={selectedAnswer === 1}
-                  onChange={() => handleAnswerSelect(1)}
-                  className="mr-2"
-                />
-                <label htmlFor={"answer"} className="text-lg text-gray-800">
-                  Yes
-                </label>
+          {isQuizCompleted ? (
+            <div className="flex flex-col items-center text-center">
+              <h2 className="text-3xl font-bold mb-4 text-gray-800">
+                Your Total Score: {score}
+              </h2>
+              <div
+                className={`text-4xl font-semibold mb-4 ${getResultMessage().color
+                  }`}
+              >
+                {getResultMessage().message}
               </div>
-              <div className="flex items-center mb-2">
-                <input
-                  type="radio"
-                  id={"no"}
-                  name="no"
-                  value={1}
-                  checked={selectedAnswer === 0}
-                  onChange={() => handleAnswerSelect(0)}
-                  className="mr-2"
-                />
-                <label htmlFor={"no"} className="text-lg text-gray-800">
-                  No
-                </label>
+              <div className="">
+                <p className="text-lg">Here’s what your score means:</p>
+                <ul className="mt-2 text-left">
+                  <li className="mb-3 text-gray-600">
+                    <span className="text-bold text-lg text-gray-900">
+                      Critical:{" "}
+                    </span>{" "}
+                    Your financial situation is at a very critical level and you
+                    need to get some professional help before its too late. We will
+                    soon send you a thorough analysis of your financial health.
+                  </li>
+                  <li className="mb-3 text-gray-600">
+                    <span className="text-bold text-lg text-gray-900">Weak: </span>
+                    Your financial situation is weak. There are certain basic areas
+                    that you have taken care of but a majority of them needs to be
+                    worked upon. We will soon send you a thorough analysis of your
+                    financial health.
+                  </li>
+                  <li className="mb-3 text-gray-600">
+                    <span className="text-bold text-lg text-gray-900">
+                      Border Line:{" "}
+                    </span>
+                    We can see that you have put in effort to plan your finances.
+                    But at the same time there certain areas that have been
+                    completely ignored. A correct direction along with proper risk
+                    profiling and asset allocation is what you might need.
+                  </li>
+                  <li className="mb-3 text-gray-600">
+                    <span className="text-bold text-lg text-gray-900">Fit: </span>
+                    Good care has been taken in planning your financial life. A good
+                    asset allocation and portfolio rebalancing may be required. It
+                    will show help in maximising returns by minimizing the risk. We
+                    will soon send you a thorough analysis of your financial health.
+                  </li>
+                  <li className="mb-3 text-gray-600">
+                    <span className="text-bold text-lg text-gray-900">
+                      Excellent:
+                    </span>{" "}
+                    We appreciate the effort you have put into financial planning.
+                    You are in the correct direction. Make sure you rebalance your
+                    portfolio regularly. We will soon send you a thorough analysis
+                    of your financial health.
+                  </li>
+                </ul>
               </div>
+              <button
+                onClick={() => {
+                  // Reset the quiz
+                  setCurrentQuestionIndex(0);
+                  setScore(0);
+                  setIsQuizCompleted(false);
+                  setSelectedAnswer(null);
+                  router.push("/");
+                }}
+                className="hover:text-black border px-8 py-2 rounded-lg mt-10 hover:bg-[var(--rv-secondary)] bg-[var(--rv-primary)] text-white w-fit"
+              >
+                Back Home
+              </button>
             </div>
-            <Button
-              onClick={() =>
-                handleNextClick(questions[currentQuestionIndex]?.question)
-              }
-              className="text-black border px-4 py-2 rounded-lg bg-[var(--rv-secondary)] hover:bg-[var(--rv-primary)] hover:text-white w-full"
-            >
-              Next
-            </Button>
-          </div>
-        )}
+          ) : (
+            <div className="flex flex-col">
+              <h2 className="text-2xl font-semibold mb-4 text-gray-800">
+                {currentQuestionIndex + 1}.{" "}
+                {questions[currentQuestionIndex]?.question}
+              </h2>
+              <div className="mb-4">
+                <div className="flex items-center mb-2">
+                  <input
+                    type="radio"
+                    id={"answer"}
+                    name="answer"
+                    value={1}
+                    checked={selectedAnswer === 1}
+                    onChange={() => handleAnswerSelect(1)}
+                    className="mr-2"
+                  />
+                  <label htmlFor={"answer"} className="text-lg text-gray-800">
+                    Yes
+                  </label>
+                </div>
+                <div className="flex items-center mb-2">
+                  <input
+                    type="radio"
+                    id={"no"}
+                    name="no"
+                    value={1}
+                    checked={selectedAnswer === 0}
+                    onChange={() => handleAnswerSelect(0)}
+                    className="mr-2"
+                  />
+                  <label htmlFor={"no"} className="text-lg text-gray-800">
+                    No
+                  </label>
+                </div>
+              </div>
+              <Button
+                onClick={() =>
+                  handleNextClick(questions[currentQuestionIndex]?.question)
+                }
+                className="hover:text-black border px-8 py-2 rounded-lg hover:bg-[var(--rv-secondary)] bg-[var(--rv-primary)] text-white w-fit"
+              >
+                Next
+              </Button>
+            </div>
+          )}
+        </div>
       </div>
-    </div>
+    </>
   );
 };
 

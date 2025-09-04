@@ -6,7 +6,7 @@ import Image from "next/image";
 
 const AboutHero = () => {
   return (
-    <section className="main-section">
+    <section className="section">
       <div className="relative z-10 h-fit max-w-screen-xl px-4 mx-auto flex flex-col lg:flex-row items-center gap-10 md:gap-10">
         <motion.div
           initial={{ opacity: 0, x: 50 }}

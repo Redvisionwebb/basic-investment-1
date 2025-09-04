@@ -9,7 +9,7 @@ export default function ImportantLinks() {
         <div className={`${styles.footerpage} `}>
             <InnerBanner pageName={"Important Links"} />
 
-            <div className="max-w-screen-xl mx-auto main-section">
+            <div className="max-w-screen-xl mx-auto section">
                 <div>
                     <h5>Here are some essential links for investors:</h5>
                     <ul>

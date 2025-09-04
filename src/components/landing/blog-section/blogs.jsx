@@ -4,7 +4,7 @@ import styles from './Blogs.module.css';
 
 const BlogSection = ({ blogs }) => {
     return (
-        <section className={`${styles.BlogSection} main-section`}>
+        <section className={`${styles.BlogSection} section`}>
             <div className="max-w-screen-xl mx-auto px-4">
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                     {/* Top-left cell: Heading */}

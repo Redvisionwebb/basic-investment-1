@@ -223,7 +223,7 @@ export default function SipCalculator({ siteData }) {
     };
 
     return (
-        <div className="main-section">
+        <div className="section">
             <div className="max-w-screen-xl mx-auto">
                 <div className="rounded-[var(--rv-radius)]">
                     <div className="grid md:grid-cols-2 grid-cols-1 gap-4">
