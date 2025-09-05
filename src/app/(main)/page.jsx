@@ -10,6 +10,7 @@ import ServicesSection from "@/components/landing/serviceSection/serviceSection"
 import ComparePlansSection from "@/components/landing/comparePlan/compareSection";
 import TeamSection from "@/components/landing/teamSection/teamSection";
 import TopTaxSavingFunds from "@/components/MutalfundSection/TopPerformanceFund/page";
+import QRCodePopup from "../../components/qrCode/qrcode";
 
 export default async function Page({ children }) {
 
@@ -28,16 +29,14 @@ export default async function Page({ children }) {
                 <AwardsSection />
                 <TrustedSection />
                 <ToolsSection />
-                <TopTaxSavingFunds/>
+                <TopTaxSavingFunds />
                 {/* top performing */}
                 <ServicesSection services={services} />
-                <ComparePlansSection/>
-                <TeamSection aboutteamdata={aboutteamdata}/>
+                <ComparePlansSection />
+                <TeamSection aboutteamdata={aboutteamdata} />
                 <DiffrentFunds />
                 <ContactUs sitedata={sitedata} />
-                {/* 
-                 */}
-                {/* <WhatsAppBot sitedata={sitedata} services={services} /> */}
+                <QRCodePopup />
             </main>
         </div>
     );
