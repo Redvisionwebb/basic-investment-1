@@ -49,7 +49,7 @@ const Page = () => {
     <div>
       <InnerBanner title={schemeName} subpages="Performance" />
       <div className="px-4">
-        <div className="max-w-screen-xl mx-auto section ">
+        <div className="">
           <MutualFundTable
             performanceData={performanceData}
             schemeName={schemeName}
