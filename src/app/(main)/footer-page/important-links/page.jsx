@@ -7,7 +7,7 @@ export default function ImportantLinks() {
 
     return (
         <div className={`${styles.footerpage} `}>
-            <InnerBanner pageName={"Important Links"} />
+            <InnerBanner title={"Important Links"} />
 
             <div className="max-w-screen-xl mx-auto section">
                 <div>

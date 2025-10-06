@@ -223,16 +223,16 @@ export default function Page() {
     }
 
     return (
-        <div className="pt-20">
+        <div className="section">
 
-            <div className="px-3 lg:px-2 max-w-screen-xl mx-auto main_section ">
+            <div className="px-3 lg:px-2 max-w-screen-xl mx-auto section">
                 <Toaster /><div className="mb-5 flex flex-col md:flex-row gap-5 justify-between ">
-                  <div className="">
-                    <span className="text-2xl md:text-3xl font-bold uppercase">
-                      Scheme Performance
-                    </span>
-                  </div>
-                  
+                    <div className="">
+                        <span className="text-2xl md:text-3xl font-bold uppercase">
+                            Scheme Performance
+                        </span>
+                    </div>
+
                 </div>
                 <div>
                     <div className='col-span-1 border border-gray-200 rounded-2xl bg-white p-2 mb-3'>
@@ -293,7 +293,6 @@ export default function Page() {
                                             <p className="font-semibold text-gray-700">
                                                 Select Equity Funds
                                             </p>
-                                            {/* {console.log(assetCategory)} */}
                                             <div className="mt-2 border border-gray-300 p-3 rounded h-60 overflow-y-auto">
                                                 {/* Equity Funds checkboxes here */}
                                                 {assetCategory
@@ -524,7 +523,7 @@ export default function Page() {
                         }
                         <div className="">
                             {result && viewby === 'graph' ?
-                            graphData && 
+                                graphData &&
                                 <div className="">
                                     <div className="grid lg:grid-cols-7 md:grid-cols-4 gap-x-3 gap-y-2 my-10">
                                         <div className="py-2 px-3 border border-stone-600 shadow shadow-emerald-100 rounded-sm text-center">

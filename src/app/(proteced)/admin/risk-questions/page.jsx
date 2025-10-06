@@ -11,38 +11,59 @@ const RiskQuestions = () => {
   const [editedQuestion, setEditedQuestion] = useState({});
   const [editedAnswers, setEditedAnswers] = useState({});
 
+  // ✅ Fetch Questions
   const fetchQuestions = async () => {
     try {
-      const res = await axios.get("/api/risk-questions");
+      const res = await axios.get(
+        `${process.env.NEXT_PUBLIC_NEXTAUTH_URL}/api/risk-questions`
+      );
       setQuestions(res.data);
-      const anyEnabled = res.data.some((q) => q.status === true);
-      setIsEnabled(anyEnabled);
     } catch (err) {
       console.error("Failed to fetch questions", err);
     }
   };
 
+  // ✅ Fetch Global Status
+  const fetchStatus = async () => {
+    try {
+      const res = await axios.get(
+        `${process.env.NEXT_PUBLIC_NEXTAUTH_URL}/api/risk-questions/status`
+      );
+      setIsEnabled(res.data.status);
+    } catch (err) {
+      console.error("Failed to fetch status", err);
+    }
+  };
+
   useEffect(() => {
     fetchQuestions();
+    fetchStatus();
   }, []);
 
+  // ✅ Toggle Handler
   const handleToggle = async () => {
     try {
       const newStatus = !isEnabled;
-      await axios.put("/api/risk-questions/status", { status: newStatus });
+      await axios.put(
+        `${process.env.NEXT_PUBLIC_NEXTAUTH_URL}/api/risk-questions/status`,
+        { status: newStatus }
+      );
       setIsEnabled(newStatus);
-      fetchQuestions();
     } catch (err) {
       console.error("Failed to update status", err);
     }
   };
 
+  // ✅ Update Question + Answers
   const handleUpdate = async (question) => {
     try {
-      await axios.put(`/api/risk-questions/${question._id}`, {
-        question: editedQuestion[question._id],
-        answers: editedAnswers[question._id],
-      });
+      await axios.put(
+        `${process.env.NEXT_PUBLIC_NEXTAUTH_URL}/api/risk-questions/${question._id}`,
+        {
+          question: editedQuestion[question._id],
+          answers: editedAnswers[question._id],
+        }
+      );
 
       setEditMode((prev) => ({ ...prev, [question._id]: false }));
       fetchQuestions();
@@ -54,7 +75,8 @@ const RiskQuestions = () => {
   return (
     <DefaultLayout>
       <div className="p-4">
-        <div className="flex justify-between items-center mb-6">
+        
+        <div className="flex justify-between items-center mb-4">
           <h1 className="text-2xl font-bold">Risk Questions</h1>
           <div className="flex items-center gap-3">
             <span className="text-sm font-medium text-gray-600">Toggle</span>
@@ -96,12 +118,14 @@ const RiskQuestions = () => {
             return (
               <div
                 key={question._id}
-                className="mb-6 p-4 border rounded shadow-sm bg-white"
+                className="mb-5 p-4 border border-gray-300 rounded shadow-sm bg-white"
               >
                 <div className="flex justify-between items-center mb-2">
-                  <label className="font-semibold">Question {index + 1}</label>
+                  <label className="font-semibold">
+                    Question {index + 1}
+                  </label>
                   <button
-                    className="text-blue-500 hover:text-blue-700 text-sm"
+                    className="bg-[var(--rv-admin-bg-color)] hover:bg-[var(--rv-admin-bg-color)] text-white py-2 px-4 rounded-md text-sm"
                     onClick={() => {
                       setEditMode((prev) => ({
                         ...prev,
@@ -117,7 +141,7 @@ const RiskQuestions = () => {
                       }));
                     }}
                   >
-                    ✏️ Edit
+                   Edit
                   </button>
                 </div>
 
@@ -130,13 +154,13 @@ const RiskQuestions = () => {
                       [question._id]: e.target.value,
                     }))
                   }
-                  className="w-full p-2 mt-1 mb-2 border rounded"
+                  className="w-full p-2 mt-1 mb-2 border border-gray-300 rounded"
                   disabled={!isEditing}
                 />
 
                 <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4 mt-4">
                   {answers.map((answer, idx) => (
-                    <div key={idx} className="border p-3 rounded">
+                    <div key={idx} className="border border-gray-300 p-3 rounded">
                       <label className="text-sm font-medium text-gray-600">
                         Answer {idx + 1}
                       </label>
@@ -156,7 +180,7 @@ const RiskQuestions = () => {
                             };
                           })
                         }
-                        className="w-full p-2 mt-1 border rounded"
+                        className="w-full p-2 mt-1 border border-gray-300 rounded"
                         disabled={!isEditing}
                       />
                     </div>
@@ -165,7 +189,7 @@ const RiskQuestions = () => {
 
                 {isEditing && (
                   <button
-                    className="mt-4 bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700"
+                     className="bg-[var(--rv-admin-bg-color)] hover:bg-[var(--rv-admin-bg-color)] text-white py-2 px-4 rounded-md text-sm mt-4"
                     onClick={() => handleUpdate(question)}
                   >
                     Update
@@ -175,7 +199,7 @@ const RiskQuestions = () => {
             );
           })
         ) : (
-          <p className="text-gray-600 mt-6">
+          <p className="text-gray-700 ">
             Risk questions are currently disabled.
           </p>
         )}

@@ -37,23 +37,42 @@ export async function POST(request) {
 
 export async function GET(request) {
   try {
+
+
     const questions = await FinancialHealthQuestionModel.find({});
 
     const hasActiveStatus = questions.some((q) => q.status === true);
 
     if (hasActiveStatus) {
+      // Return DB data if at least one has status: true
       return NextResponse.json(questions, { status: 200 });
     }
 
-    // If none have status true, fetch from external API
+    if (questions.length === 0) {
+      // First-time fetch and save to DB
+      const response = await axios.get(
+        `${process.env.NEXT_PUBLIC_DATA_API}/api/open-apis/risk-questions?apikey=${process.env.NEXT_PUBLIC_API_KEY}`
+      );
+
+      const fetchedQuestions = response.data.map((item) => ({
+        question: item.question,
+        status: false,
+      }));
+
+      await FinancialHealthQuestionModel.insertMany(fetchedQuestions);
+
+      return NextResponse.json(fetchedQuestions, { status: 200 });
+    }
+
+    // DB has data but all status = false → fetch from API but DO NOT save
     const response = await axios.get(
       `${process.env.NEXT_PUBLIC_DATA_API}/api/open-apis/risk-questions?apikey=${process.env.NEXT_PUBLIC_API_KEY}`
     );
 
     return NextResponse.json(response.data, { status: 200 });
   } catch (error) {
-    console.error('Error fetching risk questions:', error);
-    return NextResponse.json({ error: 'Internal Server Error' }, { status: 500 });
+    console.error("Error fetching risk questions:", error);
+    return NextResponse.json({ error: "Internal Server Error" }, { status: 500 });
   }
 }
 

@@ -45,7 +45,7 @@ export function MissionVisionForm() {
   useEffect(() => {
     const fetchData = async () => {
       try {
-        const response = await axios.get("/api/mission-vision");
+        const response = await axios.get(`${process.env.NEXT_PUBLIC_NEXTAUTH_URL}/api/mission-vision`);
         if (response.data) {
           form.reset({
             mission: response.data.mission || "",
@@ -65,7 +65,7 @@ export function MissionVisionForm() {
   const onSubmit = async (data) => {
     setLoading(true);
     try {
-      const response = await axios.post("/api/mission-vision", data);
+      const response = await axios.post(`${process.env.NEXT_PUBLIC_NEXTAUTH_URL}/api/mission-vision`, data);
       if (response.status === 201) {
         toast({
           title: "Mission & Vision saved successfully!",
@@ -98,58 +98,63 @@ export function MissionVisionForm() {
     <Form {...form}>
       <form
         onSubmit={form.handleSubmit(onSubmit)}
-        className="space-y-8 rounded px-7"
+        className="flex flex-col items-start w-full gap-5 rounded-md p-3 bg-white"
       >
-        <FormField
-          control={form.control}
-          name="mission"
-          render={({ field }) => (
-            <FormItem>
-              <FormLabel className="font-semibold text-gray-700">
-                Mission
-              </FormLabel>
-              <FormControl>
-                <Input
-                  placeholder="Enter Mission"
-                  {...field}
-                  className="border border-gray-500"
-                />
-              </FormControl>
-              <FormMessage />
-            </FormItem>
-          )}
-        />
+        <div className="w-full">
+
+          <FormField
+            control={form.control}
+            name="mission"
+            render={({ field }) => (
+              <FormItem>
+                <FormLabel className="font-semibold">
+                  Mission
+                </FormLabel>
+                <FormControl>
+                  <Input
+                    placeholder="Enter Mission"
+                    {...field}
+                    className="border border-gray-400"
+                  />
+                </FormControl>
+                <FormMessage />
+              </FormItem>
+            )}
+          />
+        </div>
+        <div className="w-full">
 
         <FormField
           control={form.control}
           name="vision"
           render={({ field }) => (
             <FormItem>
-              <FormLabel className="font-semibold text-gray-700">
+              <FormLabel className="font-semibold">
                 Vision
               </FormLabel>
               <FormControl>
                 <Input
                   placeholder="Enter Vision"
                   {...field}
-                  className="border border-gray-500"
+                  className="border border-gray-400"
                 />
               </FormControl>
               <FormMessage />
             </FormItem>
           )}
         />
+        </div>
 
         <FormField
           control={form.control}
           name="values"
           render={({ field }) => (
             <FormItem>
-              <FormLabel className="font-semibold text-gray-700">
+              <FormLabel className="font-semibold">
                 Values
               </FormLabel>
               <FormControl>
-                <div className="border border-gray-500 rounded overflow-hidden">
+                <div className="border border-gray-400 rounded overflow-hidden">
                   <JoditEditor
                     ref={editor}
                     value={field.value}
@@ -163,7 +168,7 @@ export function MissionVisionForm() {
         />
 
         <Button
-          className="text-white bg-[var(--primary)]"
+          className="text-white bg-[var(--rv-admin-bg-color)] hover:bg-[var(--rv-admin-bg-color)]"
           type="submit"
           disabled={loading}
         >
@@ -177,12 +182,13 @@ export function MissionVisionForm() {
 const AddMissionVisionPage = () => {
   return (
     <DefaultLayout>
-      <div className="flex justify-between">
-        <h1 className="font-bold text-gray-700 text-2xl mb-7">
-          Add / Update Mission, Vision & Values
-        </h1>
-      </div>
-      <div className="p-5 bg-gray-100 rounded">
+      <div className="flex flex-col gap-5">
+        <div className="flex justify-between">
+          <h1 className="font-bold text-2xl ">
+            Add / Update Mission, Vision & Values
+          </h1>
+        </div>
+
         <MissionVisionForm />
         <Toaster />
       </div>

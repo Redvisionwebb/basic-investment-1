@@ -14,6 +14,7 @@ import {
 } from "@/components/ui/breadcrumb";
 import { calculators } from "@/data/calculators";
 import { useRouter } from "next/navigation";
+import InnerBanner from "@/components/innerBanner/InnerBanner";
 
 export default function Page() {
   const router = useRouter();
@@ -81,7 +82,7 @@ export default function Page() {
     },
     return: {
       label: "Resultant Amount",
-      color: "var(--rv-gray)",
+      color: "var(--rv-secondary)",
     },
   }
 
@@ -92,285 +93,286 @@ export default function Page() {
     },
     growth: {
       label: "Resultant Amountt",
-      color: "var(--rv-gray)",
+      color: "var(--rv-secondary)",
     },
   };
 
 
   return (
-    <div className="pt-20">
-
-
-      <div className="max-w-screen-xl mx-auto main_section">
-        <div className="">
-          <div className="mb-5 flex flex-col md:flex-row gap-5 justify-between">
-            <div className="">
-              <span className="text-2xl md:text-3xl font-bold uppercase">
-                STP Calculator
-              </span>
-            </div>
-            <div className="flex justify-between gap-4">
-              <span>Explore other calculators</span>
-              <select
-                className="w-full border border-gray-500 rounded-lg p-2"
-                onChange={handleCalculatorChange}
-                defaultValue=""
-              >
-                <option value="" disabled>
-                  Select
-                </option>
-                {calculators.map((calc) => (
-                  <option key={calc.title} value={calc.route}>
-                    {calc.title}
+    <>
+      <InnerBanner title={'STP Calculator'} />
+      <div className="px-4">
+        <div className="max-w-screen-xl mx-auto section">
+          <div className="">
+            <div className="mb-5 flex flex-col md:flex-row gap-5 justify-between">
+              <div className="">
+                <span className="text-2xl md:text-3xl font-bold uppercase">
+                  STP Calculator
+                </span>
+              </div>
+              <div className="flex justify-between gap-4">
+                <span>Explore other calculators</span>
+                <select
+                  className="w-full border border-gray-500 rounded-lg p-2"
+                  onChange={handleCalculatorChange}
+                  defaultValue=""
+                >
+                  <option value="" disabled>
+                    Select
                   </option>
-                ))}
-              </select>
+                  {calculators.map((calc) => (
+                    <option key={calc.title} value={calc.route}>
+                      {calc.title}
+                    </option>
+                  ))}
+                </select>
+              </div>
             </div>
-          </div>
-          <div>
-            {isAuthorised ? (
-              <div>
+            <div>
+              {isAuthorised ? (
+                <div>
 
-                <div className="grid lg:grid-cols-2 grid-cols-1 gap-4 mb-4">
-                  <div className="col-span-1 border border-gray-200 rounded-2xl bg-white p-5">
-                    <div className="input-fields mt-5 mb-10">
-                      <div className="items-center mt-5">
-                        <div className="flex justify-between">
-                          <span>I want to invest in Source Fund (₹)</span>
-                          <div>
+                  <div className="grid lg:grid-cols-2 grid-cols-1 gap-4 mb-4">
+                    <div className="col-span-1 border border-[var(--rv-primary)] rounded-2xl bg-white p-5">
+                      <div className="input-fields">
+                        <div className="items-center">
+                          <div className="flex justify-between">
+                            <span>I want to invest in Source Fund (₹)</span>
+                            <div>
 
+                              <input
+                                type="number"
+                                placeholder="0"
+                                value={sourceFundAmount}
+                                onChange={(e) =>
+                                  setSourceFundAmount(parseFloat(e.target.value))
+                                }
+                                className="font-semibold text-[var(--rv-primary)] w-36  border px-2 py-2 rounded"
+                              />
+                            </div>
+                          </div>
+                          <Input
+                            type="range"
+                            min="500"
+                            max="10000000"
+                            step="500"
+                            value={isNaN(sourceFundAmount) ? 0 : sourceFundAmount}
+                            onChange={(e) =>
+                              setSourceFundAmount(parseFloat(e.target.value))
+                            }
+                            className="customRange w-full"
+                            style={{
+                              "--progress": `${(((isNaN(sourceFundAmount) ? 0 : sourceFundAmount) - 500) /
+                                (10000000 - 500)) *
+                                100}%`,
+                            }}
+                          />
+                        </div>
+                        <div className="items-center mt-5">
+                          <div className="flex justify-between mt-5">
+                            <span>I want to transfer to Destination Fund (₹)</span>
+                            <div>
+
+                              <input
+                                type="number"
+                                placeholder="0"
+
+                                value={transferToFundAmount}
+                                onChange={(e) =>
+                                  setTransferToFundAmount(
+                                    parseFloat(e.target.value)
+                                  )
+                                }
+                                className="font-semibold text-[var(--rv-primary)] w-36  border px-2 py-2 rounded"
+                              />
+                            </div>
+                          </div>
+                          <Input
+                            type="range"
+                            min="500"
+                            max="1000000"
+
+                            step="500"
+                            value={isNaN(transferToFundAmount) ? 0 : transferToFundAmount}
+                            onChange={(e) =>
+                              setTransferToFundAmount(parseFloat(e.target.value))
+                            }
+                            className="customRange w-full"
+                            style={{
+                              "--progress": `${(((isNaN(transferToFundAmount) ? 0 : transferToFundAmount) - 500) /
+                                (1000000 - 500)) *
+                                100}%`,
+                            }}
+                          />
+                        </div>
+                        <div className="items-center mt-5">
+                          <div className="flex justify-between mt-5">
+                            <span>For a period of (years)</span>
                             <input
                               type="number"
-                              placeholder="0"
-                              value={sourceFundAmount}
-                              onChange={(e) =>
-                                setSourceFundAmount(parseFloat(e.target.value))
-                              }
-                              className="font-semibold text-[var(--rv-primary)] w-36  border px-2 py-2 rounded"
-                            />
-                          </div>
-                        </div>
-                        <input
-                          type="range"
-                          min="500"
-                          max="10000000"
-                          step="500"
-                          value={isNaN(sourceFundAmount) ? 0 : sourceFundAmount}
-                          onChange={(e) =>
-                            setSourceFundAmount(parseFloat(e.target.value))
-                          }
-                          className="customRange w-full"
-                          style={{
-                            "--progress": `${(((isNaN(sourceFundAmount) ? 0 : sourceFundAmount) - 500) /
-                              (10000000 - 500)) *
-                              100}%`,
-                          }}
-                        />
-                      </div>
-                      <div className="items-center mt-5">
-                        <div className="flex justify-between mt-5">
-                          <span>I want to transfer to Destination Fund (₹)</span>
-                          <div>
-
-                            <input
-                              type="number"
+                              value={transferPeriod}
                               placeholder="0"
 
-                              value={transferToFundAmount}
                               onChange={(e) =>
-                                setTransferToFundAmount(
-                                  parseFloat(e.target.value)
-                                )
+                                setTransferPeriod(parseFloat(e.target.value))
                               }
-                              className="font-semibold text-[var(--rv-primary)] w-36  border px-2 py-2 rounded"
+                              className="font-semibold text-[var(--rv-primary)] w-20 border px-2 py-2 rounded"
                             />
                           </div>
-                        </div>
-                        <input
-                          type="range"
-                          min="500"
-                          max="1000000"
-
-                          step="500"
-                          value={isNaN(transferToFundAmount) ? 0 : transferToFundAmount}
-                          onChange={(e) =>
-                            setTransferToFundAmount(parseFloat(e.target.value))
-                          }
-                          className="customRange w-full"
-                          style={{
-                            "--progress": `${(((isNaN(transferToFundAmount) ? 0 : transferToFundAmount) - 500) /
-                              (1000000 - 500)) *
-                              100}%`,
-                          }}
-                        />
-                      </div>
-                      <div className="items-center mt-5">
-                        <div className="flex justify-between mt-5">
-                          <span>For a period of (years)</span>
-                          <input
-                            type="number"
-                            value={transferPeriod}
-                            placeholder="0"
-
+                          <Input
+                            type="range"
+                            min="1"
+                            max="30"
+                            step="1"
+                            value={isNaN(transferPeriod) ? 0 : transferPeriod}
                             onChange={(e) =>
                               setTransferPeriod(parseFloat(e.target.value))
                             }
-                            className="font-semibold text-[var(--rv-primary)] w-20 border px-2 py-2 rounded"
+                            className="customRange w-full"
+                            style={{
+                              "--progress": `${(((isNaN(transferPeriod) ? 0 : transferPeriod) - 1) /
+                                (30 - 1)) *
+                                100}%`,
+                            }}
                           />
                         </div>
-                        <input
-                          type="range"
-                          min="1"
-                          max="30"
-                          step="1"
-                          value={isNaN(transferPeriod) ? 0 : transferPeriod}
-                          onChange={(e) =>
-                            setTransferPeriod(parseFloat(e.target.value))
-                          }
-                          className="customRange w-full"
-                          style={{
-                            "--progress": `${(((isNaN(transferPeriod) ? 0 : transferPeriod) - 1) /
-                              (30 - 1)) *
-                              100}%`,
-                          }}
-                        />
-                      </div>
-                      <div className="items-center mt-5">
-                        <div className="flex justify-between mt-5">
-                          <span>Expected Rate of Return from Source Fund (%)</span>
-                          <input
-                            type="number"
-                            placeholder="0"
+                        <div className="items-center mt-5">
+                          <div className="flex justify-between mt-5">
+                            <span>Expected Rate of Return from Source Fund (%)</span>
+                            <input
+                              type="number"
+                              placeholder="0"
 
-                            value={expectedReturnSource}
+                              value={expectedReturnSource}
+                              onChange={(e) =>
+                                setExpectedReturnSource(parseFloat(e.target.value))
+                              }
+                              className="font-semibold text-[var(--rv-primary)] w-20 border px-2 py-2 rounded"
+                            />
+                          </div>
+                          <Input
+                            type="range"
+                            min="1"
+                            max="30"
+                            step="1"
+                            value={isNaN(expectedReturnSource) ? 0 : expectedReturnSource}
                             onChange={(e) =>
                               setExpectedReturnSource(parseFloat(e.target.value))
                             }
-                            className="font-semibold text-[var(--rv-primary)] w-20 border px-2 py-2 rounded"
+                            className="customRange w-full"
+                            style={{
+                              "--progress": `${(((isNaN(expectedReturnSource) ? 0 : expectedReturnSource) - 1) /
+                                (30 - 1)) *
+                                100}%`,
+                            }}
                           />
                         </div>
-                        <input
-                          type="range"
-                          min="1"
-                          max="30"
-                          step="1"
-                          value={isNaN(expectedReturnSource) ? 0 : expectedReturnSource}
-                          onChange={(e) =>
-                            setExpectedReturnSource(parseFloat(e.target.value))
-                          }
-                          className="customRange w-full"
-                          style={{
-                            "--progress": `${(((isNaN(expectedReturnSource) ? 0 : expectedReturnSource) - 1) /
-                              (30 - 1)) *
-                              100}%`,
-                          }}
-                        />
-                      </div>
-                      <div className="items-center mt-5">
-                        <div className="flex justify-between mt-5">
-                          <span>
-                            Expected Rate of Return from Destination Fund (%)
-                          </span>
-                          <input
-                            type="number"
-                            placeholder="0"
+                        <div className="items-center mt-5">
+                          <div className="flex justify-between mt-5">
+                            <span>
+                              Expected Rate of Return from Destination Fund (%)
+                            </span>
+                            <input
+                              type="number"
+                              placeholder="0"
 
-                            value={expectedReturnDestination}
+                              value={expectedReturnDestination}
+                              onChange={(e) =>
+                                setExpectedReturnDestination(
+                                  parseFloat(e.target.value)
+                                )
+                              }
+                              className="font-semibold text-[var(--rv-primary)] w-20 border px-2 py-2 rounded"
+                            />
+                          </div>
+                          <Input
+                            type="range"
+                            min="1"
+                            max="30"
+                            step="1"
+                            value={isNaN(expectedReturnDestination) ? 0 : expectedReturnDestination}
                             onChange={(e) =>
                               setExpectedReturnDestination(
                                 parseFloat(e.target.value)
                               )
                             }
-                            className="font-semibold text-[var(--rv-primary)] w-20 border px-2 py-2 rounded"
+                            className="customRange w-full"
+                            style={{
+                              "--progress": `${(((isNaN(expectedReturnDestination) ? 0 : expectedReturnDestination) - 1) /
+                                (30 - 1)) *
+                                100}%`,
+                            }}
                           />
                         </div>
-                        <input
-                          type="range"
-                          min="1"
-                          max="30"
-                          step="1"
-                          value={isNaN(expectedReturnDestination) ? 0 : expectedReturnDestination}
-                          onChange={(e) =>
-                            setExpectedReturnDestination(
-                              parseFloat(e.target.value)
-                            )
-                          }
-                          className="customRange w-full"
-                          style={{
-                            "--progress": `${(((isNaN(expectedReturnDestination) ? 0 : expectedReturnDestination) - 1) /
-                              (30 - 1)) *
-                              100}%`,
-                          }}
-                        />
                       </div>
+
+                      {result && (
+                        <div className="mt-5">
+                          <div className="flex justify-between p-2">
+                            <p>Invested Amount</p>
+                            <p className="font-bold text-lg">
+                              ₹{result?.investedAmount?.toLocaleString("en-IN")}
+                            </p>
+                          </div>
+                          <hr className="mb-3" />
+                          <div className="flex justify-between p-2">
+                            <p>Balance Amount in Source Fund</p>
+                            <p className="font-bold text-lg">
+                              ₹{result?.balanceInSourceFund?.toLocaleString("en-IN")}
+                            </p>
+                          </div>
+                          <hr className="mb-3" />
+                          <div className="flex justify-between p-2">
+                            <p>Amount Transferred to Destination Fund</p>
+                            <p className="font-bold text-lg">
+                              ₹
+                              {result?.amountTransferredToDestinationFund?.toLocaleString("en-IN")}
+                            </p>
+                          </div>
+                          <hr className="mb-3" />
+                          <div className="flex justify-between p-2">
+                            <p>Resultant Amount</p>
+                            <p className="font-bold text-lg">
+                              ₹{result?.resultantAmount?.toLocaleString("en-IN")}
+                            </p>
+                          </div>
+                        </div>
+                      )}
                     </div>
+                    <div className="col-span-1 flex flex-col gap-5">
+                      <SippieChart
+                        piedata={{
+                          totalInvestment: result?.investedAmount,
+                          futureValue: result?.resultantAmount,
+                        }}
+                        title={"STP Calculator"}
+                        customLabels={{
+                          invested: "Household Expenses",
+                          return: "Loan Repayment",
+                        }}
+                        chartConfig={chartConfig}
 
-                    {result && (
-                      <div className="mt-5">
-                        <div className="flex justify-between px-5 mb-3">
-                          <p>Invested Amount</p>
-                          <p className="font-bold text-lg">
-                            ₹{result?.investedAmount?.toLocaleString()}
-                          </p>
-                        </div>
-                        <hr className="mb-3" />
-                        <div className="flex justify-between px-5 mb-3">
-                          <p>Balance Amount in Source Fund</p>
-                          <p className="font-bold text-lg">
-                            ₹{result?.balanceInSourceFund?.toLocaleString()}
-                          </p>
-                        </div>
-                        <hr className="mb-3" />
-                        <div className="flex justify-between px-5 mb-3">
-                          <p>Amount Transferred to Destination Fund</p>
-                          <p className="font-bold text-lg">
-                            ₹
-                            {result?.amountTransferredToDestinationFund?.toLocaleString()}
-                          </p>
-                        </div>
-                        <hr className="mb-3" />
-                        <div className="flex justify-between px-5 mb-3">
-                          <p>Resultant Amount</p>
-                          <p className="font-bold text-lg">
-                            ₹{result?.resultantAmount?.toLocaleString()}
-                          </p>
-                        </div>
-                      </div>
-                    )}
-                  </div>
-                  <div className="col-span-1">
-                    <SippieChart
-                      piedata={{
-                        totalInvestment: result?.investedAmount,
-                        futureValue: result?.resultantAmount,
-                      }}
-                      title={"STP Calculator"}
-                      customLabels={{
-                        invested: "Household Expenses",
-                        return: "Loan Repayment",
-                      }}
-                      chartConfig={chartConfig}
-
-                    />
-                    <CalculatorReturnChart
-                      chartConfig={chartConfig1}
-                      data={chartData}
-                      title={"STP Calculator"}
-                    />
+                      />
+                      <CalculatorReturnChart
+                        chartConfig={chartConfig1}
+                        data={chartData}
+                        title={"STP Calculator"}
+                      />
+                    </div>
                   </div>
                 </div>
-              </div>
-            ) : (
-              <div className="flex flex-col justify-center items-center">
-                <h3 className="font-bold text-red-600 text-4xl mb-3">
-                  Error 403
-                </h3>
-                <p className="font-medium text-xl">Your not Authorised</p>
-              </div>
-            )}
+              ) : (
+                <div className="flex flex-col justify-center items-center">
+                  <h3 className="font-bold text-red-600 text-4xl mb-3">
+                    Error 403
+                  </h3>
+                  <p className="font-medium text-xl">Your not Authorised</p>
+                </div>
+              )}
+            </div>
           </div>
         </div>
       </div>
-    </div>
+    </>
   );
 }

@@ -104,102 +104,108 @@ const FinancialHealth = () => {
       <Form {...form}>
         <form
           onSubmit={form.handleSubmit(onSubmit)}
-          className="rounded-xl overflow-hidden"
+          className="space-y-4 rounded py-3 px-6 bg-white"
         >
-          <div className="flex justify-between bg-[var(--rv-bg-primary)] p-5 gap-20 items-center text-white">
-            <h1 className="font-medium text-2xl">
-              Please fill Your Details <br /> Carefully
+          <div className="flex justify-between items-center">
+            <h1 className="font-medium text-xl">
+              Please Fill Your Detail Carefully...
             </h1>
-            <Link href="/" className="text-right font-medium">
+            <Link href="/" className="text-right text-blue-500 font-medium">
               Back
             </Link>
           </div>
-          <div className="w-full  p-5 bg-white flex flex-col gap-4">
-            <FormField
-              control={form.control}
-              name="username"
-              render={({ field }) => (
-                <FormItem>
-                  <FormControl>
-                    <Input
-                      placeholder="User Name"
-                      {...field}
-                      aria-label="User Name"
-                      className="border border-[var(--rv-bg-primary)] outline-none"
-                    />
-                  </FormControl>
-                  <FormMessage />
-                </FormItem>
-              )}
+          {/* Username Field */}
+          <FormField
+            control={form.control}
+            name="username"
+            render={({ field }) => (
+              <FormItem>
+                <FormControl>
+                  <Input
+                    placeholder="User Name"
+                    {...field}
+                    aria-label="User Name"
+                    className="border border-gray-500"
+                  />
+                </FormControl>
+                <FormMessage />
+              </FormItem>
+            )}
+          />
+
+          {/* Mobile Field */}
+          <FormField
+            control={form.control}
+            name="mobile"
+            render={({ field }) => (
+              <FormItem>
+                <FormControl>
+                  <Input
+                    placeholder="Mobile"
+                    {...field}
+                    aria-label="Mobile Number"
+                    className="border border-gray-500"
+                  />
+                </FormControl>
+                <FormMessage />
+              </FormItem>
+            )}
+          />
+
+          {/* Email Field */}
+          <FormField
+            control={form.control}
+            name="email"
+            render={({ field }) => (
+              <FormItem>
+                <FormControl>
+                  <Input
+                    type="email"
+                    placeholder="Email"
+                    {...field}
+                    aria-label="Email"
+                    className="border border-gray-500"
+                  />
+                </FormControl>
+                <FormMessage />
+              </FormItem>
+            )}
+          />
+
+          {/* Message Field */}
+          <FormField
+            control={form.control}
+            name="message"
+            render={({ field }) => (
+              <FormItem>
+                <FormControl>
+                  <textarea
+                    placeholder="Message"
+                    {...field}
+                    className="w-full border border-gray-500 p-1 rounded"
+                    aria-label="Message"
+                  />
+                </FormControl>
+                <FormMessage />
+              </FormItem>
+            )}
+          />
+
+          {/* hCaptcha */}
+          <div>
+            <HCaptcha
+              sitekey={process.env.NEXT_PUBLIC_RECAPTCHA_SITE_KEY}
+              onVerify={(token) => setHcaptchaToken(token)}
             />
-            <FormField
-              control={form.control}
-              name="mobile"
-              render={({ field }) => (
-                <FormItem>
-                  <FormControl>
-                    <Input
-                      placeholder="Mobile"
-                      {...field}
-                      aria-label="Mobile Number"
-                      className="border border-[var(--rv-bg-primary)] outline-none"
-                    />
-                  </FormControl>
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
-            <FormField
-              control={form.control}
-              name="email"
-              render={({ field }) => (
-                <FormItem>
-                  <FormControl>
-                    <Input
-                      type="email"
-                      placeholder="Email"
-                      {...field}
-                      aria-label="Email"
-                      className="border border-[var(--rv-bg-primary)] outline-none"
-                    />
-                  </FormControl>
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
-            <FormField
-              control={form.control}
-              name="message"
-              render={({ field }) => (
-                <FormItem>
-                  <FormControl>
-                    <textarea
-                      placeholder="Message"
-                      {...field}
-                      className="w-full border border-[var(--rv-bg-primary)] outline-none p-1 rounded"
-                      aria-label="Message"
-                    />
-                  </FormControl>
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
-            <div>
-              <HCaptcha
-                sitekey={process.env.NEXT_PUBLIC_RECAPTCHA_SITE_KEY}
-                onVerify={(token) => setHcaptchaToken(token)}
-              />
-              {captchaError && (
-                <p className="text-red-500 text-sm mt-2">{captchaError}</p>
-              )}
-            </div>
-            <div>
-              <Button className="text-white" type="submit" disabled={loading}>
-                {!loading ? "Submit" : "Loading..."}
-              </Button>
-            </div>
+            {captchaError && (
+              <p className="text-red-500 text-sm mt-2">{captchaError}</p>
+            )}
           </div>
 
+          {/* Submit Button */}
+          <Button className="text-white bg-[var(--rv-secondary)]" type="submit" disabled={loading}>
+            {!loading ? "Submit" : "Loading..."}
+          </Button>
         </form>
       </Form>
     );
@@ -215,6 +221,7 @@ const FinancialHealth = () => {
       selectedAnswerMarks: selectedAnswer,
     };
 
+    // Update score
     setScore(score + selectedAnswer);
 
     const nextQuestionIndex = currentQuestionIndex + 1;
@@ -236,7 +243,7 @@ const FinancialHealth = () => {
       (acc, curr) => acc + curr.selectedAnswerMarks,
       0
     );
-    if (totalScore >= 1 && totalScore <= 3) {
+    if (totalScore >= 0 && totalScore <= 3) {
       healthprofile = "Critical";
     } else if (totalScore >= 4 && totalScore <= 5) {
       healthprofile = "Weak";
@@ -290,11 +297,12 @@ Here are the answers you provided:
     };
     const response = await axios.post("/api/financialhealth", payload);
     await axios.post("/api/email/", emaildata);
-    const sender = await axios.post("/api/email/", senderdata);
+    await axios.post("/api/email/", senderdata);
     if (response.status === 201) {
       toast({
         description: "Your message has been sent.",
       });
+      router.push("/thankyou");
     } else {
       alert(response.statusText);
     }
@@ -305,7 +313,7 @@ Here are the answers you provided:
   };
 
   const getResultMessage = () => {
-    if (score >= 1 && score <= 3)
+    if (score >= 0 && score <= 3)
       return { message: "Critical", color: "text-red-500" };
     if (score >= 4 && score <= 5)
       return { message: "Weak", color: "text-yellow-600" };
@@ -315,15 +323,16 @@ Here are the answers you provided:
       return { message: "Fit", color: "text-green-400" };
     return { message: "Excellent", color: "text-green-500" };
   };
+
   return (
     <>
       <InnerBanner title={'Financial Health'} />
-      <div className=" section bg-white">
-        <div className="max-w-6xl mx-auto p-6 bg-[var(--rv-bg-primary-light)]  shadow-lg rounded-lg">
+      <div className="px-4">
+        <div className="max-w-7xl mx-auto section">
           <Toaster />
           {isModalOpen && (
-            <div className="fixed inset-0 bg-[#0e314da3] bg-opacity-60 z-[5000] flex items-center justify-center">
-              <div className="">
+            <div className="fixed inset-0 bg-[#0e314da3] bg-opacity-60 z-[5000] items-center flex justify-center">
+              <div className="p-3 rounded-lg shadow-lg w-[30rem] bg-white  mb-2 max-h-[500px]">
                 <InquiryForm />
               </div>
             </div>
@@ -331,7 +340,7 @@ Here are the answers you provided:
 
           {isQuizCompleted ? (
             <div className="flex flex-col items-center text-center">
-              <h2 className="text-3xl font-bold mb-4 text-gray-800">
+              <h2 className="font-bold mb-4 text-[var(--rv-secondary)]">
                 Your Total Score: {score}
               </h2>
               <div
@@ -340,26 +349,26 @@ Here are the answers you provided:
               >
                 {getResultMessage().message}
               </div>
-              <div className="">
+              <div className="p-4">
                 <p className="text-lg">Here’s what your score means:</p>
                 <ul className="mt-2 text-left">
-                  <li className="mb-3 text-gray-600">
-                    <span className="text-bold text-lg text-gray-900">
+                  <li className="mb-3">
+                    <span className="text-lg font-bold">
                       Critical:{" "}
                     </span>{" "}
                     Your financial situation is at a very critical level and you
                     need to get some professional help before its too late. We will
                     soon send you a thorough analysis of your financial health.
                   </li>
-                  <li className="mb-3 text-gray-600">
-                    <span className="text-bold text-lg text-gray-900">Weak: </span>
+                  <li className="mb-3">
+                    <span className="text-lg font-bold">Weak: </span>
                     Your financial situation is weak. There are certain basic areas
                     that you have taken care of but a majority of them needs to be
                     worked upon. We will soon send you a thorough analysis of your
                     financial health.
                   </li>
-                  <li className="mb-3 text-gray-600">
-                    <span className="text-bold text-lg text-gray-900">
+                  <li className="mb-3">
+                    <span className="text-lg font-bold">
                       Border Line:{" "}
                     </span>
                     We can see that you have put in effort to plan your finances.
@@ -367,15 +376,15 @@ Here are the answers you provided:
                     completely ignored. A correct direction along with proper risk
                     profiling and asset allocation is what you might need.
                   </li>
-                  <li className="mb-3 text-gray-600">
-                    <span className="text-bold text-lg text-gray-900">Fit: </span>
+                  <li className="mb-3">
+                    <span className="text-lg font-bold">Fit: </span>
                     Good care has been taken in planning your financial life. A good
                     asset allocation and portfolio rebalancing may be required. It
                     will show help in maximising returns by minimizing the risk. We
                     will soon send you a thorough analysis of your financial health.
                   </li>
-                  <li className="mb-3 text-gray-600">
-                    <span className="text-bold text-lg text-gray-900">
+                  <li className="mb-3">
+                    <span className="text-lg font-bold">
                       Excellent:
                     </span>{" "}
                     We appreciate the effort you have put into financial planning.
@@ -394,7 +403,7 @@ Here are the answers you provided:
                   setSelectedAnswer(null);
                   router.push("/");
                 }}
-                className="hover:text-black border px-8 py-2 rounded-lg mt-10 hover:bg-[var(--rv-secondary)] bg-[var(--rv-primary)] text-white w-fit"
+                className="mt-6 text-white px-4 py-2 rounded-lg bg-[var(--rv-secondary)]"
               >
                 Back Home
               </button>
@@ -439,7 +448,7 @@ Here are the answers you provided:
                 onClick={() =>
                   handleNextClick(questions[currentQuestionIndex]?.question)
                 }
-                className="hover:text-black border px-8 py-2 rounded-lg hover:bg-[var(--rv-secondary)] bg-[var(--rv-primary)] text-white w-fit"
+                className="text-white border px-4 py-2 rounded-lg  w-1/4 bg-[var(--rv-secondary)] "
               >
                 Next
               </Button>

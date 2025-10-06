@@ -14,7 +14,7 @@ const AmcsLogo = () => {
 
   const fetchCategories = async () => {
     try {
-      const res = await axios.get("/api/admin/amc-category");
+      const res = await axios.get(`${process.env.NEXT_PUBLIC_NEXTAUTH_URL}/api/admin/amc-category`);
       setAllCategory(res.data)
       // if (res.data.length > 0 && !logoCategory) {
       //   setLogoCategory(data[0]._id) // Set initial logo category
@@ -26,7 +26,7 @@ const AmcsLogo = () => {
 
   const fetchAllLogos = async () => {
     try {
-      const res = await axios.get("/api/admin/amcs-logo")
+      const res = await axios.get(`${process.env.NEXT_PUBLIC_NEXTAUTH_URL}/api/admin/amcs-logo`)
       setAllAmcsLogos(res.data)
     } catch (error) {
       console.error("Error fetching categories:", error)
@@ -44,7 +44,7 @@ const AmcsLogo = () => {
 
   const handleStatusChange = async (id, status) => {
     try {
-      const response = await axios.put(`/api/amc-logo/change-status/${id}`, {
+      const response = await axios.put(`${process.env.NEXT_PUBLIC_NEXTAUTH_URL}/api/amc-logo/change-status/${id}`, {
         status: !status
       })
       if (response.status === 200) {

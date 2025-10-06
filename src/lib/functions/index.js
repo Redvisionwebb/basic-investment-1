@@ -2,9 +2,10 @@ import { ConnectDB } from "../db/ConnectDB";
 import AboutUsModel from "../models/AboutUsModel";
 import AmcsLogoModel from "../models/AmcsLogos";
 import ArnModel from "../models/ArnModel";
+import AwardModel from "../models/AwardsModel";
 import BlogsModel from "../models/BlogModel";
+import FaqModel from "../models/FaqsModel";
 import MissionVisionModel from "../models/MissionVissionModel";
-import ServicesModel from "../models/ServicesModel";
 import SiteSettingsModel from "../models/SiteSetting";
 import SocialMediaModel from "../models/SocialMedia";
 import TeamModel from "../models/TeamModel";
@@ -12,6 +13,9 @@ import TestimonialModel from "../models/TestimonialModel";
 import VideoModel from "../models/VideoModel";
 import fs from "fs";
 import path from "path";
+import AdminModel from "../models/AdminModel";
+import bcrypt from "bcryptjs";
+import AdminServiceModel from "../models/AdminServiceModel";
 
 export async function getSiteData() {
   await ConnectDB();
@@ -24,6 +28,11 @@ export async function getMissionVission() {
   const data = await MissionVisionModel?.findOne({}).select("-_id");
   return data ? data.toObject() : {};
 }
+export async function getAboutusteams() {
+  await ConnectDB();
+  const data = await TeamModel?.find({}).select('-_id');  // Use find() instead of findOne()
+  return data ? data.map(service => service.toObject()) : [];
+};
 
 export async function getSocialMedia() {
   await ConnectDB();
@@ -39,14 +48,28 @@ export async function getArn() {
 
 export async function getServiceData() {
   await ConnectDB();
-  const data = await ServicesModel?.find({}).select("-_id"); // Use find() instead of findOne()
-  return data ? data.map((service) => service.toObject()) : [];
-}
+  const data = await AdminServiceModel.find({}).lean(); // plain JS objects, not Mongoose docs
+  return data ? JSON.parse(JSON.stringify(data)) : [];
+};
+
+export async function getServiceDataBySlug(slug) {
+  await ConnectDB();
+  const data = await AdminServiceModel.findOne({ name: slug }).lean();
+  console.log(data);
+   // plain JS objects, not Mongoose docs
+  return data ? JSON.parse(JSON.stringify(data)) : [];
+};
 
 export async function getTestimonials() {
   await ConnectDB();
   const data = await TestimonialModel?.find({}).select("-_id"); // Use find() instead of findOne()
   return data ? data.map((service) => service.toObject()) : [];
+}
+
+export async function getAwards() {
+  await ConnectDB();
+  const data = await AwardModel.find({}).select("-_id"); // Fetch all awards without _id
+  return data ? data.map((award) => award.toObject()) : [];
 }
 
 export async function getTeams() {
@@ -90,10 +113,8 @@ export async function getVidios() {
 }
 
 export async function getBlogBySlug(slug) {
-  // console.log(slug,"dnajkdnhasjlkdnaslk")
   await ConnectDB();
   const blog = await BlogsModel.findOne({ slug });
-  // console.log(blog,"ndjadn")
   return blog ? blog.toObject() : null;
 }
 
@@ -135,3 +156,55 @@ export function deleteFileIfExists(section, filename) {
   }
   return false;
 }
+
+export async function getFaqs() {
+  await ConnectDB();
+  const data = await FaqModel?.find({}).select('-_id');
+  return data ? data.map(faq => faq.toObject()) : [];
+}
+
+export async function loginUser({ username, password }) {
+  console.log("Logging in user:", username, password);
+  if (!username || !password) return null;
+  await ConnectDB();
+  const user = await AdminModel.findOne({ username }).lean();
+  console.log("Found user:", user);
+  if (!user) return null;
+  const isPasswordValid = await bcrypt.compare(password, user.password);
+  console.log("Password valid:", isPasswordValid);
+  if (!isPasswordValid) return null;
+
+  return {
+    id: String(user._id),
+    name: user.username,
+    role: user.role || "normaladmin",
+  };
+}
+
+export async function DevLogin({ username, password }) {
+  console.log("Logging in user:", username, password);
+  try {
+    const res = await fetch(`${process.env.NEXT_PUBLIC_DATA_API}/api/admin`, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ username, password }),
+    });
+
+    console.log("end");
+
+    if (!res.ok) return null;
+    console.log("Response OK:", res.ok);
+
+    const data = await res.json();
+    console.log("Response Data:", data);
+    return {
+      id: data.id || data._id,
+      name: data.username || data.name,
+      role: data.role || "devadmin",
+    };
+  } catch (err) {
+    console.error("Dev login failed:", err);
+    return null;
+  }
+}
+

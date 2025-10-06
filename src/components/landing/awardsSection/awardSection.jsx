@@ -40,13 +40,12 @@ export default function AwardsSection() {
   const next = awardCards[(index + 1) % awardCards.length];
 
   return (
-    <section className={`${styles.sectionWrapper} section`}>
-      <div className="max-w-screen-xl mx-auto px-4">
+    <section className={`${styles.sectionWrapper} px-4`}>
+      <div className="max-w-screen-xl mx-auto ">
          <HomeHeading title={`Recognized for Excellence`} center="true" />
         <div
           className={`flex flex-col md:flex-row items-center md:items-start p-6 md:p-12 rounded-xl ${styles.contentBox}`}
         >
-          {/* LEFT SIDE */}
           <div className="md:basis-2/5 w-full space-y-4 z-10 text-center md:text-left">
             <h2 className={styles.leftHeading}>Achievements That Build Trust</h2>
             <p className={styles.leftDescription}>
@@ -57,11 +56,9 @@ export default function AwardsSection() {
             </p>
           </div>
 
-          {/* RIGHT SIDE */}
           <div className="md:basis-3/5 w-full relative flex items-center justify-center h-[260px] sm:h-[320px] mt-8 md:mt-0">
             <div className="relative flex items-center gap-6 sm:gap-12">
               <AnimatePresence mode="popLayout">
-                {/* Current Card */}
                 <motion.div
                   key={`main-${current.id}`}
                   drag="x"

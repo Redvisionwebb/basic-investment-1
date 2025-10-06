@@ -41,6 +41,7 @@ import formatDate from "@/lib/formatDate";
 import { useRouter } from "next/navigation";
 import { toast } from "@/hooks/use-toast";
 import DefaultLayout from "@/components/admin/Layouts/DefaultLaout";
+import { FiEdit2, FiTrash2 } from "react-icons/fi";
 
 const DataTableDemo = () => {
     const router = useRouter();
@@ -50,12 +51,14 @@ const DataTableDemo = () => {
     const [columnFilters, setColumnFilters] = React.useState([]);
     const [columnVisibility, setColumnVisibility] = React.useState({});
     const [rowSelection, setRowSelection] = React.useState({});
+    const [showConfirm, setShowConfirm] = React.useState(false);
+    const [selectedId, setSelectedId] = React.useState(null);
     // Fetch blog data from the API
     React.useEffect(() => {
         const fetchData = async () => {
             setLoading(true);
             try {
-                const res = await axios.get("/api/innerpagebanner/");
+                const res = await axios.get(`${process.env.NEXT_PUBLIC_NEXTAUTH_URL}/api/innerpagebanner/`);
                 if (res.status === 200) {
                     setData(res.data);
                 }
@@ -68,22 +71,38 @@ const DataTableDemo = () => {
         fetchData();
     }, []);
 
-    // Delete blog post function
-    const handleDelete = async (id) => {
+    // Delete blog post function\
+
+    const confirmDelete = (id) => {
+        setSelectedId(id);
+        setShowConfirm(true);
+    };
+
+    // Cancel deletion
+    const CancelDelete = () => {
+        setShowConfirm(false);
+        setSelectedId(null);
+    };
+
+    const handleDelete = async () => {
+        if (!selectedId) return;
+        setLoading(true);
+
         try {
-            const res = await axios.delete(`/api/innerpagebanner/${id}`);
+            const res = await axios.delete(`${process.env.NEXT_PUBLIC_NEXTAUTH_URL}/api/innerpagebanner/${selectedId}`);
             if (res.status === 200) {
-                setData((prevData) => prevData.filter((test) => test._id !== id));
-                toast({
-                    variant: '',
-                    title: "Deleted successfully",
-                    // description: "There was a problem with your request.",
-                });
+                setData((prevData) => prevData.filter((blog) => blog._id !== selectedId));
+                toast({ variant: "success", title: "Deleted successfully" });
             } else {
-                console.error("Failed to delete inner page banner");
+                toast({ variant: "destructive", title: "Failed to delete blog" });
             }
         } catch (error) {
-            console.error("Error deleting inner page banner:", error);
+            toast({ variant: "destructive", title: "Error deleting blog" });
+            console.error(error);
+        } finally {
+            setLoading(false);
+            setShowConfirm(false);
+            setSelectedId(null);
         }
     };
 
@@ -105,28 +124,27 @@ const DataTableDemo = () => {
         },
         {
             id: "actions",
+            header: "Actions",
             enableHiding: false,
             cell: ({ row }) => {
                 const blog = row.original;
+
                 return (
-                    <DropdownMenu>
-                        <DropdownMenuTrigger asChild>
-                            <Button variant="ghost" className="h-8 w-8 p-0">
-                                <span className="sr-only">Open menu</span>
-                                <MoreHorizontal className="h-4 w-4" />
-                            </Button>
-                        </DropdownMenuTrigger>
-                        <DropdownMenuContent className="bg-[var(--primary)] text-white" align="end">
-                            <DropdownMenuLabel>Actions</DropdownMenuLabel>
-                            <DropdownMenuSeparator />
-                            <DropdownMenuItem onClick={() => router.push(`/admin/manage-innerpagebanner/edit-post/${blog._id}`)}>
-                                Edit
-                            </DropdownMenuItem>
-                            <DropdownMenuItem onClick={() => handleDelete(blog._id)}>
-                                Delete
-                            </DropdownMenuItem>
-                        </DropdownMenuContent>
-                    </DropdownMenu>
+                    <div className="flex items-center gap-3">
+                        <button
+                            onClick={() => router.push(`/admin/manage-innerpagebanner/edit-post/${blog._id}`)}
+                            className="text-[var(--rv-admin-bg-color)] border border-[var(--rv-admin-bg-color)] rounded-md p-2"
+                        >
+                            <FiEdit2 size={16} />
+                        </button>
+
+                        <button
+                            onClick={() => confirmDelete(blog._id)}
+                            className="text-red-600 border border-red-600 rounded-md p-2"
+                        >
+                            <FiTrash2 size={16} />
+                        </button>
+                    </div>
                 );
             },
         },
@@ -154,27 +172,27 @@ const DataTableDemo = () => {
     return (
         <DefaultLayout>
             <div className="flex justify-between">
-                <h1 className='font-bold text-gray-700 text-2xl mb-7'>Add New Advertisement</h1>
+                <h1 className='font-bold text-2xl'>Add New Advertisement</h1>
                 <Link href="/admin/manage-innerpagebanner/add-innerpagebanner">
-                    <Button className="text-white bg-[var(--primary)]">Add New</Button>
+                    <Button className="text-white bg-[var(--rv-admin-bg-color)] hover:bg-[var(--rv-admin-bg-color)]">Add New</Button>
                 </Link>
             </div>
             <div className="w-full">
                 <div className="flex items-center py-4">
-                    {/* <Input
+                    <Input
                         placeholder="Filter by title..."
                         value={(table.getColumn("title")?.getFilterValue()) ?? ""}
                         onChange={(event) =>
                             table.getColumn("title")?.setFilterValue(event.target.value)
                         }
-                        className="max-w-sm"
-                    /> */}
-                    <DropdownMenu>
-                        {/* <DropdownMenuTrigger asChild>
+                        className="max-w-xl border border-gray-300"
+                    />
+                    {/* <DropdownMenu>
+                        <DropdownMenuTrigger asChild>
                             <Button variant="outline" className="ml-auto">
                                 Columns <ChevronDown className="ml-2 h-4 w-4" />
                             </Button>
-                        </DropdownMenuTrigger> */}
+                        </DropdownMenuTrigger>
                         <DropdownMenuContent align="end">
                             {table
                                 ?.getAllColumns()
@@ -191,9 +209,9 @@ const DataTableDemo = () => {
                                     </DropdownMenuItem>
                                 ))}
                         </DropdownMenuContent>
-                    </DropdownMenu>
+                    </DropdownMenu> */}
                 </div>
-                <div className="rounded-md border">
+                <div className="rounded-md">
                     <Table>
                         <TableHeader>
                             {table.getHeaderGroups().map((headerGroup) => (
@@ -254,6 +272,26 @@ const DataTableDemo = () => {
                     </div>
                 </div>
             </div>
+
+            {showConfirm && (
+                <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50">
+                    <div className="bg-white p-4 rounded shadow-lg">
+                        <p>Are you sure you want to delete this InnerBanner?</p>
+                        <div className="mt-4 flex justify-end gap-2">
+                            <button onClick={CancelDelete} className="px-4 py-2 bg-gray-300 rounded">
+                                Cancel
+                            </button>
+                            <button
+                                onClick={handleDelete}
+                                disabled={loading}
+                                className="px-4 py-2 bg-red-500 text-white rounded"
+                            >
+                                {loading ? "Deleting..." : "OK"}
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            )}
         </DefaultLayout>
     );
 };

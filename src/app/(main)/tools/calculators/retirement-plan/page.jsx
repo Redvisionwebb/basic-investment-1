@@ -19,6 +19,7 @@ import { formatValue } from "react-currency-input-field";
 import CurrencyInput from "react-currency-input-field";
 import { RetirementChart } from "@/components/charts/retirementpiechart";
 import RetrementBarChart from "@/components/charts/retirementReturnChart";
+import InnerBanner from "@/components/innerBanner/InnerBanner";
 
 const amountToCommaSeperated = (value) => {
   const newValue = formatValue({
@@ -310,7 +311,6 @@ export default function RetirementCalculator() {
         corpus1 = blnc_grwth;
         ann_exp = Math.round(ann_exp + ann_exp * infrete);
         balance = corpus1 - ann_exp;
-        // console.log(balance, "balance");
         blnc_grwth = Math.round(balance + balance * retexp);
         bintr = Math.round(balance * retexp);
       }
@@ -354,334 +354,329 @@ export default function RetirementCalculator() {
     inflationpostretrement,
   ]);
 
-  console.log(
-    totalLumpsumCorpuss,
-    totalThroughSips,
-    totalThroughLumpsums,
-    totalMonthlyExpences,
-    currentlyMonth
-  );
-
   return (
-    <div className="pt-20">
-      <div className="max-w-screen-xl mx-auto main_section">
-        <div>
+    <>
+      <InnerBanner title={'Retirement Plan Calculator'} />
+      <div className="px-4">
+        <div className="max-w-screen-xl mx-auto section">
           <div>
-            <div className="mb-5 flex flex-col md:flex-row gap-5 justify-between ">
-              <div className="">
-                <span className="text-2xl md:text-3xl font-bold uppercase">
-                  Retirement Planning Calculator
-                </span>
-              </div>
-              <div className="flex justify-between gap-4">
-                <span>Explore other calculators</span>
-                <select
-                  className="w-full border border-gray-500 rounded-lg p-2"
-                  onChange={handleCalculatorChange}
-                  defaultValue=""
-                >
-                  <option value="" disabled>
-                    Select
-                  </option>
-                  {calculators.map((calc) => (
-                    <option key={calc.title} value={calc.route}>
-                      {calc.title}
+            <div>
+              <div className="mb-5 flex flex-col md:flex-row gap-5 justify-between ">
+                <div className="">
+                  <span className="text-2xl md:text-3xl font-bold uppercase">
+                    Retirement Planning Calculator
+                  </span>
+                </div>
+                <div className="flex justify-between gap-4">
+                  <span>Explore other calculators</span>
+                  <select
+                    className="w-full border border-gray-500 rounded-lg p-2"
+                    onChange={handleCalculatorChange}
+                    defaultValue=""
+                  >
+                    <option value="" disabled>
+                      Select
                     </option>
-                  ))}
-                </select>
+                    {calculators.map((calc) => (
+                      <option key={calc.title} value={calc.route}>
+                        {calc.title}
+                      </option>
+                    ))}
+                  </select>
+                </div>
               </div>
-            </div>
-            <div className="grid lg:grid-cols-2 grid-cols-1 gap-4 mb-4">
-              <div className="col-span-1 border border-gray-200 rounded-2xl bg-white p-5">
-                <div className="sip-calculator container mx-auto p-3 sticky top-0 z-10">
-                  <div className="input-fields mt-5 mb-10">
-                    <div>
-                      <div className="flex justify-between">
-                        <span>Current Age (Y)</span>
-                        <div>
+              <div className="grid lg:grid-cols-2 grid-cols-1 gap-5">
+                <div className="col-span-1 border border-[var(--rv-primary)] rounded-2xl bg-white p-5">
+                  <div className="sip-calculator container mx-auto sticky top-0 z-10">
+                    <div className="input-fields">
+                      <div>
+                        <div className="flex justify-between">
+                          <span>Current Age (Y)</span>
+                          <div>
+                            <input
+                              type="text"
+                              value={curentAge || ""}
+                              min="0"
+                              max="100"
+                              placeholder="0"
+                              onChange={handleCurrentAge}
+                              className="font-semibold text-var(--rv-primary) w-20 border px-2 py-2 rounded"
+                            />
+                          </div>
+                        </div>
+                        <Input
+                          type="range"
+                          min="1"
+                          max="100"
+                          step="1"
+                          value={isNaN(curentAge) ? 0 : curentAge}
+                          onChange={handleCurrentAge}
+                          className="customRange w-full"
+                          style={{
+                            "--progress":
+                              (((isNaN(curentAge) ? 0 : curentAge) - 1) /
+                                (100 - 1)) *
+                              100 +
+                              "%",
+                          }}
+                        />
+                      </div>
+                      <div className="items-center mt-5">
+                        <div className="flex justify-between">
+                          <span>Retirement Age(Y)</span>
                           <input
-                            type="text"
-                            value={curentAge || ""}
                             min="0"
                             max="100"
+                            type="text"
                             placeholder="0"
-                            onChange={handleCurrentAge}
+                            value={RetirementAge || ""}
+                            onChange={handleRetrimentAge}
                             className="font-semibold text-var(--rv-primary) w-20 border px-2 py-2 rounded"
                           />
                         </div>
-                      </div>
-                      <input
-                        type="range"
-                        min="1"
-                        max="100"
-                        step="1"
-                        value={isNaN(curentAge) ? 0 : curentAge}
-                        onChange={handleCurrentAge}
-                        className="customRange w-full"
-                        style={{
-                          "--progress":
-                            (((isNaN(curentAge) ? 0 : curentAge) - 1) /
-                              (100 - 1)) *
-                            100 +
-                            "%",
-                        }}
-                      />
-                    </div>
-                    <div className="items-center mt-5">
-                      <div className="flex justify-between">
-                        <span>Retirement Age(Y)</span>
-                        <input
-                          min="0"
+                        <Input
+                          type="range"
+                          min="35"
                           max="100"
-                          type="text"
-                          placeholder="0"
-                          value={RetirementAge || ""}
+                          step="1"
+                          value={isNaN(RetirementAge) ? 0 : RetirementAge}
                           onChange={handleRetrimentAge}
-                          className="font-semibold text-var(--rv-primary) w-20 border px-2 py-2 rounded"
+                          className="customRange w-full"
+                          style={{
+                            "--progress":
+                              (((isNaN(RetirementAge) ? 0 : RetirementAge) - 35) /
+                                (100 - 35)) *
+                              100 +
+                              "%",
+                          }}
                         />
                       </div>
-                      <input
-                        type="range"
-                        min="35"
-                        max="100"
-                        step="1"
-                        value={isNaN(RetirementAge) ? 0 : RetirementAge}
-                        onChange={handleRetrimentAge}
-                        className="customRange w-full"
-                        style={{
-                          "--progress":
-                            (((isNaN(RetirementAge) ? 0 : RetirementAge) - 35) /
-                              (100 - 35)) *
-                            100 +
-                            "%",
-                        }}
-                      />
-                    </div>
 
-                    <div className="items-center mt-5">
-                      <div className="flex justify-between">
-                        <span>Life Expectancy (Y)</span>
-                        <input
-                          min="0"
-                          max="100"
-                          type="text"
-                          value={lifeExpectancy || ""}
-                          onChange={handleLifeExpectancy}
-                          className="font-semibold text-var(--rv-primary) w-20 border px-2 py-2 rounded"
-                        />
-                      </div>
-                      <input
-                        type="range"
-                        min="35"
-                        max="100"
-                        step="1"
-                        value={isNaN(lifeExpectancy) ? 0 : lifeExpectancy}
-                        onChange={handleLifeExpectancy}
-                        className="customRange w-full"
-                        style={{
-                          "--progress":
-                            (((isNaN(lifeExpectancy) ? 0 : lifeExpectancy) - 35) /
-                              (100 - 35)) *
-                            100 +
-                            "%",
-                        }}
-                      />
-                    </div>
-
-                    <div className="items-center mt-5">
-                      <div className="flex justify-between">
-                        <span>Current Monthly Expenses (₹)</span>
-                        <div>
-                          <span className="font-semibold text-var(--rv-primary)">
-
-                          </span>
+                      <div className="items-center mt-5">
+                        <div className="flex justify-between">
+                          <span>Life Expectancy (Y)</span>
                           <input
-                            Max="10000000"
-                            Min="0"
+                            min="0"
+                            max="100"
                             type="text"
-                            placeholder="0"
-                            value={currentlyMonth || ""}
-                            onChange={handleCurrentMonth}
-                            className="font-semibold text-var(--rv-primary) w-30 border px-2 py-2 rounded"
+                            value={lifeExpectancy || ""}
+                            onChange={handleLifeExpectancy}
+                            className="font-semibold text-var(--rv-primary) w-20 border px-2 py-2 rounded"
                           />
                         </div>
+                        <Input
+                          type="range"
+                          min="35"
+                          max="100"
+                          step="1"
+                          value={isNaN(lifeExpectancy) ? 0 : lifeExpectancy}
+                          onChange={handleLifeExpectancy}
+                          className="customRange w-full"
+                          style={{
+                            "--progress":
+                              (((isNaN(lifeExpectancy) ? 0 : lifeExpectancy) - 35) /
+                                (100 - 35)) *
+                              100 +
+                              "%",
+                          }}
+                        />
                       </div>
-                      <input
-                        type="range"
-                        min="1000"
-                        max="10000000"
-                        step="1000"
-                        value={isNaN(currentlyMonth) ? 0 : currentlyMonth}
-                        onChange={handleCurrentMonth}
-                        className="customRange w-full"
-                        style={{
-                          "--progress":
-                            (((isNaN(currentlyMonth) ? 0 : currentlyMonth) - 1000) /
-                              (10000000 - 1000)) *
-                            100 +
-                            "%",
-                        }}
-                      />
-                    </div>
 
-                    <div className="items-center mt-5">
-                      <div className="flex justify-between">
-                        <span>Inflation Rate (%)</span>
+                      <div className="items-center mt-5">
+                        <div className="flex justify-between">
+                          <span>Current Monthly Expenses (₹)</span>
+                          <div>
+                            <span className="font-semibold text-var(--rv-primary)">
+
+                            </span>
+                            <input
+                              Max="10000000"
+                              Min="0"
+                              type="text"
+                              placeholder="0"
+                              value={currentlyMonth || ""}
+                              onChange={handleCurrentMonth}
+                              className="font-semibold text-var(--rv-primary) w-30 border px-2 py-2 rounded"
+                            />
+                          </div>
+                        </div>
+                        <Input
+                          type="range"
+                          min="1000"
+                          max="10000000"
+                          step="1000"
+                          value={isNaN(currentlyMonth) ? 0 : currentlyMonth}
+                          onChange={handleCurrentMonth}
+                          className="customRange w-full"
+                          style={{
+                            "--progress":
+                              (((isNaN(currentlyMonth) ? 0 : currentlyMonth) - 1000) /
+                                (10000000 - 1000)) *
+                              100 +
+                              "%",
+                          }}
+                        />
+                      </div>
+
+                      <div className="items-center mt-5">
+                        <div className="flex justify-between">
+                          <span>Inflation Rate (%)</span>
+                          <input
+                            max="30"
+                            min="0"
+                            type="text"
+                            placeholder="0"
+                            value={InflationRate}
+                            onChange={handleInflationRate}
+                            className="font-semibold text-[var(--rv-primary)] w-20 border px-2 py-2 rounded"
+                          />
+                        </div>
+
                         <input
+                          type="range"
+                          min="1"
                           max="30"
-                          min="0"
-                          type="text"
-                          placeholder="0"
-                          value={InflationRate}
+                          step="1"
+                          value={isNaN(Number(InflationRate)) ? 0 : Number(InflationRate)}
                           onChange={handleInflationRate}
-                          className="font-semibold text-[var(--rv-primary)] w-20 border px-2 py-2 rounded"
+                          className="customRange w-full"
+                          style={{
+                            "--progress":
+                              ((isNaN(Number(InflationRate)) ? 0 : Number(InflationRate) - 1) /
+                                (30 - 1)) *
+                              100 +
+                              "%",
+                          }}
                         />
                       </div>
 
-                      <input
-                        type="range"
-                        min="1"
-                        max="30"
-                        step="1"
-                        value={isNaN(Number(InflationRate)) ? 0 : Number(InflationRate)}
-                        onChange={handleInflationRate}
-                        className="customRange w-full"
-                        style={{
-                          "--progress":
-                            ((isNaN(Number(InflationRate)) ? 0 : Number(InflationRate) - 1) /
-                              (30 - 1)) *
-                            100 +
-                            "%",
-                        }}
-                      />
-                    </div>
 
+                      <div className="items-center mt-5">
+                        <div className="flex justify-between">
+                          <span>Expected Return Pre-Retirement (%)</span>
+                          <input
+                            max="30"
+                            min="0"
+                            type="text"
+                            placeholder="0"
+                            value={pretrement === "" ? "" : Number(pretrement)}
+                            onChange={handlePreretrement}
+                            className="font-semibold text-[var(--rv-primary)] w-20 border px-2 py-2 rounded"
+                          />
+                        </div>
 
-                    <div className="items-center mt-5">
-                      <div className="flex justify-between">
-                        <span>Expected Return Pre-Retirement (%)</span>
                         <input
+                          type="range"
+                          min="1"
                           max="30"
-                          min="0"
-                          type="text"
-                          placeholder="0"
-                          value={pretrement === "" ? "" : Number(pretrement)}
+                          step="1"
+                          value={isNaN(Number(pretrement)) ? 0 : Number(pretrement)}
                           onChange={handlePreretrement}
-                          className="font-semibold text-[var(--rv-primary)] w-20 border px-2 py-2 rounded"
+                          className="customRange w-full"
+                          style={{
+                            "--progress":
+                              ((isNaN(Number(pretrement)) ? 0 : Number(pretrement) - 1) /
+                                (30 - 1)) *
+                              100 +
+                              "%",
+                          }}
                         />
                       </div>
 
-                      <input
-                        type="range"
-                        min="1"
-                        max="30"
-                        step="1"
-                        value={isNaN(Number(pretrement)) ? 0 : Number(pretrement)}
-                        onChange={handlePreretrement}
-                        className="customRange w-full"
-                        style={{
-                          "--progress":
-                            ((isNaN(Number(pretrement)) ? 0 : Number(pretrement) - 1) /
-                              (30 - 1)) *
-                            100 +
-                            "%",
-                        }}
-                      />
-                    </div>
+                      <div className="items-center mt-5">
+                        <div className="flex justify-between">
+                          <span>Expected Return Post-Retirement (%)</span>
+                          <input
+                            max="30"
+                            min="0"
+                            type="text"
+                            placeholder="0"
+                            value={postretrement === "" ? "" : Number(postretrement)}
+                            onChange={handlePostretrement}
+                            className="font-semibold text-[var(--rv-primary)] w-20 border px-2 py-2 rounded"
+                          />
+                        </div>
 
-                    <div className="items-center mt-5">
-                      <div className="flex justify-between">
-                        <span>Expected Return Post-Retirement (%)</span>
                         <input
+                          type="range"
+                          min="1"
                           max="30"
-                          min="0"
-                          type="text"
-                          placeholder="0"
-                          value={postretrement === "" ? "" : Number(postretrement)}
+                          step="1"
+                          value={isNaN(Number(postretrement)) ? 0 : Number(postretrement)}
                           onChange={handlePostretrement}
-                          className="font-semibold text-[var(--rv-primary)] w-20 border px-2 py-2 rounded"
+                          className="customRange w-full"
+                          style={{
+                            "--progress":
+                              ((isNaN(Number(postretrement)) ? 0 : Number(postretrement) - 1) /
+                                (30 - 1)) *
+                              100 +
+                              "%",
+                          }}
                         />
                       </div>
 
-                      <input
-                        type="range"
-                        min="1"
-                        max="30"
-                        step="1"
-                        value={isNaN(Number(postretrement)) ? 0 : Number(postretrement)}
-                        onChange={handlePostretrement}
-                        className="customRange w-full"
-                        style={{
-                          "--progress":
-                            ((isNaN(Number(postretrement)) ? 0 : Number(postretrement) - 1) /
-                              (30 - 1)) *
-                            100 +
-                            "%",
-                        }}
-                      />
-                    </div>
 
+                      {/* Display Results */}
 
-                    {/* Display Results */}
-
-                    <div className="mt-5">
-                      <div className="flex justify-between px-5 mb-3">
-                        <p>Future Monthly Expenses</p>
-                        <p className="font-bold text-lg">
-                          {amountToCommaSeperated(totalMonthlyExpences)}
-                        </p>
-                      </div>
-                      <hr className="mb-3" />
-                      <div className="flex justify-between px-5 mb-3">
-                        <p>Required Corpus At Retirement</p>
-                        <p className="font-bold text-lg">
-                          {amountToCommaSeperated(totalLumpsumCorpuss)}
-                        </p>
-                      </div>
-                      <hr className="mb-3" />
-                      <div className="flex justify-between px-5 mb-3">
-                        <p>Planning Through SIP</p>
-                        <p className="font-bold text-lg">{amountToCommaSeperated(totalThroughSips)}</p>
-                      </div>
-                      <hr className="mb-3" />
-                      <div className="flex justify-between px-5 mb-3">
-                        <p>Planning Through Lump Sum</p>
-                        <p className="font-bold text-lg">
-                          {amountToCommaSeperated(totalThroughLumpsums)}
-                        </p>
+                      <div className="mt-5">
+                        <div className="flex justify-between p-2">
+                          <p>Future Monthly Expenses</p>
+                          <p className="font-bold text-lg">
+                            {amountToCommaSeperated(totalMonthlyExpences)}
+                          </p>
+                        </div>
+                        <hr className="mb-3" />
+                        <div className="flex justify-between p-2">
+                          <p>Required Corpus At Retirement</p>
+                          <p className="font-bold text-lg">
+                            {amountToCommaSeperated(totalLumpsumCorpuss)}
+                          </p>
+                        </div>
+                        <hr className="mb-3" />
+                        <div className="flex justify-between p-2">
+                          <p>Planning Through SIP</p>
+                          <p className="font-bold text-lg">{amountToCommaSeperated(totalThroughSips)}</p>
+                        </div>
+                        <hr className="mb-3" />
+                        <div className="flex justify-between p-2">
+                          <p>Planning Through Lump Sum</p>
+                          <p className="font-bold text-lg">
+                            {amountToCommaSeperated(totalThroughLumpsums)}
+                          </p>
+                        </div>
                       </div>
                     </div>
                   </div>
                 </div>
-              </div>
-              <div className="col-span-1 space-y-5">
-                <RetirementChart
-                  piedata={{
-                    CurrentMonthlyExpenses: Number(
-                      parseFloat(currentlyMonth)?.toFixed(2)
-                    ),
-                    FutureMonthlyExpenses: Number(
-                      totalMonthlyExpences?.toFixed(2)
-                    ),
-                  }}
-                  title={"Future & Current Monthly Expenses Breakup"}
-                  customLabels={{
-                    FutureMonthlyExpenses: "Future Monthly Expenses",
-                    CurrentMonthlyExpenses: "Current Monthly Expenses",
-                  }}
-                  className="h-full"
-                />
-                <RetrementBarChart
-                  years={years}
-                  Intrested={Intrested}
-                  principalBarAmount={principalBarAmount}
-                  balance={balance}
-                />
+                <div className="col-span-1 flex flex-col gap-5">
+                  <RetirementChart
+                    piedata={{
+                      CurrentMonthlyExpenses: Number(
+                        parseFloat(currentlyMonth)?.toFixed(2)
+                      ),
+                      FutureMonthlyExpenses: Number(
+                        totalMonthlyExpences?.toFixed(2)
+                      ),
+                    }}
+                    title={"Future & Current Monthly Expenses Breakup"}
+                    customLabels={{
+                      FutureMonthlyExpenses: "Future Monthly Expenses",
+                      CurrentMonthlyExpenses: "Current Monthly Expenses",
+                    }}
+                    className="h-full"
+                  />
+                  <RetrementBarChart
+                    years={years}
+                    Intrested={Intrested}
+                    principalBarAmount={principalBarAmount}
+                    balance={balance}
+                  />
+                </div>
               </div>
             </div>
           </div>
         </div>
       </div>
-    </div>
+    </>
   );
 }

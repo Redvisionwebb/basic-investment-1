@@ -16,6 +16,7 @@ import dynamic from "next/dynamic";
 import { useParams, useRouter } from "next/navigation";
 import { DefaultContext } from "react-icons";
 import DefaultLayout from "@/components/admin/Layouts/DefaultLaout";
+import Image from "next/image";
 // Dynamically import JoditEditor with SSR disabled
 const JoditEditor = dynamic(() => import("jodit-react"), { ssr: false });
 
@@ -43,7 +44,7 @@ export function InputForm({ postId }) {
     // Fetch the post data if editing
     useEffect(() => {
         if (postId) {
-            axios.get(`/api/testimonials/${postId}`)
+            axios.get(`${process.env.NEXT_PUBLIC_NEXTAUTH_URL}/api/testimonials/${postId}`)
                 .then(response => {
                     const { author, designation, content, image } = response.data.testimonial;
                     form.setValue('author', author);
@@ -68,7 +69,7 @@ export function InputForm({ postId }) {
 
         try {
             let response;
-            response = await axios.put(`/api/testimonials/${postId}`, formData, {
+            response = await axios.put(`${process.env.NEXT_PUBLIC_NEXTAUTH_URL}/api/testimonials/${postId}`, formData, {
                 headers: {
                     'Content-Type': 'multipart/form-data',
                 },
@@ -98,17 +99,17 @@ export function InputForm({ postId }) {
 
     return (
         <Form {...form}>
-            <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-8 rounded px-7">
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
+            <form onSubmit={form.handleSubmit(onSubmit)} className="flex flex-col items-start w-full gap-5 rounded-md p-3 bg-white">
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-5 w-full">
                     {/* Username Field */}
                     <FormField
                         control={form.control}
                         name="author"
                         render={({ field }) => (
                             <FormItem>
-                                <FormLabel className="font-semibold text-gray-700">Author</FormLabel>
+                                <FormLabel className="font-semibold ">Author</FormLabel>
                                 <FormControl>
-                                    <Input placeholder="Author" {...field} aria-label="Author" className="border border-gray-500" />
+                                    <Input placeholder="Author" {...field} aria-label="Author" className="border border-gray-400" />
                                 </FormControl>
                                 <FormMessage />
                             </FormItem>
@@ -121,9 +122,9 @@ export function InputForm({ postId }) {
                         name="designation"
                         render={({ field }) => (
                             <FormItem>
-                                <FormLabel className="font-semibold text-gray-700">Designation</FormLabel>
+                                <FormLabel className="font-semibold ">Designation</FormLabel>
                                 <FormControl>
-                                    <Input placeholder="Designation" {...field} aria-label="Designation" className="border border-gray-500" />
+                                    <Input placeholder="Designation" {...field} aria-label="Designation" className="border border-gray-400" />
                                 </FormControl>
                                 <FormMessage />
                             </FormItem>
@@ -137,7 +138,7 @@ export function InputForm({ postId }) {
                     name="image"
                     render={({ field }) => (
                         <FormItem>
-                            <FormLabel className="font-semibold text-gray-700">Upload Image</FormLabel>
+                            <FormLabel className="font-semibold ">Upload Image</FormLabel>
                             <FormControl>
                                 <Input type="file" accept="image/*" onChange={(e) => {
                                     const file = e.target.files[0];
@@ -145,27 +146,31 @@ export function InputForm({ postId }) {
                                         setSelectedImage(file);
                                         field.onChange(file); // Update react-hook-form with selected file
                                     }
-                                }} aria-label="Image" className="border border-gray-500" />
+                                }} aria-label="Image" className="border border-gray-400" />
                             </FormControl>
                             <FormMessage />
                             {previousImage && (
                                 <div className="mt-4">
                                     <p className="text-sm text-gray-500">Previous Image:</p>
-                                    <img src={previousImage} alt="Previous Image" className="max-w-sm rounded border h-auto w-40" />
+                                 <Image src={previousImage}
+                    width={100}
+                    height={100} alt="Previous Image" className="max-w-sm rounded border h-auto w-40" />
                                 </div>
                             )}
                         </FormItem>
                     )}
                 />
 
-                <JoditEditor
-                    ref={editor}
-                    value={content}
-                    tabIndex={1}
-                    onBlur={newContent => setContent(newContent)}
-                    onChange={newContent => { }}
-                />
-                <Button className="text-white bg-[var(--primary)]" type="submit">{!loading ? 'Submit' : 'Loading...'}</Button>
+                <div className="w-full">
+                    <JoditEditor
+                        ref={editor}
+                        value={content}
+                        tabIndex={1}
+                        onBlur={newContent => setContent(newContent)}
+                        onChange={newContent => { }}
+                    />
+                </div>
+                <Button className="text-white bg-[var(--rv-admin-bg-color)] hover:bg-[var(--rv-admin-bg-color)]" type="submit">{!loading ? 'Submit' : 'Loading...'}</Button>
             </form>
         </Form>
     );
@@ -176,16 +181,18 @@ const EditPost = () => {
     const postId = param.id
     return (
         <DefaultLayout>
-            <div className="flex justify-between">
-                <h1 className='font-bold text-gray-700 text-2xl mb-7'>
-                    Edit Post
-                </h1>
-                <Link href="/admin/manage-testimonials/manage">
-                    <Button className="text-white bg-[var(--primary)]">All Posts</Button>
-                </Link>
+            <div className="flex flex-col gap-5">
+                <div className="flex justify-between">
+                    <h1 className='font-bold  text-2xl'>
+                        Edit Post
+                    </h1>
+                    <Link href="/admin/manage-testimonials/manage">
+                        <Button className="text-white bg-[var(--rv-admin-bg-color)] hover:bg-[var(--rv-admin-bg-color)]">All Posts</Button>
+                    </Link>
+                </div>
+                <InputForm postId={postId} />
+                <Toaster />
             </div>
-            <InputForm postId={postId} />
-            <Toaster />
         </DefaultLayout>
     );
 };

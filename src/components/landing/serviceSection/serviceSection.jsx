@@ -9,7 +9,7 @@ import HomeHeading from "../heading/heading";
 export default function ServicesSection({ services }) {
   const containerRef = useRef(null);
 
-  const scrollBySlide = (direction) => { 
+  const scrollBySlide = (direction) => {
     const container = containerRef.current;
     const slideWidth = container?.firstChild?.offsetWidth || 0;
     if (!container) return;
@@ -18,12 +18,22 @@ export default function ServicesSection({ services }) {
     container.scrollBy({ left: scrollAmount, behavior: "smooth" });
   };
 
+  const slugify = (text) => {
+    return text
+      .toString()
+      .toLowerCase()
+      .trim()
+      .replace(/\s+/g, "-")      // spaces → -
+      .replace(/[^\w\-]+/g, "")  // remove special chars
+      .replace(/\-\-+/g, "-");   // multiple - → single -
+  };
+
   return (
-    <section className={`${styles.ServiceSection} section`}>
-      <div className="max-w-screen-xl mx-auto px-4">
-        <div className="text-center mb-10">
-            <HomeHeading title={`Grow Smarter with Our Services`} center="true" />
-          <p className="mt-2 max-w-2xl mx-auto">
+    <section className={`${styles.ServiceSection} px-4`}>
+      <div className="max-w-screen-xl mx-auto ">
+        <div className="text-center">
+          <HomeHeading title={`Grow Smarter with Our Services`} center="true" />
+          <p className=" max-w-2xl mx-auto">
             Lorem ipsum dolor sit amet, consectetuer adipiscing elit, sed diam
             nonummy nibh euismod tincidunt ut laoreet dolore magna aliquam erat
             volutpat.
@@ -45,41 +55,36 @@ export default function ServicesSection({ services }) {
           </button>
 
           <div className={styles.sliderContainer} ref={containerRef}>
-            {services?.map((service, index) => (
-              <motion.div
-                key={index}
-                className={styles.slide}
-                whileHover={{ scale: 1.03 }}
-              >
-                <Link
-                  href={`/services/${service.link}`}
-                  className={styles.card}
+            {services?.map((service, index) => {
+              const slug = slugify(service.name);
+
+              return (
+                <motion.div
+                  key={index}
+                  className={styles.slide}
+                  whileHover={{ scale: 1.03 }}
                 >
-                  <div className={styles.cardInner}>
-                    {/* <div
-                                            className={styles.cardBg}
-                                            style={{
-                                                backgroundImage: `url(/images/services/${service.imageSrc})`,
-                                            }}
-                                        ></div> */}
-                    <div
-                      className={styles.cardBg}
-                      style={{
-                        backgroundImage: `url(/images/services/${service.imageSrc}.png)`,
-                      }}
-                    ></div>
-                    <div className={styles.overlay}></div>
-                    <div className={styles.cardContent}>
-                      <h3>{service.name}</h3>
-                      <p>{service.description}</p>
-                      <span className={styles.hoverArrow}>
-                        <ChevronRight size={20} />
-                      </span>
+                  <Link
+                    href={`/services/${slug}`}
+                    className={styles.card}
+                  >
+                    <div className={styles.cardInner}>
+                      <div className={styles.overlay}></div>
+                      <div className={styles.cardContent}>
+                        <h3>{service.name}</h3>
+                        <div
+                          className="line-clamp-4"
+                          dangerouslySetInnerHTML={{ __html: service.description }}
+                        />
+                        <span className={styles.hoverArrow}>
+                          <ChevronRight size={20} />
+                        </span>
+                      </div>
                     </div>
-                  </div>
-                </Link>
-              </motion.div>
-            ))}
+                  </Link>
+                </motion.div>
+              );
+            })}
           </div>
         </div>
       </div>

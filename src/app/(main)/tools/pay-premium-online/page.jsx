@@ -1,114 +1,122 @@
-// "use client";
-// import Image from "next/image";
-// import React, { useState } from "react";
-// import Link from "next/link";
-// import Banner from "@/components/banner/banner";
+"use client";
+import React, { useEffect, useState } from "react";
+import Link from "next/link";
+import InnerBanner from "@/components/innerBanner/InnerBanner";
+import Autoplay from "embla-carousel-autoplay";
+import {
+    Carousel,
+    CarouselContent,
+    CarouselItem,
+} from "@/components/ui/carousel";
 
-// export default function PayPremium() {
-//     const [selectedCategory, setSelectedCategory] = useState('li');
+export default function PayPremium() {
+    const [allCategory, setAllCategory] = useState([]);
+    const [selectedCategoryId, setSelectedCategoryId] = useState("");
+    const [amcLogoData, setAmcLogoData] = useState([]);
 
-//     const handleCategoryClick = (category) => {
-//         setSelectedCategory(category);
-//     };
+    useEffect(() => {
+        fetchCategories();
+    }, []);
 
-//     const fiimagedata = [
-//         {
-//             image: "/lifeinsurancelogo/1.webp",
-//             link: "https://licindia.in/premium-payment"
-//         },
-//         {
-//             image: "/lifeinsurancelogo/2.webp",
-//             link: "https://portal.uiic.in/GCWebPortal/gcDealerMisc/pgmessagebuildoffice.do"
-//         },
-//         {
-//             image: "/lifeinsurancelogo/3.webp",
-//             link: "https://online.avivaindia.com/econnect/Pages/PayPremiumDirect.aspx"
-//         },
-//         {
-//             image: "/lifeinsurancelogo/4.webp",
-//             link: "https://www.bhartiaxa.com/pay-premium-online"
-//         },
-//         {
-//             image: "/lifeinsurancelogo/5.webp",
-//             link: "https://www.bajajallianzlife.com/renewal-payment.html"
-//         },
-//     ];
+    useEffect(() => {
+        if (selectedCategoryId) {
+            fetchLogos(selectedCategoryId);
+        }
+    }, [selectedCategoryId]);
 
-//     const hiimagedata = [
-//         {
-//             image: "/healthinsurancelogo/1.webp",
-//             link: "https://www.icicilombard.com/renew-policy-online#/AllRenewal"
-//         },
-//         {
-//             image: "/healthinsurancelogo/2.webp",
-//             link: "https://www.tataaig.com/renewal?lob=others&renewalHeader=yes"
-//         },
-//         {
-//             image: "/healthinsurancelogo/3.webp",
-//             link: "https://transactions.nivabupa.com/renewal/renewpolicies.aspx"
-//         },
-//         {
-//             image: "/healthinsurancelogo/4.webp",
-//             link: "https://www.starhealth.in/help/internal/website/"
-//         },
-//         {
-//             image: "/healthinsurancelogo/5.webp",
-//             link: "https://transactions.nivabupa.com/renewal/renewpolicies.aspx"
-//         },
-//     ];
+    const fetchCategories = async () => {
+        try {
+            const res = await fetch(`${process.env.NEXT_PUBLIC_NEXTAUTH_URL}/api/amc-category`);
+            const data = await res.json();
+            const filtered = data.filter((cat) =>
+                ["Life Insurance", "Health Insurance", "General Insurance"].includes(cat.title)
+            );
+            setAllCategory(filtered);
+            if (filtered.length > 0) {
+                setSelectedCategoryId(filtered[0]._id);
+            }
+        } catch (error) {
+            console.error("Error fetching categories:", error);
+        }
+    };
 
-//     const giimagedata = [
-//         {
-//             image: "/generalinsurancelogo/1.webp",
-//             link: "https://my.royalsundaram.in/"
-//         },
-//         {
-//             image: "/generalinsurancelogo/2.webp",
-//             link: "https://www.tataaig.com/renewal?lob=others&renewalHeader=yes"
-//         },
-//         {
-//             image: "/generalinsurancelogo/3.webp",
-//             link: "https://www.sbigeneral.in/policy-renewal"
-//         },
-//         {
-//             image: "/generalinsurancelogo/4.webp",
-//             link: "https://www.reliancegeneral.co.in/insurance/health-insurance/renewal-online-premium-calculation.aspx"
-//         },
-//         {
-//             image: "/generalinsurancelogo/5.webp",
-//             link: "https://orientalinsurance.org.in/"
-//         },
-//     ];
+    const fetchLogos = async (categoryID) => {
+        try {
+            const res = await fetch(`${process.env.NEXT_PUBLIC_NEXTAUTH_URL}/api/amc-logos?categoryID=${categoryID}&addisstatus=true`);
+            const data = await res.json();
+            if (data.success) {
+                setAmcLogoData(data.data);
+            }
+        } catch (err) {
+            console.error("Failed to fetch AMC Logos:", err);
+        }
+    };
 
-//     // Determine which data set to use based on selected category
-//     const data = selectedCategory === 'li' ? fiimagedata : selectedCategory === 'hi' ? hiimagedata : giimagedata;
-//     return (
-//         <div className="">
-//             <Banner title={"Pay Premium Online"} imageSrc={"/images/banners/inner-banner.svg"} />
-//             <section className="container mx-auto main_section ">
-//                 <div className='md:px-36 px-4 '>
-//                     <div className='md:px-5  py-4 bg-[var(--rv-secondary)] text-white flex items-center gap-x-2 md:gap-x-10  rounded'>
-//                         <div className='cursor-pointer' onClick={() => handleCategoryClick('gi')}>
-//                             <p className={`uppercase font-semibold hover:text-[--rv-primary] ${selectedCategory === 'gi' ? 'text-[var(--rv-primary)]' : ''}`}>General Insurance</p>
-//                         </div>
-//                         <div className='cursor-pointer' onClick={() => handleCategoryClick('li')}>
-//                             <p className={`uppercase font-semibold hover:text-[--rv-primary] ${selectedCategory === 'li' ? 'text-[var(--rv-primary)]' : ''}`}>Life Insurance</p>
-//                         </div>
-//                         <div className='cursor-pointer' onClick={() => handleCategoryClick('hi')}>
-//                             <p className={`uppercase font-semibold hover:text-[--rv-primary] ${selectedCategory === 'hi' ? 'text-[var(--rv-primary)]' : ''}`}>Health Insurance</p>
-//                         </div>
-//                     </div>
-//                     <div className="grid grid-cols-2 md:grid-cols-5 gap-x-3 my-4">
-//                         {data.map((item, index) => (
-//                             <Link href={item.link} key={index} target="blank">
-//                                 <div className="flex justify-center p-5 border text-center mb-3 bg-white rounded" >
-//                                     <Image src={item.image} alt={`logo-${item.image}`} width={150} height={100} />
-//                                 </div>
-//                             </Link>
-//                         ))}
-//                     </div>
-//                 </div>
-//             </section>
-//         </div>
-//     );
-// }
+    return (
+        <>
+            <InnerBanner title="Pay Premium Online" />
+            <div className="px-4">
+                <section className="max-w-screen-xl mx-auto section">
+                    {/* CATEGORY SELECTOR */}
+                    <div className="grid lg:grid-cols-5 md:grid-cols-3 gap-5 sm:grid-cols-2 grid-cols-1  bg-[var(--rv-secondary)] px-6 py-4 rounded-xl shadow-md mb-8">
+                        {allCategory.map((cat) => (
+                            <button
+                                key={cat._id}
+                                onClick={() => {
+                                    setSelectedCategoryId(cat._id);
+                                }}
+                                className={`transition-all duration-300 uppercase px-5 py-3 rounded-md font-medium tracking-wide text-sm hover:scale-105 
+              ${selectedCategoryId === cat._id
+                                        ? "bg-[var(--rv-primary)] text-white shadow-md"
+                                        : "bg-white text-[var(--rv-primary)] hover:bg-[var(--rv-primary)] hover:text-white"
+                                    }`}
+                            >
+                                {cat.title}
+                            </button>
+                        ))}
+                    </div>
+
+                    {/* AMC LOGO CAROUSEL */}
+                    {amcLogoData.length > 0 && (
+                        <Carousel
+                            plugins={[
+                                Autoplay({
+                                    delay: 2000,
+                                    stopOnInteraction: true,
+                                }),
+                            ]}
+                            opts={{
+                                align: "start",
+                                loop: true,
+                            }}
+                            className="w-full"
+                        >
+                            <CarouselContent className="">
+                                {amcLogoData.map((partners, index) => (
+                                    <CarouselItem
+                                        key={index}
+                                        className=" basis-1/2 sm:basis-1/3 md:basis-1/4 lg:basis-1/5"
+                                    >
+                                        <Link href={partners.logourl || "#"} target="_blank">
+                                            <div className="bg-white p-2 border border-black/50 rounded-lg hover:shadow-xl transition-all duration-300 flex items-center justify-center h-[100px]">
+                                                {/* eslint-disable-next-line @next/next/no-img-element */}
+                                                <img
+                                                    src={`${process.env.NEXT_PUBLIC_DATA_API}${partners.logo}`}
+                                                    alt={`logo-${partners.logoname}`}
+                                                    width={130}
+                                                    height={80}
+                                                    className="object-contain"
+                                                />
+                                            </div>
+                                        </Link>
+
+                                    </CarouselItem>
+                                ))}
+                            </CarouselContent>
+                        </Carousel>
+                    )}
+                </section>
+            </div>
+        </>
+    );
+}

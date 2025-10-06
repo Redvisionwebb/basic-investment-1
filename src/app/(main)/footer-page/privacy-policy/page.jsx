@@ -50,8 +50,10 @@ export default function PrivacyPolicy() {
     return (
         <div className="">
             <InnerBanner title={"Privacy Policy"} />
-            <div className="text-gray-700 mx-auto container my-10 lg:px-40 md:px-20 px-10">
-                <p dangerouslySetInnerHTML={createMarkup()} />
+            <div className="section">
+                <div className="text-gray-700 mx-auto max-w-7xl">
+                    <p dangerouslySetInnerHTML={createMarkup()} />
+                </div>
             </div>
         </div>
     );

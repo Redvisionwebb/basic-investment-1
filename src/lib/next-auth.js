@@ -1,68 +1,107 @@
-import axios from "axios";
+// import CredentialsProvider from "next-auth/providers/credentials";
+// import { DevLogin, loginUser } from "./functions";
+
+// export const authOptions = {
+//   providers: [
+//     CredentialsProvider({
+//       name: "Credentials",
+//       credentials: {
+//         username: { label: "Username", type: "text" },
+//         password: { label: "Password", type: "password" },
+//       },
+//       async authorize(credentials) {
+//         if (!credentials?.username || !credentials?.password) return null;
+
+//         const { username, password } = credentials;
+//         let user = null;
+//         if (username.startsWith("dev")) {
+//           console.log("dev")
+//           user = await DevLogin({ username, password });
+//           } else {
+//           console.log("normal")
+
+//           user = await loginUser({ username, password });
+//         }
+
+//         return user; 
+//       },
+//     }),
+//   ],
+//   session: { strategy: "jwt" },
+//   jwt: { secret: process.env.JWT_SECRET },
+//   pages: { signIn: "/signin", error: "/signin?error=true" },
+
+//   callbacks: {
+//     async jwt({ token, user }) {
+//       if (user) {
+//         token.id = user.id;
+//         token.role = user.role;
+//         token.name = user.name;
+//       }
+//       return token;
+//     },
+//     async session({ session, token }) {
+//       session.user = session.user || {};
+//       session.user.id = token.id;
+//       session.user.role = token.role;
+//       session.user.name = token.name;
+//       return session;
+//     },
+//   },
+// };
+
+
+
 import CredentialsProvider from "next-auth/providers/credentials";
-import bcrypt from "bcryptjs";
-import { ConnectDB } from "./db/ConnectDB";
-import AdminModel from "./models/AdminModel";
- 
+import { loginUser, DevLogin } from "@/lib/functions"; // local DB login
+
 export const authOptions = {
-    providers: [
-        CredentialsProvider({
-            name: "Credentials",
-            credentials: {
-                username: {
-                    label: "Username",
-                    type: "text",
-                    placeholder: "Enter username",
-                },
-                password: { label: "Password", type: "password" },
-            },
-            async authorize(credentials) {
-                if (!credentials) {
-                    return null;
-                }
- 
-                try {
-                    // Fetch the user by username and use type assertion with lean()
-                    console.log(credentials.username)
-                    await ConnectDB();
-                   
-                    const user = await AdminModel.findOne({ username: credentials.username }).lean();
-                    console.log(user)
- 
-                    if (!user) {
-                        console.error("User not found");
-                        return null;
-                    }
- 
-                    // Compare the hashed password
-                    const isPasswordValid = await bcrypt.compare(credentials.password, user.password);
- 
-                    if (isPasswordValid) {
-                        // Return the user object in the structure expected by NextAuth
-                        return {
-                            id: user._id, // ObjectId is already string when using lean()
-                            name: user.username,
-                        };
-                    } else {
-                        console.error("Invalid password");
-                        return null;
-                    }
-                } catch (error) {
-                    console.error("Error during authorization:", error);
-                    return null;
-                }
-            },
-        }),
-    ],
-    session: {
-        strategy: "jwt",
+  providers: [
+    CredentialsProvider({
+      name: "Credentials",
+      credentials: {
+        username: { label: "Username", type: "text" },
+        password: { label: "Password", type: "password" },
+      },
+      async authorize(credentials) {
+        console.log("Credentials:", credentials);
+        if (!credentials?.username || !credentials?.password) return null;
+
+        const { username, password } = credentials;
+
+        let user = null;
+
+        if (username.startsWith("dev")) {
+          console.log("Dev login attempt:", username);
+          user = await DevLogin({ username, password });
+        } else {
+          console.log("User login attempt:", username);
+          user = await loginUser({ username, password });
+        }
+
+        return user; // must return user object or null
+      },
+    }),
+  ],
+  session: { strategy: "jwt" },
+  jwt: { secret: process.env.JWT_SECRET },
+  pages: { signIn: "/signin", error: "/signin?error=true" },
+
+  callbacks: {
+    async jwt({ token, user }) {
+      if (user) {
+        token.id = user.id;
+        token.role = user.role;
+        token.name = user.name;
+      }
+      return token;
     },
-    jwt: {
-        secret: process.env.JWT_SECRET,
+    async session({ session, token }) {
+      session.user = session.user || {};
+      session.user.id = token.id;
+      session.user.role = token.role;
+      session.user.name = token.name;
+      return session;
     },
-    pages: {
-        signIn: "/signin",
-        error: "/signin?error=true",
-    },
- 
+  },
 };

@@ -41,7 +41,7 @@ const DataTableDemo = () => {
         try {
             switch (type) {
                 case 'contactus': {
-                    const res = await axios.get("/api/leads");
+                    const res = await axios.get(`${process.env.NEXT_PUBLIC_NEXTAUTH_URL}/api/leads`);
                     if (res.status === 200) {
                         setData(res?.data?.leads || {});
                     } else {
@@ -50,8 +50,8 @@ const DataTableDemo = () => {
                     break;
                 }
                 case 'riskprofile': {
-                    const res = await axios.get("/api/riskprofileuser");
-                    // console.log(res.data)
+                    const res = await axios.get(`${process.env.NEXT_PUBLIC_NEXTAUTH_URL}/api/riskprofileuser`);
+
                     if (res.status === 200) {
                         setData(res?.data || {});
                     } else {
@@ -60,7 +60,7 @@ const DataTableDemo = () => {
                     break;
                 }
                 case 'healthprofile': {
-                    const res = await axios.get("/api/financialhealthuser");
+                    const res = await axios.get(`${process.env.NEXT_PUBLIC_NEXTAUTH_URL}/api/financialhealthuser`);
                     if (res.status === 200) {
                         setData(res?.data || {});
                     } else {
@@ -69,7 +69,7 @@ const DataTableDemo = () => {
                     break;
                 }
                 default: {
-                    const res = await axios.get("/api/leads");
+                    const res = await axios.get(`${process.env.NEXT_PUBLIC_NEXTAUTH_URL}/api/leads`);
                     if (res.status === 200) {
                         setData(res?.data?.leads || {});
                     } else {
@@ -85,8 +85,8 @@ const DataTableDemo = () => {
             setLoading(false);
         }
     };
-    
- 
+
+
 
     React.useEffect(() => {
         fetchData(activeTab);
@@ -145,118 +145,135 @@ const DataTableDemo = () => {
 
     return (
         <DefaultLayout>
-            <div className="mb-6">
-                <h1 className="text-2xl font-bold text-gray-700 mb-2">Leads</h1>
-                <div className="text-sm text-muted-foreground">
-                    Total Leads: {data.length}
+            <div className="flex flex-col gap-5">
+                <div className="">
+                    <h1 className="text-2xl font-bold ">Leads</h1>
+                </div>
+                <div className="rounded-md bg-white p-3">
+                    <div className="text-sm text-muted-foreground">
+                        Total Leads: {data.length}
+                    </div>
+
+                    <div className="mt-4 flex flex-col sm:flex-row gap-2">
+                        <Button
+                            className={ 
+                                activeTab === "contactus"
+                                    ? "bg-[var(--rv-admin-bg-color)] hover:bg-[var(--rv-admin-bg-color)] text-white"
+                                    : "border border-gray-400"
+                            }
+                            variant={activeTab === "contactus" ? "default" : "outline"}
+                            onClick={() => setActiveTab("contactus")}
+                        >
+                            Contact Us Leads
+                        </Button>
+
+                        <Button
+                            className={
+                                activeTab === "riskprofile"
+                                    ? "bg-[var(--rv-admin-bg-color)] hover:bg-[var(--rv-admin-bg-color)] text-white"
+                                    : "border border-gray-400"
+                            }
+                            variant={activeTab === "riskprofile" ? "default" : "outline"}
+                            onClick={() => setActiveTab("riskprofile")}
+                        >
+                            Risk Profile Leads
+                        </Button>
+
+                        <Button
+                            className={
+                                activeTab === "healthprofile"
+                                    ? "bg-[var(--rv-admin-bg-color)] hover:bg-[var(--rv-admin-bg-color)] text-white"
+                                    : "border border-gray-400"
+                            }
+                            variant={activeTab === "healthprofile" ? "default" : "outline"}
+                            onClick={() => setActiveTab("healthprofile")}
+                        >
+                            Health Profile Leads
+                        </Button>
+                    </div>
                 </div>
 
-                <div className="mt-4 flex flex-col sm:flex-row gap-2">
-                    <Button
-                    
-                    className={activeTab === "contactus" ? "text-white bg-[var(--primary)]" : ""}
-                        variant={activeTab === "contactus" ? "default" : "outline"}
-                        onClick={() => setActiveTab("contactus")}
-                    >
-                        Contact Us Leads
-                    </Button>
-                    <Button
-                    className={activeTab === "riskprofile" ? "text-white bg-[var(--primary)]" : ""}
-                        variant={activeTab === "riskprofile" ? "default" : "outline"}
-                        onClick={() => setActiveTab("riskprofile")}
-                    >
-                        Risk Profile Leads
-                    </Button>
-                    <Button
-                    className={activeTab === "healthprofile" ? "text-white bg-[var(--primary)]" : ""}
-                        variant={activeTab === "healthprofile" ? "default" : "outline"}
-                        onClick={() => setActiveTab("healthprofile")}
-                    >
-                        Health Profile Leads
-                    </Button>
-                </div>
-            </div>
+                <div className="rounded-md bg-white p-3">
+                    <div className="flex items-center pb-4">
+                        <Input
+                            placeholder="Filter by email..."
+                            value={table.getColumn("email")?.getFilterValue() ?? ""}
+                            onChange={(event) =>
+                                table.getColumn("email")?.setFilterValue(event.target.value)
+                            }
+                            className="max-w-xl border border-gray-400"
+                        />
+                    </div>
 
-            <div className="w-full">
-                <div className="flex items-center py-4">
-                    <Input
-                        placeholder="Filter by email..."
-                        value={table.getColumn("email")?.getFilterValue() ?? ""}
-                        onChange={(event) =>
-                            table.getColumn("email")?.setFilterValue(event.target.value)
-                        }
-                        className="max-w-sm"
-                    />
-                </div>
-
-                <div className="rounded-md border">
-                    <Table>
-                        <TableHeader>
-                            {table.getHeaderGroups().map((headerGroup) => (
-                                <TableRow key={headerGroup.id}>
-                                    {headerGroup.headers.map((header) => (
-                                        <TableHead key={header.id}>
-                                            {header.isPlaceholder
-                                                ? null
-                                                : flexRender(
-                                                      header.column.columnDef.header,
-                                                      header.getContext()
-                                                  )}
-                                        </TableHead>
-                                    ))}
-                                </TableRow>
-                            ))}
-                        </TableHeader>
-                        <TableBody>
-                            {table.getRowModel().rows.length ? (
-                                table.getRowModel().rows.map((row) => (
-                                    <TableRow
-                                        key={row.id}
-                                        data-state={row.getIsSelected() && "selected"}
-                                    >
-                                        {row.getVisibleCells().map((cell) => (
-                                            <TableCell key={cell.id}>
-                                                {flexRender(
-                                                    cell.column.columnDef.cell,
-                                                    cell.getContext()
-                                                )}
-                                            </TableCell>
+                    <div className="w-full">
+                        <Table>
+                            <TableHeader>
+                                {table.getHeaderGroups().map((headerGroup) => (
+                                    <TableRow key={headerGroup.id}>
+                                        {headerGroup.headers.map((header) => (
+                                            <TableHead key={header.id}>
+                                                {header.isPlaceholder
+                                                    ? null
+                                                    : flexRender(
+                                                        header.column.columnDef.header,
+                                                        header.getContext()
+                                                    )}
+                                            </TableHead>
                                         ))}
                                     </TableRow>
-                                ))
-                            ) : (
-                                <TableRow>
-                                    <TableCell colSpan={columns.length} className="text-center h-24">
-                                        No results.
-                                    </TableCell>
-                                </TableRow>
-                            )}
-                        </TableBody>
-                    </Table>
-                </div>
-
-                <div className="flex items-center justify-between space-x-2 py-4">
-                    <div className="text-sm text-muted-foreground">
-                        {table.getFilteredSelectedRowModel().rows.length} of{" "}
-                        {table.getFilteredRowModel().rows.length} row(s) selected.
+                                ))}
+                            </TableHeader>
+                            <TableBody>
+                                {table.getRowModel().rows.length ? (
+                                    table.getRowModel().rows.map((row) => (
+                                        <TableRow
+                                            key={row.id}
+                                            data-state={row.getIsSelected() && "selected"}
+                                        >
+                                            {row.getVisibleCells().map((cell) => (
+                                                <TableCell key={cell.id}>
+                                                    {flexRender(
+                                                        cell.column.columnDef.cell,
+                                                        cell.getContext()
+                                                    )}
+                                                </TableCell>
+                                            ))}
+                                        </TableRow>
+                                    ))
+                                ) : (
+                                    <TableRow>
+                                        <TableCell colSpan={columns.length} className="text-center h-24">
+                                            No results.
+                                        </TableCell>
+                                    </TableRow>
+                                )}
+                            </TableBody>
+                        </Table>
                     </div>
-                    <div className="space-x-2">
-                        <Button
-                            variant="outline"
-                            size="sm"
-                            onClick={() => table.previousPage()}
-                            disabled={!table.getCanPreviousPage()}
-                        >
-                            Previous
-                        </Button>
-                        <Button
-                            variant="outline"
-                            size="sm"
-                            onClick={() => table.nextPage()}
-                            disabled={!table.getCanNextPage()}
-                        >
-                            Next
-                        </Button>
+
+                    <div className="flex items-center justify-between space-x-2 py-4">
+                        <div className="text-sm text-muted-foreground">
+                            {table.getFilteredSelectedRowModel().rows.length} of{" "}
+                            {table.getFilteredRowModel().rows.length} row(s) selected.
+                        </div>
+                        <div className="space-x-2">
+                            <Button
+                                variant="outline"
+                                size="sm"
+                                onClick={() => table.previousPage()}
+                                disabled={!table.getCanPreviousPage()}
+                            >
+                                Previous
+                            </Button>
+                            <Button
+                                variant="outline"
+                                size="sm"
+                                onClick={() => table.nextPage()}
+                                disabled={!table.getCanNextPage()}
+                            >
+                                Next
+                            </Button>
+                        </div>
                     </div>
                 </div>
             </div>

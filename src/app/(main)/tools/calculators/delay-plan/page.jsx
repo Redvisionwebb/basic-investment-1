@@ -15,6 +15,7 @@ import { CalculatorReturnChart } from "@/components/charts/calculatorReturnChart
 import axios from "axios";
 import { useRouter } from "next/navigation";
 import { calculators } from "@/data/calculators";
+import InnerBanner from "@/components/innerBanner/InnerBanner";
 
 export default function DelayCostCalculator() {
   const router = useRouter();
@@ -68,7 +69,7 @@ export default function DelayCostCalculator() {
     },
     return: {
       label: "Future Value without Delay",
-      color: "var(--rv-gray)",
+      color: "var(--rv-secondary)",
     },
   }
 
@@ -79,216 +80,218 @@ export default function DelayCostCalculator() {
     },
     growth: {
       label: "Future Value without Delay",
-      color: "var(--rv-gray)",
+      color: "var(--rv-secondary)",
     },
   };
 
   return (
-    <div className="pt-20">
-      <div className="max-w-screen-xl mx-auto main_section">
-        <div className="">
-          <div className="mb-5 flex flex-col md:flex-row gap-5 justify-between">
-            <div className="">
-              <span className="text-2xl md:text-3xl font-bold uppercase">
-                Delay Cost Calculator
-              </span>
-            </div>
-            <div className="flex justify-between gap-4">
-              <span>Explore other calculators</span>
-              <select
-                className="w-full border border-gray-500 rounded-lg p-2"
-                onChange={handleCalculatorChange}
-                defaultValue=""
-              >
-                <option value="" disabled>
-                  Select
-                </option>
-                {calculators.map((calc) => (
-                  <option key={calc.title} value={calc.route}>
-                    {calc.title}
+    <>
+      <InnerBanner title={'Delay Plan Calculator'} />
+      <div className="px-4">
+        <div className="max-w-screen-xl mx-auto section">
+          <div className="">
+            <div className="mb-5 flex flex-col md:flex-row gap-5 justify-between">
+              <div className="">
+                <span className="text-2xl md:text-3xl font-bold uppercase">
+                  Delay Cost Calculator
+                </span>
+              </div>
+              <div className="flex justify-between gap-4">
+                <span>Explore other calculators</span>
+                <select
+                  className="w-full border border-gray-500 rounded-lg p-2"
+                  onChange={handleCalculatorChange}
+                  defaultValue=""
+                >
+                  <option value="" disabled>
+                    Select
                   </option>
-                ))}
-              </select>
+                  {calculators.map((calc) => (
+                    <option key={calc.title} value={calc.route}>
+                      {calc.title}
+                    </option>
+                  ))}
+                </select>
+              </div>
             </div>
-          </div>
-          <div>
             <div>
-              <div className="grid lg:grid-cols-2 grid-cols-1 gap-4 mb-4">
-                <div className="col-span-1 border border-gray-200 rounded-2xl bg-white p-5">
-                  <div className="sip-calculator container mx-auto p-3 sticky top-0 z-10">
-                    <div className="input-fields mt-5 mb-10">
-                      {/* Monthly SIP */}
-                      <div className="flex justify-between">
-                        <span>Monthly SIP (₹)</span>
-                        <div>
-                          <input
-                            type="number"
-                            value={monthlySIP}
-                            placeholder="0"
-                            onChange={(e) =>
-                              setMonthlySIP(
-                                parseFloat(e.target.value.replace(/,/g, ""))
-                              )
-                            }
-                            className="font-semibold text-var(--rv-primary) w-36 border px-2 py-2 rounded"
-                          />
-                        </div>
-                      </div>
-                      <input
-                        type="range"
-                        min="500"
-                        max="100000"
-                        step="500"
-                        value={monthlySIP || 0}
-                        onChange={(e) =>
-                          setMonthlySIP(parseFloat(e.target.value))
-                        }
-                        className="customRange w-full"
-                        style={{
-                          "--progress": `${((monthlySIP - 500) / (100000 - 500)) * 100
-                            }%`,
-                        }}
-                      />
-
-                      {/* Time Period */}
-                      <div className="items-center mt-5">
+              <div>
+                <div className="grid lg:grid-cols-2 grid-cols-1 gap-5">
+                  <div className="col-span-1 border border-[var(--rv-primary)] rounded-2xl bg-white p-5">
+                    <div className="sip-calculator container mx-auto sticky top-0 z-10">
+                      <div className="input-fields">
+                        {/* Monthly SIP */}
                         <div className="flex justify-between">
-                          <span>Time Period (Years)</span>
-                          <input
-                            type="number"
-                            placeholder="0"
-                            value={timePeriod}
+                          <span>Monthly SIP (₹)</span>
+                          <div>
+                            <input
+                              type="number"
+                              value={monthlySIP}
+                              placeholder="0"
+                              onChange={(e) =>
+                                setMonthlySIP(
+                                  parseFloat(e.target.value.replace(/,/g, ""))
+                                )
+                              }
+                              className="font-semibold text-var(--rv-primary) w-36 border px-2 py-2 rounded"
+                            />
+                          </div>
+                        </div>
+                        <Input
+                          type="range"
+                          min="500"
+                          max="100000"
+                          step="500"
+                          value={monthlySIP || 0}
+                          onChange={(e) =>
+                            setMonthlySIP(parseFloat(e.target.value))
+                          }
+                          className="customRange w-full"
+                          style={{
+                            "--progress": `${((monthlySIP - 500) / (100000 - 500)) * 100
+                              }%`,
+                          }}
+                        />
+
+                        {/* Time Period */}
+                        <div className="items-center mt-5">
+                          <div className="flex justify-between">
+                            <span>Time Period (Years)</span>
+                            <input
+                              type="number"
+                              placeholder="0"
+                              value={timePeriod}
+                              onChange={(e) =>
+                                setTimePeriod(parseFloat(e.target.value))
+                              }
+                              className="font-semibold text-var(--rv-primary) w-20 border px-2 py-2 rounded"
+                            />
+                          </div>
+                          <Input
+                            type="range"
+                            min="1"
+                            max="30"
+                            step="1"
+                            value={timePeriod || 0}
                             onChange={(e) =>
                               setTimePeriod(parseFloat(e.target.value))
                             }
-                            className="font-semibold text-var(--rv-primary) w-20 border px-2 py-2 rounded"
+                            style={{
+                              "--progress": `${((timePeriod - 1) / (30 - 1)) * 100
+                                }%`,
+                            }}
                           />
                         </div>
-                        <input
-                          type="range"
-                          min="1"
-                          max="30"
-                          step="1"
-                          value={timePeriod || 0}
-                          onChange={(e) =>
-                            setTimePeriod(parseFloat(e.target.value))
-                          }
-                          className="customRange w-full"
-                          style={{
-                            "--progress": `${((timePeriod - 1) / (30 - 1)) * 100
-                              }%`,
-                          }}
-                        />
-                      </div>
 
-                      {/* Rate of Return */}
-                      <div className="items-center mt-5">
-                        <div className="flex justify-between">
-                          <span>Expected Return (%)</span>
-                          <input
-                            type="number"
-                            value={expectedReturn}
-                            placeholder="0"
+                        {/* Rate of Return */}
+                        <div className="items-center mt-5">
+                          <div className="flex justify-between">
+                            <span>Expected Return (%)</span>
+                            <input
+                              type="number"
+                              value={expectedReturn}
+                              placeholder="0"
+                              onChange={(e) =>
+                                setExpectedReturn(parseFloat(e.target.value))
+                              }
+                              className="font-semibold text-var(--rv-primary) w-20 border px-2 py-2 rounded"
+                            />
+                          </div>
+                          <Input
+                            type="range"
+                            min="1"
+                            max="30"
+                            step="1"
+                            value={expectedReturn || 0}
                             onChange={(e) =>
                               setExpectedReturn(parseFloat(e.target.value))
                             }
-                            className="font-semibold text-var(--rv-primary) w-20 border px-2 py-2 rounded"
+                            className="customRange w-full"
+                            style={{
+                              "--progress": `${((expectedReturn - 1) / (30 - 1)) * 100
+                                }%`,
+                            }}
                           />
                         </div>
-                        <input
-                          type="range"
-                          min="1"
-                          max="30"
-                          step="1"
-                          value={expectedReturn || 0}
-                          onChange={(e) =>
-                            setExpectedReturn(parseFloat(e.target.value))
-                          }
-                          className="customRange w-full"
-                          style={{
-                            "--progress": `${((expectedReturn - 1) / (30 - 1)) * 100
-                              }%`,
-                          }}
-                        />
-                      </div>
 
-                      {/* Delay in SIP */}
-                      <div className="items-center mt-5">
-                        <div className="flex justify-between">
-                          <span>Delay in Starting SIP (Months)</span>
-                          <input
-                            type="number"
-                            value={delayMonths}
-                            placeholder="0"
+                        {/* Delay in SIP */}
+                        <div className="items-center mt-5">
+                          <div className="flex justify-between">
+                            <span>Delay in Starting SIP (Months)</span>
+                            <input
+                              type="number"
+                              value={delayMonths}
+                              placeholder="0"
+                              onChange={(e) =>
+                                setDelayMonths(parseFloat(e.target.value))
+                              }
+                              className="font-semibold text-var(--rv-primary) w-20 border px-2 py-2 rounded"
+                            />
+                          </div>
+                          <Input
+                            type="range"
+                            min="0"
+                            max="24"
+                            step="1"
+                            value={delayMonths || 0}
                             onChange={(e) =>
                               setDelayMonths(parseFloat(e.target.value))
                             }
-                            className="font-semibold text-var(--rv-primary) w-20 border px-2 py-2 rounded"
+                            className="customRange w-full"
+                            style={{
+                              "--progress": `${(delayMonths / 24) * 100}%`,
+                            }}
                           />
                         </div>
-                        <input
-                          type="range"
-                          min="0"
-                          max="24"
-                          step="1"
-                          value={delayMonths || 0}
-                          onChange={(e) =>
-                            setDelayMonths(parseFloat(e.target.value))
-                          }
-                          className="customRange w-full"
-                          style={{
-                            "--progress": `${(delayMonths / 24) * 100}%`,
-                          }}
-                        />
                       </div>
+
+                      {result && (
+                        <div className="mt-5">
+                          <div className="flex justify-between p-2">
+                            <p>Total Value</p>
+                            <p className="font-bold text-lg">
+                              ₹{result?.totalInvestment?.toLocaleString("en-IN")}
+                            </p>
+                          </div>
+                          <hr className="mb-3" />
+                          <div className="flex justify-between p-2">
+                            <p>Future Value without Delay</p>
+                            <p className="font-bold text-lg">
+                              ₹{result?.futureValue?.toLocaleString("en-IN")}
+                            </p>
+                          </div>
+                          <hr className="mb-3" />
+                          <div className="flex justify-between p-2">
+                            <p>Cost of Delay in Future Value</p>
+                            <p className="font-bold text-lg">
+                              ₹{result?.sipInvestment?.toLocaleString("en-IN")}
+                            </p>
+                          </div>
+                          <hr className="mb-3" />
+                          <div className="flex justify-between p-2">
+                            <p>Future Value after Delay</p>
+                            <p className="font-bold text-lg">
+                              ₹{result?.lumpsumInvestment?.toLocaleString("en-IN")}
+                            </p>
+                          </div>
+                        </div>
+                      )}
                     </div>
-
-                    {result && (
-                      <div className="mt-5">
-                        <div className="flex justify-between px-5 mb-3">
-                          <p>Total Value</p>
-                          <p className="font-bold text-lg">
-                            ₹{result?.totalInvestment?.toLocaleString()}
-                          </p>
-                        </div>
-                        <hr className="mb-3" />
-                        <div className="flex justify-between px-5 mb-3">
-                          <p>Future Value without Delay</p>
-                          <p className="font-bold text-lg">
-                            ₹{result?.futureValue?.toLocaleString()}
-                          </p>
-                        </div>
-                        <hr className="mb-3" />
-                        <div className="flex justify-between px-5 mb-3">
-                          <p>Cost of Delay in Future Value</p>
-                          <p className="font-bold text-lg">
-                            ₹{result?.sipInvestment?.toLocaleString()}
-                          </p>
-                        </div>
-                        <hr className="mb-3" />
-                        <div className="flex justify-between px-5 mb-3">
-                          <p>Future Value after Delay</p>
-                          <p className="font-bold text-lg">
-                            ₹{result?.lumpsumInvestment?.toLocaleString()}
-                          </p>
-                        </div>
-                      </div>
-                    )}
                   </div>
-                </div>
-                <div className="col-span-1">
-                  <SippieChart
-                    piedata={result}
-                    title={"Delay Planning Projection"}
+                  <div className="col-span-1 flex flex-col gap-5">
+                    <SippieChart
+                      piedata={result}
+                      title={"Delay Planning Projection"}
 
-                    chartConfig={chartConfig}
-                  />
-                  <div className="mt-5">
-                    <CalculatorReturnChart
-                      data={chartData}
-
-                      chartConfig={chartConfig1}
+                      chartConfig={chartConfig}
                     />
+                    <div className="">
+                      <CalculatorReturnChart
+                        data={chartData}
+
+                        chartConfig={chartConfig1}
+                      />
+                    </div>
                   </div>
                 </div>
               </div>
@@ -296,6 +299,6 @@ export default function DelayCostCalculator() {
           </div>
         </div>
       </div>
-    </div>
+    </>
   );
 }

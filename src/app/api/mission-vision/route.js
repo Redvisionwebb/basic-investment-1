@@ -39,7 +39,6 @@ export async function POST(req) {
 export async function GET() {
   try {
     await ConnectDB();
-    console.log("mnlknjjlkn")
     const result = await MissionVisionModel.findOne().sort({ createdAt: -1 });
     return NextResponse.json(result, { status: 200 });
   } catch (error) {

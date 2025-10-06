@@ -1,0 +1,39 @@
+.usefulBox {
+    border: 1px solid var(--rv-primary);
+    border-radius: 8px;
+    color: var(--rv-black);
+    width: 100%;
+    overflow: hidden;
+    padding: 24px;
+    position: relative;
+    background-color: var(--rv-background);
+    transition: all 0.3s ease-in;
+}
+
+.cardsContainer {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    grid-gap: 10px;
+    max-width: 100%;
+    justify-items: center;
+    justify-content: space-between;
+}
+
+.boxImage {
+    height: auto;
+    width: 80px;
+    opacity: 0.8;
+    z-index: 1;
+    transition: opacity 0.3s ease;
+}
+
+
+.cardsContainer:hover .boxImage {
+    opacity: 1;
+}
+
+.cardsContainer:hover .usefulBox {
+    opacity: 1;
+    background-color: var(--rv-forth);
+    transition: all 0.3s ease-in;
+}

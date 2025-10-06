@@ -11,10 +11,8 @@ export async function POST(req) {
             id, name,websiteName,email,alternateEmail,alternateMobile,mobile,whatsAppNo,address,iframe,mapurl,websiteDomain,image,callbackurl,siteurl,appsplaystoreurl,appsappleurl,description
         } = await req.json();
 
-        // console.log(whatsAppNo)
         let updatedImage = image;
         
-        // console.log(title, email, arn, address, mapurl, euin, mobile, mobile2, logo, description, twitter, facebook, instagram, linkedin, youtube)
         const data = await SiteSettingsModel.find({});
 
            if (image && image.size > 0) {

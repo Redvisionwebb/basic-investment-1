@@ -1,27 +1,31 @@
 "use client";
-import React, { useState, ReactNode } from "react";
+
+import React from "react";
 import Sidebar from "../Sidebar";
 import Header from "../Header";
+import { SidebarProvider, useSidebar } from "@/context/SidebarContext";
+
+const LayoutContent = ({ children }) => {
+    const { sidebarOpen, isMobile } = useSidebar();
+
+    return (
+        <div className="flex h-screen overflow-hidden">
+            <Sidebar />
+            <div
+                className={`
+          flex-1 flex flex-col transition-all duration-300 ease-in-out
+          ${isMobile ? "w-full" : sidebarOpen ? "ml-0" : "ml-0"}`}>
+                <Header />
+                <main className="flex-1 overflow-y-auto bg-gray-100 p-4">{children}</main>
+            </div>
+        </div>
+    );
+};
 
 export default function DefaultLayout({ children }) {
-    const [sidebarOpen, setSidebarOpen] = useState(false);
     return (
-        <>
-            <div className="flex h-screen overflow-hidden">
-                {/* <!-- ===== Sidebar ===== --> */}
-                <Sidebar sidebarOpen={sidebarOpen} setSidebarOpen={setSidebarOpen} />
-
-                {/* <!-- ===== Content Area ===== --> */}
-                <div className="relative flex flex-1 flex-col overflow-y-auto overflow-x-hidden">
-                    {/* <!-- ===== Header Star ===== --> */}
-                    <Header sidebarOpen={sidebarOpen} setSidebarOpen={setSidebarOpen} />
-                    <main>
-                        <div className="mx-auto max-w-screen-2xl p-4 md:p-6 2xl:p-10 bg-gray-50">
-                            {children}
-                        </div>
-                    </main>
-                </div>
-            </div>
-        </>
+        <SidebarProvider>
+            <LayoutContent>{children}</LayoutContent>
+        </SidebarProvider>
     );
 }

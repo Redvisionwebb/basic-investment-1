@@ -19,6 +19,7 @@ import { Toaster } from "@/components/ui/toaster";
 import Link from "next/link";
 import { useParams, useRouter } from "next/navigation";
 import DefaultLayout from "@/components/admin/Layouts/DefaultLaout";
+import Image from "next/image";
 
 export function InputForm({ postId }) {
   const router = useRouter();
@@ -28,12 +29,10 @@ export function InputForm({ postId }) {
   const [previousImage, setPreviousImage] = useState(null);
 
   const FormSchema = z.object({
-    title: z
-      .string()
-      .min(2, { message: "Title must be at least 2 characters." }),
+    title: z.string().min(2, { message: "Title must be at least 2 characters." }),
     videoUrl: z.string().nonempty({ message: "videoUrl is required." }),
-    image: z.instanceof(File).optional(),
     embedUrl: z.string().optional(),
+    image: z.union([z.instanceof(File), z.string()]).optional(),
   });
   const form = useForm({
     resolver: zodResolver(FormSchema),
@@ -49,7 +48,7 @@ export function InputForm({ postId }) {
   useEffect(() => {
     if (postId) {
       axios
-        .get(`/api/video-admin/${postId}`)
+        .get(`${process.env.NEXT_PUBLIC_NEXTAUTH_URL}/api/video-admin/${postId}`)
         .then((response) => {
           const { title, videoUrl, image, embedUrl } = response?.data?.video;
           form.setValue("title", title);
@@ -64,7 +63,6 @@ export function InputForm({ postId }) {
   }, [postId]);
 
   const onSubmit = async (data) => {
-    // console.log("data");
     setLoading(true);
     const formData = new FormData();
 
@@ -75,7 +73,7 @@ export function InputForm({ postId }) {
 
     try {
       let response;
-      response = await axios.put(`/api/video-admin/${postId}`, formData, {
+      response = await axios.put(`${process.env.NEXT_PUBLIC_NEXTAUTH_URL}/api/video-admin/${postId}`, formData, {
         headers: {
           "Content-Type": "multipart/form-data",
         },
@@ -107,16 +105,16 @@ export function InputForm({ postId }) {
     <Form {...form}>
       <form
         onSubmit={form.handleSubmit(onSubmit)}
-        className="space-y-8 rounded px-7"
+        className="flex flex-col items-start w-full gap-5 rounded-md p-3 bg-white"
       >
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-5 w-full">
           {/* Username Field */}
           <FormField
             control={form.control}
             name="title"
             render={({ field }) => (
               <FormItem>
-                <FormLabel className="font-semibold text-gray-700">
+                <FormLabel className="font-semibold">
                   Title
                 </FormLabel>
                 <FormControl>
@@ -124,7 +122,7 @@ export function InputForm({ postId }) {
                     placeholder="Enter Title"
                     {...field}
                     aria-label="title"
-                    className="border border-gray-500"
+                    className="border border-gray-400"
                   />
                 </FormControl>
                 <FormMessage />
@@ -138,7 +136,7 @@ export function InputForm({ postId }) {
             name="videoUrl"
             render={({ field }) => (
               <FormItem>
-                <FormLabel className="font-semibold text-gray-700">
+                <FormLabel className="font-semibold">
                   Video Url
                 </FormLabel>
                 <FormControl>
@@ -146,7 +144,7 @@ export function InputForm({ postId }) {
                     placeholder="videoUrl"
                     {...field}
                     aria-label="videoUrl"
-                    className="border border-gray-500"
+                    className="border border-gray-400"
                   />
                 </FormControl>
                 <FormMessage />
@@ -159,7 +157,7 @@ export function InputForm({ postId }) {
             name="embedUrl"
             render={({ field }) => (
               <FormItem>
-                <FormLabel className="font-semibold text-gray-700">
+                <FormLabel className="font-semibold">
                   Embed Url
                 </FormLabel>
                 <FormControl>
@@ -167,7 +165,7 @@ export function InputForm({ postId }) {
                     placeholder="embedUrl"
                     {...field}
                     aria-label="embedUrl"
-                    className="border border-gray-500"
+                    className="border border-gray-400"
                   />
                 </FormControl>
                 <FormMessage />
@@ -182,7 +180,7 @@ export function InputForm({ postId }) {
           name="image"
           render={({ field }) => (
             <FormItem>
-              <FormLabel className="font-semibold text-gray-700">
+              <FormLabel className="font-semibold">
                 Upload Image
               </FormLabel>
               <FormControl>
@@ -193,19 +191,20 @@ export function InputForm({ postId }) {
                     const file = e.target.files[0];
                     if (file) {
                       setSelectedImage(file);
-                      field.onChange(file); // Update react-hook-form with selected file
+                      field.onChange(file);
                     }
                   }}
                   aria-label="Image"
-                  className="border border-gray-500"
+                  className="border border-gray-400"
                 />
               </FormControl>
               <FormMessage />
               {previousImage && (
                 <div className="mt-4">
                   <p className="text-sm text-gray-500">Previous Image:</p>
-                  <img
-                    src={previousImage}
+                  <Image src={previousImage}
+                    width={100}
+                    height={100}
                     alt="Previous Image"
                     className="max-w-sm rounded border h-auto w-40"
                   />
@@ -214,7 +213,7 @@ export function InputForm({ postId }) {
             </FormItem>
           )}
         />
-        <Button className="text-white bg-[var(--primary)] " type="submit">
+        <Button className="text-white bg-[var(--rv-admin-bg-color)] hover:bg-[var(--rv-admin-bg-color)] " type="submit">
           {!loading ? "Submit" : "Loading..."}
         </Button>
       </form>
@@ -227,11 +226,11 @@ const EditVideo = () => {
   const postId = param.id;
   return (
     <DefaultLayout>
-      <div className="py-10 px-10">
+      <div className="flex flex-col gap-5">
         <div className="flex justify-between">
-          <h1 className="font-bold text-gray-700 text-2xl mb-7">Edit Video</h1>
+          <h1 className="font-bold text-2xl">Edit Video</h1>
           <Link href="/admin/manage-Video/manage">
-            <Button className="text-white bg-[var(--primary)]">
+            <Button className="text-white bg-[var(--rv-admin-bg-color)] hover:bg-[var(--rv-admin-bg-color)]">
               All Posts
             </Button>
           </Link>

@@ -66,10 +66,9 @@ export default function HeroSection() {
   };
 
   return (
-    <section className={`${styles.heroSection}`}>
-      <div className="max-w-screen-xl mx-auto px-4">
+    <section className={`${styles.heroSection} px-4`}>
+      <div className="max-w-screen-xl mx-auto section ">
         <div className="grid grid-cols-1 md:grid-cols-2 items-center gap-12">
-          {/* Left Section */}
           <div className="space-y-6">
             <h1
               className={`text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-bold ${styles.heading}`}
@@ -105,7 +104,6 @@ export default function HeroSection() {
             </div>
           </div>
 
-          {/* Right Section */}
           <div
             className={` ${styles.banner}`}
           >

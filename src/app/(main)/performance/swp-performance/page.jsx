@@ -24,6 +24,7 @@ import { Label } from "@radix-ui/react-label";
 import { SwpPerformanceChart } from "@/components/charts/swpPerformanceChart";
 import SwpPerformanceTable from "@/components/swpPerformanceTable";
 import { Breadcrumb, BreadcrumbItem, BreadcrumbLink, BreadcrumbList, BreadcrumbPage, BreadcrumbSeparator } from "@/components/ui/breadcrumb";
+import InnerBanner from "@/components/innerBanner/InnerBanner";
 
 export default function Page() {
     const [loading, setLoading] = useState(false);
@@ -285,376 +286,397 @@ export default function Page() {
     };
 
     return (
-        <div className="pt-20">
-            <div className="max-w-screen-xl mx-auto main_section lg:px-1 px-3">
-                   <div className="mb-5 flex flex-col md:flex-row gap-5 justify-between ">
-                  <div className="">
-                    <span className="text-2xl md:text-3xl font-bold uppercase">
-                      SWP Performance
-                    </span>
-                  </div>
-                  
-                </div>
-                <Toaster />
-                <div>
-                    <div className='col-span-1 border border-gray-200 rounded-2xl bg-white p-2 mb-3'>
-                        <div className="sip-calculator container mx-auto p-3 sticky top-0 z-10">
-                            {/* Investment Type Toggle */}
-                            <div className="flex space-x-4 mb-8">
-                                <Button
-                                    onClick={() => (setIsMonthlySip(true), setSchemesData([]), setGraphData(false), setSelectedAcms([]))}
-                                    className={`text-sm rounded-full hover:bg-[var(--rv-primary)] hover:text-white ${isMonthlySip ? "bg-[var(--rv-primary)] text-[var(--rv-secondary)]"
-                                        : "bg-[var(--rv-secondary)] text-black border"
-                                        }`}
-                                >
-                                    Fund House
-                                </Button>
-                                <Button
-                                    onClick={() => (setIsMonthlySip(false), setSchemesData([]), setGraphData(false), setSelectedAssets(new Set()))}
-                                    className={`text-sm rounded-full hover:bg-[var(--rv-primary)] hover:text-white ${!isMonthlySip ? "bg-[var(--rv-primary)] text-[var(--rv-secondary)]"
-                                        : "bg-[var(--rv-secondary)] text-black border"
-                                        }`}
-                                >
-                                    Asset Category
-                                </Button>
-                            </div>
-                            <div className="input-fields mt-5 mb-5">
-                                {isMonthlySip ? (
-                                    <div className="w-full">
-                                        <h4 className="font-semibold text-gray-700">Select AMC</h4>
-                                        <div className="max-w-full mt-2 border border-gray-300 p-3 rounded h-60 overflow-y-auto">
-                                            <input
-                                                type="text"
-                                                placeholder="Search Scheme"
-                                                className="w-full px-3 py-2 border rounded mb-1"
-                                                value={searchQuery}
-                                                onChange={(e) => setSearchQuery(e.target.value.toLowerCase())} // Update search query
-                                            />
-                                            {/* Render filtered checkboxes for each AMC */}
-                                            {allAcmdata
-                                                ?.filter((scheme) =>
-                                                    scheme?.funddes?.toLowerCase().includes(searchQuery)
-                                                ).map((scheme, index) => (
-                                                    <div key={index} className="flex items-center mb-1">
-                                                        <input
-                                                            type="checkbox"
-                                                            id={`acm-${index}`}
-                                                            checked={selectedAcms.includes(scheme)}
-                                                            onChange={() => handleAcmSelect(scheme)}
-                                                            className="mr-2"
-                                                        />
-                                                        <label htmlFor={`acm-${index}`} className="text-stone-900 text-sm">
-                                                            {scheme?.funddes}
-                                                        </label>
-                                                    </div>
-                                                ))}
-                                        </div>
-                                    </div>
-                                ) : (
-                                    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-x-4 gap-y-4">
-                                        <div>
-                                            <p className="font-semibold text-gray-700">
-                                                Select Equity Funds
-                                            </p>
-                                            {console.log(assetCategory)}
-                                            <div className="mt-2 border border-gray-300 p-3 rounded h-60 overflow-y-auto">
-                                                {/* Equity Funds checkboxes here */}
-                                                {assetCategory
-                                                    ?.filter((item) => item.nav_c2 === "Equity")
-                                                    .map((scheme, index) => (
+        <>
+            <InnerBanner title={'SWP Performance'} />
+            <div className="px-4">
+                <div className="max-w-screen-xl mx-auto section">
+                    <div className="mb-5 flex flex-col md:flex-row gap-5 justify-between ">
+                        <div className="">
+                            <span className="text-2xl md:text-3xl font-bold uppercase">
+                                SWP Performance
+                            </span>
+                        </div>
+
+                    </div>
+                    <Toaster />
+                    <div>
+                        <div className='col-span-1 border border-gray-200 rounded-2xl bg-white p-2 mb-3'>
+                            <div className="sip-calculator container mx-auto p-3 sticky top-0 z-10">
+                                {/* Investment Type Toggle */}
+                                <div className="flex space-x-4 mb-8">
+                                    <Button
+                                        onClick={() => (setIsMonthlySip(true), setSchemesData([]), setGraphData(false), setSelectedAcms([]))}
+                                        className={`text-sm rounded-full ${isMonthlySip ? "bg-[var(--rv-primary)] text-[var(--rv-white)]"
+                                            : "bg-transparent shadow-none text-black border"
+                                            }`}
+                                    >
+                                        Fund House
+                                    </Button>
+                                    <Button
+                                        onClick={() => (setIsMonthlySip(false), setSchemesData([]), setGraphData(false), setSelectedAssets(new Set()))}
+                                        className={`text-sm rounded-full ${!isMonthlySip ? "bg-[var(--rv-primary)] text-[var(--rv-white)]"
+                                            : "bg-transparent shadow-none text-black border"
+                                            }`}
+                                    >
+                                        Asset Category
+                                    </Button>
+                                </div>
+                                <div className="input-fields mt-5 mb-5">
+                                    {isMonthlySip ? (
+                                        <div className="w-full">
+                                            <h4 className="font-semibold text-gray-700">Select AMC</h4>
+                                            <div className="max-w-full mt-2 border border-gray-300 p-3 rounded h-60 overflow-y-auto">
+                                                <input
+                                                    type="text"
+                                                    placeholder="Search Scheme"
+                                                    className="w-full px-3 py-2 border rounded mb-1"
+                                                    value={searchQuery}
+                                                    onChange={(e) => setSearchQuery(e.target.value.toLowerCase())} // Update search query
+                                                />
+                                                {/* Render filtered checkboxes for each AMC */}
+                                                {allAcmdata
+                                                    ?.filter((scheme) =>
+                                                        scheme?.funddes?.toLowerCase().includes(searchQuery)
+                                                    ).map((scheme, index) => (
                                                         <div key={index} className="flex items-center mb-1">
                                                             <input
                                                                 type="checkbox"
-                                                                id={`asset-equity-${index}`}
-                                                                checked={selectedAssets.has(
-                                                                    scheme.assets_class
-                                                                )}
-                                                                onChange={() => handleAssetSelect(scheme)}
+                                                                id={`acm-${index}`}
+                                                                checked={selectedAcms.includes(scheme)}
+                                                                onChange={() => handleAcmSelect(scheme)}
                                                                 className="mr-2"
                                                             />
-                                                            <label
-                                                                htmlFor={`asset-equity-${index}`}
-                                                                className="text-stone-900 text-sm"
-                                                            >
-                                                                Equity - {scheme?.assets_class}
+                                                            <label htmlFor={`acm-${index}`} className="text-stone-900 text-sm">
+                                                                {scheme?.funddes}
                                                             </label>
                                                         </div>
                                                     ))}
                                             </div>
                                         </div>
-                                        <div>
-                                            <p className="font-semibold text-gray-700">
-                                                Select Debt Funds
-                                            </p>
-                                            <div className="mt-2 border border-gray-300 p-3 rounded h-60 overflow-y-auto">
-                                                {assetCategory
-                                                    ?.filter((item) => item.nav_c2 === "Debt")
-                                                    .map((scheme, index) => (
-                                                        <div key={index} className="flex items-center mb-1">
-                                                            <input
-                                                                type="checkbox"
-                                                                id={`asset-debt-${index}`}
-                                                                checked={selectedAssets.has(
-                                                                    scheme.assets_class
-                                                                )}
-                                                                onChange={() => handleAssetSelect(scheme)}
-                                                                className="mr-2"
-                                                            />
-                                                            <label
-                                                                htmlFor={`asset-debt-${index}`}
-                                                                className="text-stone-900 text-sm"
-                                                            >
-                                                                Debt - {scheme?.assets_class}
-                                                            </label>
-                                                        </div>
-                                                    ))}
+                                    ) : (
+                                        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-x-4 gap-y-4">
+                                            <div>
+                                                <p className="font-semibold text-gray-700">
+                                                    Select Equity Funds
+                                                </p>
+                                                <div className="mt-2 border border-gray-300 p-3 rounded h-60 overflow-y-auto">
+                                                    {/* Equity Funds checkboxes here */}
+                                                    {assetCategory
+                                                        ?.filter((item) => item.nav_c2 === "Equity")
+                                                        .map((scheme, index) => (
+                                                            <div key={index} className="flex items-center mb-1">
+                                                                <input
+                                                                    type="checkbox"
+                                                                    id={`asset-equity-${index}`}
+                                                                    checked={selectedAssets.has(
+                                                                        scheme.assets_class
+                                                                    )}
+                                                                    onChange={() => handleAssetSelect(scheme)}
+                                                                    className="mr-2"
+                                                                />
+                                                                <label
+                                                                    htmlFor={`asset-equity-${index}`}
+                                                                    className="text-stone-900 text-sm"
+                                                                >
+                                                                    Equity - {scheme?.assets_class}
+                                                                </label>
+                                                            </div>
+                                                        ))}
+                                                </div>
                                             </div>
-                                        </div>
-                                        <div>
-                                            <p className="font-semibold text-gray-700">
-                                                Select Hybrid Funds
-                                            </p>
-                                            <div className="mt-2 border border-gray-300 p-3 rounded h-60 overflow-y-auto">
-                                                {/* Hybrid Funds checkboxes here */}
-                                                {assetCategory
-                                                    ?.filter((item) => item.nav_c2 === "Hybrid")
-                                                    .map((scheme, index) => (
-                                                        <div key={index} className="flex items-center mb-1">
-                                                            <input
-                                                                type="checkbox"
-                                                                id={`asset-hybrid-${index}`}
-                                                                checked={selectedAssets.has(
-                                                                    scheme.assets_class
-                                                                )}
-                                                                onChange={() => handleAssetSelect(scheme)}
-                                                                className="mr-2"
-                                                            />
-                                                            <label
-                                                                htmlFor={`asset-hybrid-${index}`}
-                                                                className="text-stone-900 text-sm"
-                                                            >
-                                                                Hybrid - {scheme?.assets_class}
-                                                            </label>
-                                                        </div>
-                                                    ))}
+                                            <div>
+                                                <p className="font-semibold text-gray-700">
+                                                    Select Debt Funds
+                                                </p>
+                                                <div className="mt-2 border border-gray-300 p-3 rounded h-60 overflow-y-auto">
+                                                    {assetCategory
+                                                        ?.filter((item) => item.nav_c2 === "Debt")
+                                                        .map((scheme, index) => (
+                                                            <div key={index} className="flex items-center mb-1">
+                                                                <input
+                                                                    type="checkbox"
+                                                                    id={`asset-debt-${index}`}
+                                                                    checked={selectedAssets.has(
+                                                                        scheme.assets_class
+                                                                    )}
+                                                                    onChange={() => handleAssetSelect(scheme)}
+                                                                    className="mr-2"
+                                                                />
+                                                                <label
+                                                                    htmlFor={`asset-debt-${index}`}
+                                                                    className="text-stone-900 text-sm"
+                                                                >
+                                                                    Debt - {scheme?.assets_class}
+                                                                </label>
+                                                            </div>
+                                                        ))}
+                                                </div>
                                             </div>
-                                        </div>
-                                        <div>
-                                            <p className="font-semibold text-gray-700">
-                                                Select Commodity Funds/ Others
-                                            </p>
-                                            <div className="mt-2 border border-gray-300 p-3 rounded h-60 overflow-y-auto">
-                                                {assetCategory
-                                                    ?.filter(
-                                                        (item) =>
-                                                            item.nav_c2 === "Other " ||
-                                                            item.nav_c2 === "Others" ||
-                                                            item.nav_c2 === "Sol Oriented"
-                                                    )
-                                                    .map((scheme, index) => (
-                                                        <div key={index} className="flex items-center mb-1">
-                                                            <input
-                                                                type="checkbox"
-                                                                id={`asset-other-${index}`}
-                                                                checked={selectedAssets.has(
-                                                                    scheme.assets_class
-                                                                )}
-                                                                onChange={() => handleAssetSelect(scheme)}
-                                                                className="mr-2"
-                                                            />
-                                                            <label
-                                                                htmlFor={`asset-other-${index}`}
-                                                                className="text-stone-900 text-sm"
-                                                            >
-                                                                Other - {scheme?.assets_class}
-                                                            </label>
-                                                        </div>
-                                                    ))}
+                                            <div>
+                                                <p className="font-semibold text-gray-700">
+                                                    Select Hybrid Funds
+                                                </p>
+                                                <div className="mt-2 border border-gray-300 p-3 rounded h-60 overflow-y-auto">
+                                                    {/* Hybrid Funds checkboxes here */}
+                                                    {assetCategory
+                                                        ?.filter((item) => item.nav_c2 === "Hybrid")
+                                                        .map((scheme, index) => (
+                                                            <div key={index} className="flex items-center mb-1">
+                                                                <input
+                                                                    type="checkbox"
+                                                                    id={`asset-hybrid-${index}`}
+                                                                    checked={selectedAssets.has(
+                                                                        scheme.assets_class
+                                                                    )}
+                                                                    onChange={() => handleAssetSelect(scheme)}
+                                                                    className="mr-2"
+                                                                />
+                                                                <label
+                                                                    htmlFor={`asset-hybrid-${index}`}
+                                                                    className="text-stone-900 text-sm"
+                                                                >
+                                                                    Hybrid - {scheme?.assets_class}
+                                                                </label>
+                                                            </div>
+                                                        ))}
+                                                </div>
                                             </div>
-                                        </div>
-                                    </div>
-                                )}
-                            </div>
-                            <div className="grid grid-cols-1 lg:grid-cols-6">
-                                <div className="col-span-2 mt-2 overflow-y-auto p-2">
-                                    {/* Dropdown for selecting a scheme */}
-                                    <div className="mb-4">
-                                        <label htmlFor="schemeSelect" className="text-sm block font-semibold text-gray-700 mb-1">
-                                            Select Scheme
-                                        </label>
-                                        <select
-                                            id="schemeSelect"
-                                            className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5"
-                                            onChange={(e) => {
-                                                const selectedScheme = schemesData?.data.find(
-                                                    (scheme) => scheme.funddes === e.target.value
-                                                );
-                                                setPcode(selectedScheme?.pcode);
-                                                setTitle(selectedScheme?.funddes);
-                                            }}
-                                        >
-                                            <option value="" selected>
-                                                Choose a scheme
-                                            </option>
-                                            {!isMonthlySip ?
-                                                schemesData
-                                                    ? schemesData &&
-                                                    schemesData?.data?.map((scheme, index) => (
-                                                        <option key={index} value={scheme?.funddes}>
-                                                            {scheme?.funddes}
-                                                        </option>
-                                                    ))
-                                                    : "Loading..."
-                                                :
-                                                selectedAcms &&
-                                                    selectedAcms.length > 0 &&
-                                                    schemesData?.data ? (
-                                                    schemesData.data
-                                                        .filter((scheme) =>
-                                                            selectedAcms.some(
-                                                                (acm) => acm.fund === scheme.fund
-                                                            )
+                                            <div>
+                                                <p className="font-semibold text-gray-700">
+                                                    Select Commodity Funds/ Others
+                                                </p>
+                                                <div className="mt-2 border border-gray-300 p-3 rounded h-60 overflow-y-auto">
+                                                    {assetCategory
+                                                        ?.filter(
+                                                            (item) =>
+                                                                item.nav_c2 === "Other " ||
+                                                                item.nav_c2 === "Others" ||
+                                                                item.nav_c2 === "Sol Oriented"
                                                         )
                                                         .map((scheme, index) => (
-                                                            <option key={index} value={scheme.funddes}>
-                                                                {scheme.funddes}
+                                                            <div key={index} className="flex items-center mb-1">
+                                                                <input
+                                                                    type="checkbox"
+                                                                    id={`asset-other-${index}`}
+                                                                    checked={selectedAssets.has(
+                                                                        scheme.assets_class
+                                                                    )}
+                                                                    onChange={() => handleAssetSelect(scheme)}
+                                                                    className="mr-2"
+                                                                />
+                                                                <label
+                                                                    htmlFor={`asset-other-${index}`}
+                                                                    className="text-stone-900 text-sm"
+                                                                >
+                                                                    Other - {scheme?.assets_class}
+                                                                </label>
+                                                            </div>
+                                                        ))}
+                                                </div>
+                                            </div>
+                                        </div>
+                                    )}
+                                </div>
+                                <div className="grid grid-cols-1 lg:grid-cols-6">
+                                    <div className="col-span-2 mt-2 overflow-y-auto p-2">
+                                        {/* Dropdown for selecting a scheme */}
+                                        <div className="mb-4">
+                                            <label htmlFor="schemeSelect" className="text-sm block font-semibold text-gray-700 mb-1">
+                                                Select Scheme
+                                            </label>
+                                            <select
+                                                id="schemeSelect"
+                                                className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5"
+                                                onChange={(e) => {
+                                                    const selectedScheme = schemesData?.data.find(
+                                                        (scheme) => scheme.funddes === e.target.value
+                                                    );
+                                                    setPcode(selectedScheme?.pcode);
+                                                    setTitle(selectedScheme?.funddes);
+                                                }}
+                                            >
+                                                <option value="" selected>
+                                                    Choose a scheme
+                                                </option>
+                                                {!isMonthlySip ?
+                                                    schemesData
+                                                        ? schemesData &&
+                                                        schemesData?.data?.map((scheme, index) => (
+                                                            <option key={index} value={scheme?.funddes}>
+                                                                {scheme?.funddes}
                                                             </option>
                                                         ))
-                                                ) : (
-                                                    <option disabled>Select...</option>
-                                                )}
-                                        </select>
+                                                        : "Loading..."
+                                                    :
+                                                    selectedAcms &&
+                                                        selectedAcms.length > 0 &&
+                                                        schemesData?.data ? (
+                                                        schemesData.data
+                                                            .filter((scheme) =>
+                                                                selectedAcms.some(
+                                                                    (acm) => acm.fund === scheme.fund
+                                                                )
+                                                            )
+                                                            .map((scheme, index) => (
+                                                                <option key={index} value={scheme.funddes}>
+                                                                    {scheme.funddes}
+                                                                </option>
+                                                            ))
+                                                    ) : (
+                                                        <option disabled>Select...</option>
+                                                    )}
+                                            </select>
+                                        </div>
+                                    </div>
+                                    <div className="col-span-2 mt-2 overflow-y-auto p-2">
+                                        {/* Text input for scheme name */}
+                                        <div className="mb-4">
+                                            <label htmlFor="schemeName" className="text-sm block font-semibold text-gray-700 mb-1">Initial Amt</label>
+                                            <input
+                                                type="number"
+                                                id="schemeName"
+                                                placeholder="Enter scheme name"
+                                                className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5"
+                                                value={initialAmount}
+                                                onChange={(e) => setInitialAmount(e.target.value)}
+                                            />
+                                        </div>
+                                    </div>
+                                    <div className="col-span-2 mt-2 overflow-y-auto p-2">
+                                        {/* Text input for scheme name */}
+                                        <div className="mb-4">
+                                            <label htmlFor="schemeName" className="text-sm block font-semibold text-gray-700 mb-1">Withdrawal Amt</label>
+                                            <input
+                                                type="number"
+                                                id="schemeName"
+                                                placeholder="Enter scheme name"
+                                                className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5"
+                                                value={withdrawalAmount}
+                                                onChange={(e) => setWithdrawalAmount(e.target.value)}
+                                            />
+                                        </div>
+                                    </div>
+                                    {/* Date input for selecting a date */}
+                                    <div className="col-span-2 mt-2 overflow-y-auto p-2">
+                                        <div className="mb-4">
+                                            <label htmlFor="schemeDate" className="text-sm block font-semibold text-gray-700 mb-1">Investment Date</label>
+                                            <input
+                                                type="date"
+                                                id="schemeDate"
+                                                className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5"
+                                                min={startsipDate}
+                                                max={getTodayDate()}
+                                                value={valuationDate}
+                                                onChange={(e) => setValuationDate(e.target.value)}
+                                            />
+                                        </div>
+                                    </div>
+                                    {/* Date input for selecting a date */}
+                                    <div className="col-span-2 mt-2 overflow-y-auto p-2">
+                                        <div className="mb-4">
+                                            <label htmlFor="schemeDate" className="text-sm block font-semibold text-gray-700 mb-1">Start Date</label>
+                                            <input
+                                                type="date"
+                                                id="schemeDate"
+                                                className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5"
+                                                value={startsipDate}
+                                                onChange={(e) => setStartSipDate(e.target.value)}
+                                            />
+                                        </div>
+                                    </div>
+                                    {/* Date input for selecting a date */}
+                                    <div className="col-span-2 mt-2 overflow-y-auto p-2">
+                                        <div className="mb-4">
+                                            <label htmlFor="schemeDate" className="text-sm block font-semibold text-gray-700 mb-1">End Date</label>
+                                            <input
+                                                type="date"
+                                                id="schemeDate"
+                                                className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5"
+                                                min={startsipDate}
+                                                value={endsipDate}
+                                                onChange={(e) => setEndSipDate(e.target.value)}
+                                            />
+                                        </div>
                                     </div>
                                 </div>
-                                <div className="col-span-2 mt-2 overflow-y-auto p-2">
-                                    {/* Text input for scheme name */}
-                                    <div className="mb-4">
-                                        <label htmlFor="schemeName" className="text-sm block font-semibold text-gray-700 mb-1">Initial Amt</label>
-                                        <input
-                                            type="number"
-                                            id="schemeName"
-                                            placeholder="Enter scheme name"
-                                            className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5"
-                                            value={initialAmount}
-                                            onChange={(e) => setInitialAmount(e.target.value)}
-                                        />
-                                    </div>
-                                </div>
-                                <div className="col-span-2 mt-2 overflow-y-auto p-2">
-                                    {/* Text input for scheme name */}
-                                    <div className="mb-4">
-                                        <label htmlFor="schemeName" className="text-sm block font-semibold text-gray-700 mb-1">Withdrawal Amt</label>
-                                        <input
-                                            type="number"
-                                            id="schemeName"
-                                            placeholder="Enter scheme name"
-                                            className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5"
-                                            value={withdrawalAmount}
-                                            onChange={(e) => setWithdrawalAmount(e.target.value)}
-                                        />
-                                    </div>
-                                </div>
-                                {/* Date input for selecting a date */}
-                                <div className="col-span-2 mt-2 overflow-y-auto p-2">
-                                    <div className="mb-4">
-                                        <label htmlFor="schemeDate" className="text-sm block font-semibold text-gray-700 mb-1">Investment Date</label>
-                                        <input
-                                            type="date"
-                                            id="schemeDate"
-                                            className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5"
-                                            min={startsipDate}
-                                            max={getTodayDate()}
-                                            value={valuationDate}
-                                            onChange={(e) => setValuationDate(e.target.value)}
-                                        />
-                                    </div>
-                                </div>
-                                {/* Date input for selecting a date */}
-                                <div className="col-span-2 mt-2 overflow-y-auto p-2">
-                                    <div className="mb-4">
-                                        <label htmlFor="schemeDate" className="text-sm block font-semibold text-gray-700 mb-1">Start Date</label>
-                                        <input
-                                            type="date"
-                                            id="schemeDate"
-                                            className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5"
-                                            value={startsipDate}
-                                            onChange={(e) => setStartSipDate(e.target.value)}
-                                        />
-                                    </div>
-                                </div>
-                                {/* Date input for selecting a date */}
-                                <div className="col-span-2 mt-2 overflow-y-auto p-2">
-                                    <div className="mb-4">
-                                        <label htmlFor="schemeDate" className="text-sm block font-semibold text-gray-700 mb-1">End Date</label>
-                                        <input
-                                            type="date"
-                                            id="schemeDate"
-                                            className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5"
-                                            min={startsipDate}
-                                            value={endsipDate}
-                                            onChange={(e) => setEndSipDate(e.target.value)}
-                                        />
-                                    </div>
-                                </div>
+                                <Button
+                                    className="bg-[var(--rv-primary)] text-[var(--rv-white)] hover:bg-[var(--rv-secondary)]"
+                                    onClick={() => handleSubmit()}
+                                >
+                                    Show
+                                </Button>
                             </div>
-                            <Button className="bg-[var(--rv-primary)] text-[var(--rv-secondary)] hover:text-black disabled:opacity-50 hover:bg-[var(--rv-secondary)]" onClick={() => handleSubmit()}>Show</Button>
                         </div>
-                    </div>
-                    <div className='col-span-1'>
-                        {graphData &&
-                            <div className="mb-5 flex justify-between">
-                                <div className="space-x-2">
-                                    <Button variant="outline" className={`border-2 ${viewby === 'graph' ? 'border-blue-600' : 'border-gray-600'} uppercase font-semibold text-gray-800`} onClick={() => setViewBy('graph')}>Graph</Button>
-                                    <Button variant="outline" className={`border-2 ${viewby === 'table' ? 'border-blue-600' : 'border-gray-600'} uppercase font-semibold text-gray-800`} onClick={() => setViewBy('table')}>Table</Button>
-                                </div>
-                                <div className="cursor-pointer" onClick={() => handlePdf(result, title, startsipDate, valuationDate, withdrawalAmount)}>
-                                    <h1 className="text-2xl">{viewby === "graph" && <FaFilePdf />}</h1>
-                                </div>
-                            </div>
-                        }
-                        {result && viewby === 'graph' ?
-                            graphData && <div className="">
-                                <div className="grid lg:grid-cols-6 md:grid-cols-3 grid-cols-1 gap-3 my-10">
-                                    <div className="py-2 px-1 border border-stone-600 shadow shadow-emerald-100 rounded-sm text-center">
-                                        <h1 className="font-semibold text-gray-800 text-sm">Amount Invested</h1>
-                                        <h1 className="font-medium text-gray-900 text-sm">{result?.initialAmount}</h1>
+                        <div className='col-span-1'>
+                            {graphData &&
+                                <div className="mb-5 flex justify-between">
+                                    <div className="space-x-2">
+                                        <Button
+                                            variant="outline"
+                                            className={`border-2 ${viewby === "graph" ? "border-[var(--rv-primary)]" : "border-[var(--rv-secondary)]"
+                                                } uppercase font-semibold text-gray-800`}
+                                            onClick={() => setViewBy("graph")}
+                                        >
+                                            Graph
+                                        </Button>
+                                        <Button
+                                            variant="outline"
+                                            className={`border-2 ${viewby === "table" ? "border-[var(--rv-primary)]" : "border-[var(--rv-secondary)]"
+                                                } uppercase font-semibold text-gray-800`}
+                                            onClick={() => setViewBy("table")}
+                                        >
+                                            Table
+                                        </Button>
                                     </div>
-                                    <div className="py-2 px-1 border border-stone-600 shadow shadow-emerald-100 rounded-sm text-center">
-                                        <h1 className="font-semibold text-gray-800 text-sm">Monthly Withdrawl</h1>
-                                        <h1 className="font-medium text-gray-900 text-sm">{withdrawalAmount}</h1>
-                                    </div>
-                                    <div className="py-2 px-1 border border-stone-600 shadow shadow-emerald-100 rounded-sm text-center">
-                                        <h1 className="font-semibold text-gray-800 text-sm">Total Withdrawl (A)</h1>
-                                        <h1 className="font-medium text-gray-900 text-sm">{result?.totalWithdrawlAmount}</h1>
-                                    </div>
-                                    <div className="py-2 px-1 border border-stone-600 shadow shadow-emerald-100 rounded-sm text-center">
-                                        <h1 className="font-semibold text-gray-800 text-sm">Remaning Fund Value (B)</h1>
-                                        <h1 className="font-medium text-gray-900 text-sm">{result?.fundRemaining}</h1>
-                                    </div>
-                                    <div className="py-2 px-1 border border-stone-600 shadow shadow-emerald-100 rounded-sm text-center">
-                                        <h1 className="font-semibold text-gray-800 text-sm">Total Portfolio Value (A+B)</h1>
-                                        <h1 className="font-medium text-gray-900 text-sm">{result?.portFolioValue}</h1>
-                                    </div>
-                                    <div className="py-2 px-1 border border-stone-600 shadow shadow-emerald-100 rounded-sm text-center">
-                                        <h1 className="font-semibold text-gray-800 text-sm">XIRR (%)</h1>
-                                        <h1 className="font-medium text-gray-900 text-sm">{result?.xirrRate}</h1>
+                                    <div className="cursor-pointer" onClick={() => handlePdf(result, title, startsipDate, valuationDate, withdrawalAmount)}>
+                                        <h1 className="text-2xl">{viewby === "graph" && <FaFilePdf />}</h1>
                                     </div>
                                 </div>
-                                <div id="graphId">
-                                    {graphData && <SwpPerformanceChart piedata={result} startDate={startsipDate} endDate={endsipDate} title={title} />}
+                            }
+                            {result && viewby === 'graph' ?
+                                graphData && <div className="">
+                                    <div className="grid lg:grid-cols-6 md:grid-cols-3 grid-cols-1 gap-3 my-10">
+                                        <div className="py-2 px-1 border border-stone-600 shadow shadow-emerald-100 rounded-sm text-center">
+                                            <h1 className="font-semibold text-gray-800 text-sm">Amount Invested</h1>
+                                            <h1 className="font-medium text-gray-900 text-sm">{result?.initialAmount}</h1>
+                                        </div>
+                                        <div className="py-2 px-1 border border-stone-600 shadow shadow-emerald-100 rounded-sm text-center">
+                                            <h1 className="font-semibold text-gray-800 text-sm">Monthly Withdrawl</h1>
+                                            <h1 className="font-medium text-gray-900 text-sm">{withdrawalAmount}</h1>
+                                        </div>
+                                        <div className="py-2 px-1 border border-stone-600 shadow shadow-emerald-100 rounded-sm text-center">
+                                            <h1 className="font-semibold text-gray-800 text-sm">Total Withdrawl (A)</h1>
+                                            <h1 className="font-medium text-gray-900 text-sm">{result?.totalWithdrawlAmount}</h1>
+                                        </div>
+                                        <div className="py-2 px-1 border border-stone-600 shadow shadow-emerald-100 rounded-sm text-center">
+                                            <h1 className="font-semibold text-gray-800 text-sm">Remaning Fund Value (B)</h1>
+                                            <h1 className="font-medium text-gray-900 text-sm">{result?.fundRemaining}</h1>
+                                        </div>
+                                        <div className="py-2 px-1 border border-stone-600 shadow shadow-emerald-100 rounded-sm text-center">
+                                            <h1 className="font-semibold text-gray-800 text-sm">Total Portfolio Value (A+B)</h1>
+                                            <h1 className="font-medium text-gray-900 text-sm">{result?.portFolioValue}</h1>
+                                        </div>
+                                        <div className="py-2 px-1 border border-stone-600 shadow shadow-emerald-100 rounded-sm text-center">
+                                            <h1 className="font-semibold text-gray-800 text-sm">XIRR (%)</h1>
+                                            <h1 className="font-medium text-gray-900 text-sm">{result?.xirrRate}</h1>
+                                        </div>
+                                    </div>
+                                    <div id="graphId">
+                                        {graphData && <SwpPerformanceChart piedata={result} startDate={startsipDate} endDate={endsipDate} title={title} />}
+                                    </div>
                                 </div>
-                            </div>
-                            :
-                            <div>
-                                {graphData && <SwpPerformanceTable data={result} />}
-                            </div>
-                        }
-                        {error && (
-                            <div>No Data Found</div>
-                        )}
+                                :
+                                <div>
+                                    {graphData && <SwpPerformanceTable data={result} />}
+                                </div>
+                            }
+                            {error && (
+                                <div>No Data Found</div>
+                            )}
+                        </div>
                     </div>
                 </div>
             </div>
-        </div>
+        </>
     );
 }

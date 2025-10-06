@@ -104,92 +104,93 @@ const DiffrentFunds = () => {
   };
 
   return (
-    <section className={`${styles.diffrentFunds} section`}>
-      <div className={`${styles.container} max-w-screen-xl mx-auto px-4 ${styles.innerDiffrance}`}>
-        <HomeHeading title={`Returns That Make a Difference`} center="true" />
-        {/* Input Controls */}
-        <div className={styles.controlsGrid}>
-          {/* Monthly Amount */}
-          <div className={styles.sliderBox}>
-            <div className={styles.labelRow}>
-              <label className={styles.label} htmlFor="monthly">
-                Monthly Invested Amount
-              </label> 
+    <section className={`${styles.diffrentFunds} px-4`}>
+      <div className={` max-w-screen-xl mx-auto section `}>
+        <div className={`${styles.container} ${styles.innerDiffrance}`}>
+          <HomeHeading title={`Returns That Make a Difference`} center="true" />
+          {/* Input Controls */}
+          <div className={styles.controlsGrid}>
+            {/* Monthly Amount */}
+            <div className={styles.sliderBox}>
+              <div className={styles.labelRow}>
+                <label className={styles.label} htmlFor="monthly">
+                  Monthly Invested Amount
+                </label>
+                <input
+                  type="number"
+                  id="monthly"
+                  min="0"
+                  max="100000"
+                  step="1"
+                  value={monthly}
+                  onChange={(e) => {
+                    let val = parseInt(e.target.value);
+                    if (isNaN(val) || val < 0) val = 0;
+                    if (val > 50000) val = 50000;
+                    setMonthly(val);
+                  }}
+                  className={styles.valueInput}
+                />
+              </div>
               <input
-                type="number"
-                id="monthly"
+                ref={monthlyRef}
+                type="range"
                 min="0"
                 max="100000"
                 step="1"
                 value={monthly}
                 onChange={(e) => {
-                  let val = parseInt(e.target.value);
-                  if (isNaN(val) || val < 0) val = 0;
-                  if (val > 50000) val = 50000;
-                  setMonthly(val);
+                  setMonthly(parseInt(e.target.value));
+                  updateSliderBackground(e);
                 }}
-                className={styles.valueInput}
+                className={styles.rangeSlider}
               />
             </div>
-            <input
-              ref={monthlyRef}
-              type="range"
-              min="0"
-              max="100000"
-              step="1"
-              value={monthly}
-              onChange={(e) => {
-                setMonthly(parseInt(e.target.value));
-                updateSliderBackground(e);
-              }}
-              className={styles.rangeSlider}
-            />
-          </div>
 
-          {/* Years */}
-          <div className={styles.sliderBox}>
-            <div className={styles.labelRow}>
-              <label className={styles.label} htmlFor="years">
-                Time Period (in years)
-              </label>
+            {/* Years */}
+            <div className={styles.sliderBox}>
+              <div className={styles.labelRow}>
+                <label className={styles.label} htmlFor="years">
+                  Time Period (in years)
+                </label>
+                <input
+                  type="number"
+                  id="years"
+                  min="0"
+                  max="30"
+                  step="1"
+                  value={years}
+                  onChange={(e) => {
+                    let val = parseInt(e.target.value);
+                    if (isNaN(val) || val < 0) val = 0;
+                    if (val > 30) val = 30;
+                    setYears(val);
+                  }}
+                  className={styles.valueInput}
+                />
+              </div>
               <input
-                type="number"
-                id="years"
+                ref={yearsRef}
+                type="range"
                 min="0"
                 max="30"
                 step="1"
                 value={years}
                 onChange={(e) => {
-                  let val = parseInt(e.target.value);
-                  if (isNaN(val) || val < 0) val = 0;
-                  if (val > 30) val = 30;
-                  setYears(val);
+                  setYears(parseInt(e.target.value));
+                  updateSliderBackground(e);
                 }}
-                className={styles.valueInput}
+                className={styles.rangeSlider}
               />
             </div>
-            <input
-              ref={yearsRef}
-              type="range"
-              min="0"
-              max="30"
-              step="1"
-              value={years}
-              onChange={(e) => {
-                setYears(parseInt(e.target.value));
-                updateSliderBackground(e);
-              }}
-              className={styles.rangeSlider}
-            />
           </div>
-        </div>
 
-        {/* Fund Comparison Cards */}
-        <div className={styles.fundGrid}>
-          {funds.map((fund, idx) => (
-            <div key={idx} className={styles.card}>
-              <div className={styles.iconWithText}>
-                {/* <img
+          {/* Fund Comparison Cards */}
+          <div className={styles.fundGrid}>
+            {funds.map((fund, idx) => (
+              <div key={idx} className={styles.card}>
+                <div className={styles.iconWithText}>
+                  {/* <img
                   src={fund.icon}
                   alt={fund.name}
                   className={{ display: "none" }}
@@ -199,33 +200,34 @@ const DiffrentFunds = () => {
                     e.currentTarget.nextSibling.style.display = "block";
                   }}
                 /> */}
-                <div className="text-[var(--rv-primary)]" >{fund.fallbackIcon}</div>
-                <h4 className={styles.fundName}>{fund.name}</h4>
+                  <div className="text-[var(--rv-primary)]" >{fund.fallbackIcon}</div>
+                  <h4 className={styles.fundName}>{fund.name}</h4>
+                </div>
+                <p className={styles.amount}>
+                  ₹{" "}
+                  {formatINR(
+                    calculateFundReturn(monthly, years, fund.rate, fund.type)
+                  )}
+                </p>
+                <p className={styles.rate}>(with {fund.rate}% return)</p>
               </div>
-              <p className={styles.amount}>
-                ₹{" "}
-                {formatINR(
-                  calculateFundReturn(monthly, years, fund.rate, fund.type)
-                )}
-              </p>
-              <p className={styles.rate}>(with {fund.rate}% return)</p>
-            </div>
-          ))}
-        </div>
+            ))}
+          </div>
 
-        {/* Summary */}
-        <p className={styles.note}>
-          If you build a personalized plan with a certified Mutual Fund
-          Distributor (MFD), your expected returns could reach up to 15%
-          annually turning ₹{formatINR(monthly)}/month into nearly ₹
-          {formatINR(calculateCompoundInterest(monthly, years, 15))} in {years}{" "}
-          years.
-        </p>
+          {/* Summary */}
+          <p className={styles.note}>
+            If you build a personalized plan with a certified Mutual Fund
+            Distributor (MFD), your expected returns could reach up to 15%
+            annually turning ₹{formatINR(monthly)}/month into nearly ₹
+            {formatINR(calculateCompoundInterest(monthly, years, 15))} in {years}{" "}
+            years.
+          </p>
 
-        <div className={styles.btnWrap}>
-          <Link href="/login" className="btn btn-primary">
-            Begin My Investment
-          </Link>
+          <div className={styles.btnWrap}>
+            <Link href="/login" className="btn btn-primary">
+              Begin My Investment
+            </Link>
+          </div>
         </div>
       </div>
     </section>

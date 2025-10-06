@@ -5,7 +5,7 @@ import InnerBanner from "@/components/innerBanner/InnerBanner";
 const CommissionDisclosurePage = () => {
   return (
     <div className="">
-      <InnerBanner pageName="Commission Disclosures" />
+      <InnerBanner title="Commission Disclosures" />
       {/* Table Section */}
       <div className="max-w-screen-xl mx-auto">
         <h2 className="text-xl  font-bold text-[var(--rv-primary)] mb-2 mt-2">Commission Disclosure under SEBI Circular SEBI/IMD/CIR No.4 /168230/09</h2>

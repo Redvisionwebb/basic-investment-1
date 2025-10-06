@@ -6,8 +6,8 @@
 }
 
 .topSection {
-  background-color: var(--rv-primary-dark);
-  padding: 4rem 1rem 8rem; /* Extra bottom padding to allow card overlap */
+  background-color: var(--rv-secondary);
+  padding: 4rem 1rem 8rem;
   text-align: center;
 }
 
@@ -28,8 +28,7 @@
 }
 
 .bottomSection {
-  margin-top: -6rem; /* Pull cards up into the dark section */
-  padding-bottom: 4rem;
+  margin-top: -6rem; 
   position: relative;
   z-index: 10;
 }

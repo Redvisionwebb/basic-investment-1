@@ -53,7 +53,7 @@ const DataTableDemo = () => {
     const fetchData = async () => {
         setLoading(true);
         try {
-            const res = await axios.get("/api/webpopups/");
+            const res = await axios.get(`${process.env.NEXT_PUBLIC_NEXTAUTH_URL}/api/webpopups/`);
             if (res.status === 200) {
                 setData(res.data);
             }
@@ -70,7 +70,7 @@ const DataTableDemo = () => {
     const handleChangeStatus = async (id, currentStatus) => {
         const status = currentStatus ? false : true; // Toggle the current status
         try {
-            const res = await axios.put(`/api/webpopups/changestatus/`, { status, id });
+            const res = await axios.put(`${process.env.NEXT_PUBLIC_NEXTAUTH_URL}/api/webpopups/changestatus/`, { status, id });
             if (res.status === 201) {
                 // Update the local state to reflect the status change
                 fetchData();
@@ -180,7 +180,7 @@ const DataTableDemo = () => {
     return (
         <DefaultLayout>
             <div className="flex justify-between">
-                <h1 className='font-bold text-gray-700 text-2xl mb-7'>Popups</h1>
+                <h3 className='font-bold text-2xl'>Popups</h3>
             </div>
             <div className="w-full">
                 <div className="flex items-center py-4">
@@ -190,9 +190,9 @@ const DataTableDemo = () => {
                         onChange={(event) =>
                             table.getColumn("title")?.setFilterValue(event.target.value)
                         }
-                        className="max-w-sm"
+                        className="max-w-xl border border-gray-300"
                     />
-                    <DropdownMenu>
+                    {/* <DropdownMenu>
                         <DropdownMenuTrigger asChild>
                             <Button variant="outline" className="ml-auto">
                                 Columns <ChevronDown className="ml-2 h-4 w-4" />
@@ -214,9 +214,9 @@ const DataTableDemo = () => {
                                     </DropdownMenuItem>
                                 ))}
                         </DropdownMenuContent>
-                    </DropdownMenu>
+                    </DropdownMenu> */}
                 </div>
-                <div className="rounded-md border">
+                <div className="rounded-md">
                     <Table>
                         <TableHeader>
                             {table.getHeaderGroups().map((headerGroup) => (

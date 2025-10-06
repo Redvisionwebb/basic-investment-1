@@ -42,7 +42,7 @@ export function InputForm() {
         formData.append('link', data.link);
 
         try {
-            const response = await axios.post('/api/advertisement/', formData, {
+            const response = await axios.post(`${process.env.NEXT_PUBLIC_NEXTAUTH_URL}/api/advertisement/`, formData, {
                 headers: {
                     'Content-Type': 'multipart/form-data',
                 },
@@ -75,17 +75,17 @@ export function InputForm() {
 
     return (
         <Form {...form}>
-            <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-8 rounded px-7">
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
+            <form onSubmit={form.handleSubmit(onSubmit)} className="flex flex-col items-start w-full gap-5 rounded-md p-3 bg-white">
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-5 w-full">
                     {/* Username Field */}
                     <FormField
                         control={form.control}
                         name="link"
                         render={({ field }) => (
                             <FormItem>
-                                <FormLabel className="font-semibold text-gray-700">link</FormLabel>
+                                <FormLabel className="font-semibold">link</FormLabel>
                                 <FormControl>
-                                    <Input placeholder="link" {...field} aria-label="link" className="border border-gray-500" />
+                                    <Input placeholder="link" {...field} aria-label="link" className="border border-gray-400" />
                                 </FormControl>
                                 <FormMessage />
                             </FormItem>
@@ -100,7 +100,7 @@ export function InputForm() {
                     name="image"
                     render={({ field }) => (
                         <FormItem>
-                            <FormLabel className="font-semibold text-gray-700">Upload Image</FormLabel>
+                            <FormLabel className="font-semibold">Upload Image</FormLabel>
                             <FormControl>
                                 <Input type="file" accept="image/*" onChange={(e) => {
                                     const file = e.target.files[0];
@@ -108,13 +108,13 @@ export function InputForm() {
                                         setSelectedImage(file);
                                         field.onChange(file); // Update react-hook-form with selected file
                                     }
-                                }} aria-label="Image" className="border border-gray-500" />
+                                }} aria-label="Image" className="border border-gray-400" />
                             </FormControl>
                             <FormMessage />
                         </FormItem>
                     )}
                 />
-                <Button className="text-white bg-[var(--primary)]" type="submit">{!loading ? 'Submit' : 'Loading...'}</Button>
+                <Button className="text-white bg-[var(--rv-admin-bg-color)] hover:bg-[var(--rv-admin-bg-color)]" type="submit">{!loading ? 'Submit' : 'Loading...'}</Button>
             </form>
         </Form>
     );
@@ -123,15 +123,17 @@ export function InputForm() {
 const AddPost = () => {
     return (
         <DefaultLayout>
-            <div className="flex justify-between">
-                <h1 className='font-bold text-gray-700 text-2xl mb-7'>Add New Advertisement</h1>
-                <Link href="/admin/manage-advertisement/manage">
-                    <Button className="text-white bg-[var(--primary)]">All Advertisement</Button>
-                </Link>
-            </div>
-            <div className='p-5 bg-gray-100 rounded '>
-                <InputForm />
-                <Toaster />
+            <div className="flex flex-col gap-5">
+                <div className="flex justify-between">
+                    <h1 className='font-bold text-2xl'>Add New Advertisement</h1>
+                    <Link href="/admin/manage-advertisement/manage">
+                        <Button className="text-white bg-[var(--rv-admin-bg-color)] hover:bg-[var(--rv-admin-bg-color)]">All Advertisement</Button>
+                    </Link>
+                </div>
+                <div className=''>
+                    <InputForm />
+                    <Toaster />
+                </div>
             </div>
         </DefaultLayout>
     )

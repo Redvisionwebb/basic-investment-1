@@ -6,7 +6,7 @@ export default function TermsConditions() {
 
     return (
         <div className={`${styles.footerpage} `}>
-            <InnerBanner pageName={"Term And Condition"} />
+            <InnerBanner title={"Term And Condition"} />
             <div className="max-w-screen-xl mx-auto section">
                 <div className="container">
                     <div>

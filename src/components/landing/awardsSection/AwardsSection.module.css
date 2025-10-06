@@ -33,7 +33,7 @@
 .leftHeading {
   font-size: 50px;
   font-weight: 600;
-  color: var(--rv-primary-dark);
+  color: var(--rv-primary);
 }
 
 .leftDescription {
@@ -103,7 +103,6 @@
 .leftHeading {
   font-size: 1.75rem;
   font-weight: 600;
-  color: var(--rv-primary-dark);
 }
 
 @media (min-width: 768px) {

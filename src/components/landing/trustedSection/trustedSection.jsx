@@ -27,8 +27,8 @@ export default function TrustedSection() {
   };
 
   return (
-    <section className={`${styles.partnerWrapper} section`}>
-      <div className="max-w-screen-xl mx-auto px-4">
+    <section className={`${styles.partnerWrapper}  px-4`}>
+      <div className="max-w-screen-xl mx-auto section">
         <div className="grid grid-cols-1 md:grid-cols-2 gap-8 items-center">
           {/* Left Side */}
           <div className="flex flex-col gap-4">

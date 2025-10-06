@@ -94,7 +94,7 @@ const Footer = ({ siteData, services, arnData, socialmedialinks }) => {
   ];
 
   return (
-    <footer className="bg-[var(--rv-black)]  bg-blend-overlay border-t-2 md:mt-88 sm:mt-88 pt-[30px]">
+    <footer className="bg-[var(--rv-secondary-dark)]  bg-blend-overlay border-t-2 md:mt-88 sm:mt-88 pt-[30px]">
       <div className="mx-auto w-full max-w-screen-xl ">
         <div className="grid grid-cols-1 gap-6 py-6 md:grid-cols-2 lg:grid-cols-12 md:px-0 px-4">
           {/* Logo - 5 columns */}

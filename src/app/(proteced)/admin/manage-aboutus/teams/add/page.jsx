@@ -65,7 +65,6 @@ const TeamForm = () => {
   });
 
   const onSubmit = async (data) => {
-    console.log("Submitting...", data);
     setLoading(true);
 
     const formData = new FormData();
@@ -77,7 +76,7 @@ const TeamForm = () => {
     formData.append("socialMedia", JSON.stringify(data.socialMedia));
 
     try {
-      const res = await axios.post("/api/teams", formData, {
+      const res = await axios.post(`${process.env.NEXT_PUBLIC_NEXTAUTH_URL}/api/teams`, formData, {
         headers: {
           "Content-Type": "multipart/form-data",
         },
@@ -106,16 +105,16 @@ const TeamForm = () => {
 
   return (
     <Form {...form}>
-      <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6 px-6">
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
+      <form onSubmit={form.handleSubmit(onSubmit)} className="flex flex-col items-start w-full gap-5 rounded-md p-3 bg-white">
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-5 w-full">
           <FormField
             control={form.control}
             name="name"
             render={({ field }) => (
               <FormItem>
-                <FormLabel>Name</FormLabel>
+                <FormLabel className="font-semibold">Name</FormLabel>
                 <FormControl>
-                  <Input placeholder="Enter name" {...field} />
+                  <Input placeholder="Enter name" {...field} className="border border-gray-400" />
                 </FormControl>
                 <FormMessage />
               </FormItem>
@@ -126,9 +125,9 @@ const TeamForm = () => {
             name="designation"
             render={({ field }) => (
               <FormItem>
-                <FormLabel>Designation</FormLabel>
+                <FormLabel className="font-semibold">Designation</FormLabel>
                 <FormControl>
-                  <Input placeholder="Enter designation" {...field} />
+                  <Input placeholder="Enter designation" {...field} className="border border-gray-400" />
                 </FormControl>
                 <FormMessage />
               </FormItem>
@@ -139,10 +138,30 @@ const TeamForm = () => {
             name="experience"
             render={({ field }) => (
               <FormItem>
-                <FormLabel>Experience (Years)</FormLabel>
+                <FormLabel className="font-semibold">Experience (Years)</FormLabel>
                 <FormControl>
-                  <Input type="number" placeholder="Years of experience" {...field} />
+                  <Input type="number" placeholder="Years of experience" {...field} className="border border-gray-400" />
                 </FormControl>
+                <FormMessage />
+              </FormItem>
+            )}
+          />
+        </div>
+        <div className="w-full">
+          <FormField
+            control={form.control}
+            name="description"
+            render={({ field }) => (
+              <FormItem>
+                <FormLabel className="font-semibold">Description</FormLabel>
+                <JoditEditor
+                  ref={editor}
+                  value={description}
+                  onBlur={(newContent) => {
+                    setDescription(newContent);
+                    form.setValue("description", newContent); // Sync JoditEditor with form
+                  }}
+                />
                 <FormMessage />
               </FormItem>
             )}
@@ -151,33 +170,15 @@ const TeamForm = () => {
 
         <FormField
           control={form.control}
-          name="description"
-          render={({ field }) => (
-            <FormItem>
-              <FormLabel>Description</FormLabel>
-              <JoditEditor
-                ref={editor}
-                value={description}
-                onBlur={(newContent) => {
-                  setDescription(newContent);
-                  form.setValue("description", newContent); // Sync JoditEditor with form
-                }}
-              />
-              <FormMessage />
-            </FormItem>
-          )}
-        />
-
-        <FormField
-          control={form.control}
           name="image"
           render={({ field }) => (
             <FormItem>
-              <FormLabel>Upload Image</FormLabel>
+              <FormLabel className="font-semibold">Upload Image</FormLabel>
               <FormControl>
                 <Input
                   type="file"
                   accept="image/*"
+                  className="border border-gray-400"
                   onChange={(e) => {
                     const file = e.target.files?.[0];
                     if (file) {
@@ -192,17 +193,17 @@ const TeamForm = () => {
           )}
         />
 
-        <div className="space-y-4">
-          <FormLabel>Social Media Links</FormLabel>
+        <div className="flex flex-col gap-5 w-full items-start">
+          <FormLabel className="font-semibold">Social Media Links</FormLabel>
           {fields.map((item, index) => (
-            <div key={item.id} className="grid grid-cols-1 md:grid-cols-3 gap-3 items-end">
+            <div key={item.id} className="grid grid-cols-1 md:grid-cols-3 gap-3 items-center w-full">
               <FormField
                 control={form.control}
                 name={`socialMedia.${index}.name`}
                 render={({ field }) => (
                   <FormItem>
                     <FormControl>
-                      <Input placeholder="Platform (e.g., LinkedIn)" {...field} />
+                      <Input placeholder="Platform (e.g., LinkedIn)" {...field} className="border border-gray-400" />
                     </FormControl>
                     <FormMessage />
                   </FormItem>
@@ -214,7 +215,7 @@ const TeamForm = () => {
                 render={({ field }) => (
                   <FormItem>
                     <FormControl>
-                      <Input placeholder="URL" {...field} />
+                      <Input placeholder="URL" {...field} className="border border-gray-400" />
                     </FormControl>
                     <FormMessage />
                   </FormItem>
@@ -223,7 +224,7 @@ const TeamForm = () => {
               <Button
                 type="button"
                 onClick={() => remove(index)}
-                className="bg-red-500 text-white mt-1"
+                className="bg-red-600 hover:bg-red-600 text-white mt-1"
               >
                 Remove
               </Button>
@@ -232,7 +233,7 @@ const TeamForm = () => {
           <Button
             type="button"
             onClick={() => append({ name: "", link: "" })}
-            className="bg-blue-500 text-white"
+            className="text-white bg-[var(--rv-admin-bg-color)] hover:bg-[var(--rv-admin-bg-color)]"
           >
             + Add Social Link
           </Button>
@@ -240,12 +241,12 @@ const TeamForm = () => {
 
         {/* Show validation errors for debugging */}
         {Object.entries(form.formState.errors).map(([key, err]) => (
-          <p key={key} className="text-red-500 text-sm">
+          <p key={key} className="text-red-600 text-sm">
             {key}: {err?.message}
           </p>
         ))}
 
-        <Button type="submit" className="bg-[var(--primary)] text-white">
+        <Button type="submit" className="text-white bg-[var(--rv-admin-bg-color)] hover:bg-[var(--rv-admin-bg-color)]">
           {loading ? "Submitting..." : "Submit"}
         </Button>
       </form>
@@ -256,13 +257,13 @@ const TeamForm = () => {
 const AddPost = () => {
   return (
     <DefaultLayout>
-      <div className="flex justify-between mb-6">
-        <h1 className="text-2xl font-bold text-gray-700">Add Team Member</h1>
-        <Link href="/admin/manage-aboutus/teams/manage">
-          <Button className="text-white bg-[var(--primary)]">All Team Members</Button>
-        </Link>
-      </div>
-      <div className="p-6 bg-gray-100 rounded">
+      <div className="flex flex-col gap-5">
+        <div className="flex justify-between">
+          <h1 className="text-2xl font-bold">Add Team Member</h1>
+          <Link href="/admin/manage-aboutus/teams/manage">
+            <Button className="text-white bg-[var(--rv-admin-bg-color)] hover:bg-[var(--rv-admin-bg-color)]">All Team Members</Button>
+          </Link>
+        </div>
         <TeamForm />
         <Toaster />
       </div>

@@ -3,7 +3,6 @@ import { ConnectDB } from "@/lib/db/ConnectDB";
 import Gallery from "@/lib/models/Gallery";
 import axios from "axios";
 import { saveImageToLocal } from "@/lib/functions";
-// Upload image to Cloudinary
 
 // // Connect to the database
 const LoadDB = async () => {

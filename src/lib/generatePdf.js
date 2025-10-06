@@ -173,7 +173,6 @@ export const generatePDF = async (data, title, startDate, endDate, graphId, site
 };
 
 export const generateSwpPDF = async (data, title, startDate, endDate, graphId, withdrawalAmount, siteData) => {
-    console.log(data)
     const doc = new jsPDF();
     const websiteName = siteData?.websiteName;
     const email = siteData?.email;
@@ -336,7 +335,6 @@ export const generateSwpPDF = async (data, title, startDate, endDate, graphId, w
 };
 
 export const generateSchemePDF = async (data, title, startDate, endDate, graphId, siteData = {}) => {
-    console.log(data);
     try {
         // Validate input data
         if (!data || !title || !startDate || !endDate || !graphId) {
@@ -534,7 +532,6 @@ export const generateStpPDF = async (data, title, destinationTitle, startDate, e
         return;
     }
 
-    console.log("Input Data:", JSON.stringify(data, null, 2));
 
     const doc = new jsPDF();
     const websiteName = siteData?.websiteName || "Unknown Website";
@@ -576,7 +573,6 @@ export const generateStpPDF = async (data, title, destinationTitle, startDate, e
 
     // Source Fund Section
     const sourceData = data.withdrawlingScheme || {};
-    console.log("Source Data:", JSON.stringify(sourceData, null, 2));
     if (Object.keys(sourceData).length > 0) {
         doc.setFontSize(8);
         // Set bold font for title
@@ -630,7 +626,6 @@ export const generateStpPDF = async (data, title, destinationTitle, startDate, e
 
     // Destination Fund Section
     const destinationData = data.investedScheme.DestinationFundValuation || {};
-    console.log("Destination Data:", JSON.stringify(destinationData, null, 2));
     if (Object.keys(destinationData).length > 0) {
         doc.setFontSize(8);
         // Set bold font for title

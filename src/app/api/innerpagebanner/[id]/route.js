@@ -1,11 +1,9 @@
 import { NextResponse } from 'next/server';
 import { ConnectDB } from '@/lib/db/ConnectDB';
-import cloudinary from '@/lib/cloudinary';
 import path from 'path';
 import fs from 'fs';
 import InnerBannerPageModel from '@/lib/models/InnerPageBanner';
 import { deleteFileIfExists, saveImageToLocal } from '@/lib/functions';
-import axios from 'axios';
 
 export async function DELETE(req, { params }) {
     const { id } = params;

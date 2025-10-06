@@ -15,6 +15,7 @@ import Link from "next/link";
 import dynamic from "next/dynamic";
 import { useParams, useRouter } from "next/navigation";
 import DefaultLayout from "@/components/admin/Layouts/DefaultLaout";
+import Image from "next/image";
 // Dynamically import JoditEditor with SSR disabled
 const JoditEditor = dynamic(() => import("jodit-react"), { ssr: false });
 
@@ -40,7 +41,7 @@ export function InputForm({ postId }) {
     // Fetch the post data if editing
     useEffect(() => {
         if (postId) {
-            axios.get(`/api/webpopups/${postId}`)
+            axios.get(`${process.env.NEXT_PUBLIC_NEXTAUTH_URL}/api/webpopups/${postId}`)
                 .then(response => {
                     const { title, image } = response.data.popup;
                     form.setValue('title', title);
@@ -60,7 +61,7 @@ export function InputForm({ postId }) {
 
         try {
             let response;
-            response = await axios.put(`/api/webpopups/${postId}`, formData, {
+            response = await axios.put(`${process.env.NEXT_PUBLIC_NEXTAUTH_URL}/api/webpopups/${postId}`, formData, {
                 headers: {
                     'Content-Type': 'multipart/form-data',
                 },
@@ -125,7 +126,9 @@ export function InputForm({ postId }) {
                             {previousImage && (
                                 <div className="mt-4">
                                     <p className="text-sm text-gray-500">Previous Image:</p>
-                                    <img src={previousImage} alt="Previous Image" className="max-w-sm rounded border h-auto w-40" />
+                                 <Image src={previousImage}
+                    width={100}
+                    height={100} alt="Previous Image" className="max-w-sm rounded border h-auto w-40" />
                                 </div>
                             )}
                         </FormItem>

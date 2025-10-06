@@ -25,7 +25,7 @@ export default function TeamSection({ aboutteamdata }) {
   return (
     <section className={styles.wrapper}>
       <div className={styles.topSection}>
-        <div className="max-w-screen-md mx-auto text-center px-4">
+        <div className="max-w-screen-md mx-auto text-center ">
           <HomeHeading
             title={`Meet the Experts Who Stand <br /> by You`}
             center="true"

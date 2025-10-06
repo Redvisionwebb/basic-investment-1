@@ -2,6 +2,7 @@
 import React from "react";
 import { motion } from "framer-motion";
 import styles from "./InnerBanner.module.css";
+import Link from "next/link";
 
 const InnerBanner = ({ title }) => {
     return (
@@ -27,7 +28,7 @@ const InnerBanner = ({ title }) => {
                     animate={{ scale: 1 }}
                     transition={{ duration: 0.6 }}
                 >
-                    <p>Home</p>/ <p>{title}</p>
+                    <Link href={'/'}>Home</Link>/ <p>{title}</p>
                 </motion.div>
             </motion.div>
         </div>

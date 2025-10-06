@@ -73,7 +73,7 @@ export default function Page() {
     },
     return: {
       label: "Future Value",
-      color: "var(--rv-gray)",
+      color: "var(--rv-secondary)",
     },
   }
 
@@ -84,13 +84,13 @@ export default function Page() {
     },
     growth: {
       label: "Future Value",
-      color: "var(--rv-gray)",
+      color: "var(--rv-secondary)",
     },
   };
 
   return (
-    <div className="pt-20">
-      <div className="max-w-screen-xl mx-auto main_section">
+    <div className="px-4">
+      <div className="max-w-screen-xl mx-auto section">
         <div className="">
           <div className="mb-5 flex flex-col md:flex-row gap-5 justify-between">
             <span className="text-2xl md:text-3xl font-bold uppercase">
@@ -116,10 +116,10 @@ export default function Page() {
           </div>
           <div>
             <div>
-              <div className="grid lg:grid-cols-2 grid-cols-1 gap-4 mb-4">
-                <div className="col-span-1 border border-gray-200 rounded-2xl bg-white p-5">
-                  <div className="Lumpsum-calculator container mx-auto p-3 sticky top-24 z-10">
-                    <div className="input-fields mt-5 mb-10">
+              <div className="grid lg:grid-cols-2 grid-cols-1 gap-5">
+                <div className="col-span-1 border border-[var(--rv-primary)] rounded-2xl bg-white p-5">
+                  <div className="Lumpsum-calculator container mx-auto sticky top-24 z-10">
+                    <div className="input-fields">
                       <div>
                         <div className="flex justify-between">
                           <span>Total investment(₹)</span>
@@ -136,7 +136,7 @@ export default function Page() {
                             />
                           </div>
                         </div>
-                        <input
+                        <Input
                           type="range"
                           min="500"
                           max="1000000"
@@ -163,7 +163,7 @@ export default function Page() {
                             className="font-semibold text-[var(--rv-primary)] w-20 border px-2 py-2 rounded"
                           />
                         </div>
-                        <input
+                        <Input
                           type="range"
                           min="1"
                           max="40"
@@ -188,7 +188,7 @@ export default function Page() {
                             className="font-semibold text-[var(--rv-primary)] w-20 border px-2 py-2 rounded"
                           />
                         </div>
-                        <input
+                        <Input
                           type="range"
                           min="1"
                           max="30"
@@ -207,14 +207,14 @@ export default function Page() {
                     </div>
                     {result && (
                       <div className="mt-5">
-                        <div className="flex justify-between px-5 mb-3">
+                        <div className="flex justify-between p-2">
                           <p>Invested Amount </p>
                           <p className="font-bold text-lg">
                             ₹{result?.totalInvestment.toFixed(2)}
                           </p>
                         </div>
                         <hr className="mb-3" />
-                        <div className="flex justify-between px-5 mb-3">
+                        <div className="flex justify-between p-2">
                           <p>Wealth Gained </p>
                           <p className="font-bold text-lg">
                             ₹
@@ -224,7 +224,7 @@ export default function Page() {
                           </p>
                         </div>
                         <hr className="mb-3" />
-                        <div className="flex justify-between px-5 mb-3">
+                        <div className="flex justify-between p-2">
                           <p>Expected Amount </p>
                           <p className="font-bold text-lg">
                             ₹{result.futureValue.toFixed(2)}
@@ -235,8 +235,8 @@ export default function Page() {
                     )}
                   </div>
                 </div>
-                <div className="col-span-1">
-                  <div className="mb-3">
+                <div className="col-span-1 flex flex-col gap-5">
+                  <div className="">
                     <SippieChart piedata={result} title={"Lumpsum Calculator"} chartConfig={chartConfig} />
                   </div>
                   <div>

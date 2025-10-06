@@ -15,6 +15,7 @@ import {
 } from "@/components/ui/breadcrumb";
 import { calculators } from "@/data/calculators";
 import { useRouter } from "next/navigation";
+import InnerBanner from "@/components/innerBanner/InnerBanner";
 
 export default function Page() {
   const router = useRouter();
@@ -74,7 +75,7 @@ export default function Page() {
     },
     return: {
       label: "Future Cost of Vacation",
-      color: "var(--rv-gray)",
+      color: "var(--rv-secondary)",
     },
   }
 
@@ -85,225 +86,228 @@ export default function Page() {
     },
     growth: {
       label: "Future Cost of Vacation",
-      color: "var(--rv-gray)",
+      color: "var(--rv-secondary)",
     },
   };
 
   return (
-    <div className="pt-20">
-      <div className="max-w-screen-xl mx-auto main_section">
-        <div className="">
-          <div className="mb-5 flex flex-col md:flex-row gap-5 justify-between">
-            <span className="text-2xl md:text-3xl font-bold uppercase">
-              Vacation Plan Calculator
-            </span>
-            <div className="flex justify-between gap-4">
-              <span>Explore other calculators</span>
-              <select
-                className="w-full border border-gray-500 rounded-lg p-2"
-                onChange={handleCalculatorChange}
-                defaultValue=""
-              >
-                <option value="" disabled>
-                  Select
-                </option>
-                {calculators.map((calc) => (
-                  <option key={calc.title} value={calc.route}>
-                    {calc.title}
+    <>
+      <InnerBanner title={'Vacation Plan Calculator'} />
+      <div className="px-4">
+        <div className="max-w-screen-xl mx-auto section">
+          <div className="">
+            <div className="mb-5 flex flex-col md:flex-row gap-5 justify-between">
+              <span className="text-2xl md:text-3xl font-bold uppercase">
+                Vacation Plan Calculator
+              </span>
+              <div className="flex justify-between gap-4">
+                <span>Explore other calculators</span>
+                <select
+                  className="w-full border border-gray-500 rounded-lg p-2"
+                  onChange={handleCalculatorChange}
+                  defaultValue=""
+                >
+                  <option value="" disabled>
+                    Select
                   </option>
-                ))}
-              </select>
+                  {calculators.map((calc) => (
+                    <option key={calc.title} value={calc.route}>
+                      {calc.title}
+                    </option>
+                  ))}
+                </select>
+              </div>
             </div>
-          </div>
-          <div>
-            {isAuthorised ? (
-              <div>
-                <div className="grid lg:grid-cols-2 grid-cols-1 gap-4 mb-4">
-                  <div className="col-span-1 border border-gray-200 rounded-2xl bg-white p-5">
-                    <div className="sip-calculator container mx-auto p-3 sticky top-0 z-10">
-                      <div className="input-fields mt-5 mb-10">
-                        <div>
-                          <div className="flex justify-between">
-                            <span>Current Vacation Expenses (₹)</span>
-                            <div>
+            <div>
+              {isAuthorised ? (
+                <div>
+                  <div className="grid lg:grid-cols-2 grid-cols-1 gap-5">
+                    <div className="col-span-1 border border-[var(--rv-primary)] rounded-2xl bg-white p-5">
+                      <div className="sip-calculator container mx-auto sticky top-0 z-10">
+                        <div className="input-fields">
+                          <div>
+                            <div className="flex justify-between">
+                              <span>Current Vacation Expenses (₹)</span>
+                              <div>
 
+                                <input
+                                  type="number"
+                                  value={totalInvestment}
+                                  onChange={(e) =>
+                                    setCurrentExpenses(parseFloat(e.target.value))
+                                  }
+                                  className="font-semibold text-[var(--rv-primary)] w-36 border px-2 py-2 rounded"
+                                />
+                              </div>
+                            </div>
+                            <Input
+                              type="range"
+                              min="10000"
+                              max="200000"
+                              step="100"
+                              value={totalInvestment || 0}
+                              onChange={(e) =>
+                                setCurrentExpenses(parseFloat(e.target.value))
+                              }
+                              className="w-full text-gray-400"
+                              style={{
+                                "--progress": `${((totalInvestment - 10000) /
+                                  (200000 - 10000)) *
+                                  100}%`,
+                              }}
+                            />
+                          </div>
+                          <div className="items-center mt-5">
+                            <div className="flex justify-between">
+                              <span>
+                                After How Many Years Do You Wish To Plan Your
+                                Holiday?
+                              </span>
                               <input
                                 type="number"
-                                value={totalInvestment}
+                                value={investmentDuration}
                                 onChange={(e) =>
-                                  setCurrentExpenses(parseFloat(e.target.value))
+                                  setInvestmentDuration(parseFloat(e.target.value))
                                 }
-                                className="font-semibold text-[var(--rv-primary)] w-36 border px-2 py-2 rounded"
+                                className="font-semibold text-[var(--rv-primary)] w-20 border px-2 py-2 rounded"
                               />
                             </div>
-                          </div>
-                          <input
-                            type="range"
-                            min="10000"
-                            max="200000"
-                            step="100"
-                            value={totalInvestment || 0}
-                            onChange={(e) =>
-                              setCurrentExpenses(parseFloat(e.target.value))
-                            }
-                            className="customRange w-full text-gray-400"
-                            style={{
-                              "--progress": `${((totalInvestment - 10000) /
-                                (200000 - 10000)) *
-                                100}%`,
-                            }}
-                          />
-                        </div>
-                        <div className="items-center mt-5">
-                          <div className="flex justify-between">
-                            <span>
-                              After How Many Years Do You Wish To Plan Your
-                              Holiday?
-                            </span>
-                            <input
-                              type="number"
-                              value={investmentDuration}
+                            <Input
+                              type="range"
+                              min="1"
+                              max="40"
+                              step="1"
+                              value={investmentDuration || 0}
                               onChange={(e) =>
                                 setInvestmentDuration(parseFloat(e.target.value))
                               }
-                              className="font-semibold text-[var(--rv-primary)] w-20 border px-2 py-2 rounded"
+                              className="w-full text-gray-400"
+                              style={{
+                                "--progress": `${((investmentDuration - 1) /
+                                  (40 - 1)) *
+                                  100}%`,
+                              }}
                             />
                           </div>
-                          <input
-                            type="range"
-                            min="1"
-                            max="40"
-                            step="1"
-                            value={investmentDuration || 0}
-                            onChange={(e) =>
-                              setInvestmentDuration(parseFloat(e.target.value))
-                            }
-                            className="customRange w-full text-gray-400"
-                            style={{
-                              "--progress": `${((investmentDuration - 1) /
-                                (40 - 1)) *
-                                100}%`,
-                            }}
-                          />
-                        </div>
-                        <div className="items-center mt-5">
-                          <div className="flex justify-between">
-                            <span>Rate of Return (%)</span>
-                            <input
-                              type="number"
-                              value={expectedReturn}
+                          <div className="items-center mt-5">
+                            <div className="flex justify-between">
+                              <span>Rate of Return (%)</span>
+                              <input
+                                type="number"
+                                value={expectedReturn}
+                                onChange={(e) =>
+                                  setExpectedReturn(parseFloat(e.target.value))
+                                }
+                                className="font-semibold text-[var(--rv-primary)] w-20 border px-2 py-2 rounded"
+                              />
+                            </div>
+                            <Input
+                              type="range"
+                              min="1"
+                              max="30"
+                              step="1"
+                              value={expectedReturn || 0}
                               onChange={(e) =>
                                 setExpectedReturn(parseFloat(e.target.value))
                               }
-                              className="font-semibold text-[var(--rv-primary)] w-20 border px-2 py-2 rounded"
+                              className="w-full text-gray-400"
+                              style={{
+                                "--progress": `${((expectedReturn - 1) / (30 - 1)) *
+                                  100}%`,
+                              }}
                             />
                           </div>
-                          <input
-                            type="range"
-                            min="1"
-                            max="30"
-                            step="1"
-                            value={expectedReturn || 0}
-                            onChange={(e) =>
-                              setExpectedReturn(parseFloat(e.target.value))
-                            }
-                            className="customRange w-full text-gray-400"
-                            style={{
-                              "--progress": `${((expectedReturn - 1) / (30 - 1)) *
-                                100}%`,
-                            }}
-                          />
-                        </div>
-                        <div className="items-center mt-5">
-                          <div className="flex justify-between">
-                            <span>Inflation Rate (%)</span>
-                            <input
-                              type="number"
-                              value={inflationRate}
+                          <div className="items-center mt-5">
+                            <div className="flex justify-between">
+                              <span>Inflation Rate (%)</span>
+                              <input
+                                type="number"
+                                value={inflationRate}
+                                onChange={(e) =>
+                                  setInflationRate(parseFloat(e.target.value))
+                                }
+                                className="font-semibold text-[var(--rv-primary)] w-20 border px-2 py-2 rounded"
+                              />
+                            </div>
+                            <Input
+                              type="range"
+                              min="0"
+                              max="30"
+                              step="1"
+                              value={inflationRate || 0}
                               onChange={(e) =>
                                 setInflationRate(parseFloat(e.target.value))
                               }
-                              className="font-semibold text-[var(--rv-primary)] w-20 border px-2 py-2 rounded"
+                              className="w-full text-gray-400"
+                              style={{
+                                "--progress": `${(inflationRate / 30) * 100}%`,
+                              }}
                             />
                           </div>
-                          <input
-                            type="range"
-                            min="0"
-                            max="30"
-                            step="1"
-                            value={inflationRate || 0}
-                            onChange={(e) =>
-                              setInflationRate(parseFloat(e.target.value))
-                            }
-                            className="customRange w-full text-gray-400"
-                            style={{
-                              "--progress": `${(inflationRate / 30) * 100}%`,
-                            }}
-                          />
                         </div>
-                      </div>
 
-                      {result && (
-                        <div className="mt-5">
-                          <div className="flex justify-between px-5 mb-3">
-                            <p>Current Cost of Vacation</p>
-                            <p className="font-bold text-lg">
-                              ₹{result?.totalInvestment?.toLocaleString()}
-                            </p>
+                        {result && (
+                          <div className="mt-5">
+                            <div className="flex justify-between p-2">
+                              <p>Current Cost of Vacation</p>
+                              <p className="font-bold text-lg">
+                                ₹{result?.totalInvestment?.toLocaleString("en-IN")}
+                              </p>
+                            </div>
+                            <hr className="mb-3" />
+                            <div className="flex justify-between p-2">
+                              <p>Future Cost of Vacation</p>
+                              <p className="font-bold text-lg">
+                                ₹{result?.futureValue?.toLocaleString("en-IN")}
+                              </p>
+                            </div>
+                            <hr className="mb-3" />
+                            <div className="flex justify-between p-2">
+                              <p>Planning Through SIP</p>
+                              <p className="font-bold text-lg">
+                                ₹{result?.sipInvestment?.toLocaleString("en-IN")}
+                              </p>
+                            </div>
+                            <hr className="mb-3" />
+                            <div className="flex justify-between p-2">
+                              <p>Planning Through Lump Sum</p>
+                              <p className="font-bold text-lg">
+                                ₹{result?.lumpsumInvestment?.toLocaleString("en-IN")}
+                              </p>
+                            </div>
+                            <hr />
                           </div>
-                          <hr className="mb-3" />
-                          <div className="flex justify-between px-5 mb-3">
-                            <p>Future Cost of Vacation</p>
-                            <p className="font-bold text-lg">
-                              ₹{result?.futureValue?.toLocaleString()}
-                            </p>
-                          </div>
-                          <hr className="mb-3" />
-                          <div className="flex justify-between px-5 mb-3">
-                            <p>Planning Through SIP</p>
-                            <p className="font-bold text-lg">
-                              ₹{result?.sipInvestment?.toLocaleString()}
-                            </p>
-                          </div>
-                          <hr className="mb-3" />
-                          <div className="flex justify-between px-5 mb-3">
-                            <p>Planning Through Lump Sum</p>
-                            <p className="font-bold text-lg">
-                              ₹{result?.lumpsumInvestment?.toLocaleString()}
-                            </p>
-                          </div>
-                          <hr />
-                        </div>
-                      )}
+                        )}
+                      </div>
                     </div>
-                  </div>
-                  <div className="col-span-1">
-                    <SippieChart
-                      piedata={result}
-                      title={"Current & Future Cost Of Vacation Breakup"}
-                      chartConfig={chartConfig}
-                    />
-                    <div className="mt-5">
-                      <CalculatorReturnChart
-                        data={chartData}
-                        title={"Vacation Planning "}
-                        chartConfig={chartConfig1}
+                    <div className="col-span-1">
+                      <SippieChart
+                        piedata={result}
+                        title={"Current & Future Cost Of Vacation Breakup"}
+                        chartConfig={chartConfig}
                       />
+                      <div className="mt-5">
+                        <CalculatorReturnChart
+                          data={chartData}
+                          title={"Vacation Planning "}
+                          chartConfig={chartConfig1}
+                        />
+                      </div>
                     </div>
                   </div>
                 </div>
-              </div>
-            ) : (
-              <div className="flex flex-col justify-center items-center">
-                <span className="font-bold text-red-600 text-4xl mb-3">
-                  Error 403
-                </span>
-                <p className="font-medium text-xl">Your not Authorised</p>
-              </div>
-            )}
+              ) : (
+                <div className="flex flex-col justify-center items-center">
+                  <span className="font-bold text-red-600 text-4xl mb-3">
+                    Error 403
+                  </span>
+                  <p className="font-medium text-xl">Your not Authorised</p>
+                </div>
+              )}
+            </div>
           </div>
         </div>
       </div>
-    </div>
+    </>
   );
 }

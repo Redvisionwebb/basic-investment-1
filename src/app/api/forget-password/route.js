@@ -1,22 +1,34 @@
-import axios from "axios";
-import { NextResponse } from "next/server";
+import axios from 'axios';
 
-export async function POST(req) {
-    try {
-        const formData = await req.json();
-        const res = await axios.post("https://superadmin-roan.vercel.app/api/login/forget-password", formData,
-            {
-                headers: {
-                    "Content-Type": "application/json",  // Set the content type to multipart/form-data
-                }
-            }
-        );
-        // console.log(res.data)
-        return NextResponse.json(res.data, { status: 201 });
-    }
-    catch (error) {
-        console.log(error)
-        return NextResponse.json({ error: error }, { status: 500 });
-    }
+export async function POST(request) {
+  try {
+    const provider = await request.json(); // Get data from request body
 
+    const response = await axios.post(
+      `${process.env.NEXT_PUBLIC_DATA_API}/api/login/forget-password`,
+      provider
+    );
+
+    return new Response(JSON.stringify(response.data), {
+      status: response.status,
+      headers: {
+        'Content-Type': 'application/json',
+      },
+    });
+  } catch (error) {
+    console.error('Forget Password API Error:', error);
+
+    return new Response(
+      JSON.stringify({
+        error: 'Failed to initiate forget password request',
+        message: error?.response?.data || error.message,
+      }),
+      {
+        status: error?.response?.status || 500,
+        headers: {
+          'Content-Type': 'application/json',
+        },
+      }
+    );
+  }
 }

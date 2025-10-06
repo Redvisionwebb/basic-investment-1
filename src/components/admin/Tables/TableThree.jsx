@@ -10,7 +10,7 @@ const TableThree = ({ packageData, onDelete, allamcslogodata }) => {
         toast.warn("This Category contain logos")
       }
       else {
-        const response = await axios.delete(`/api/category/${id}`);
+        const response = await axios.delete(`${process.env.NEXT_PUBLIC_NEXTAUTH_URL}/api/category/${id}`);
         if (response.status === 201) {
           toast.success("Category deleted successfully.");
           onDelete();

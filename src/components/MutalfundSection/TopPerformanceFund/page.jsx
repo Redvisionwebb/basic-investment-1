@@ -85,8 +85,8 @@ export default function TopTaxSavingFunds() {
   };
 
   return (
-    <section className={`${styles.sectionWrapper} section`}>
-      <div className="max-w-screen-xl mx-auto px-4">
+    <section className={`${styles.sectionWrapper} px-4 `}>
+      <div className="max-w-screen-xl mx-auto section">
          <HomeHeading title={`Top Performing Funds`} center="true" />
         <div className="">
           <div className="text-center">

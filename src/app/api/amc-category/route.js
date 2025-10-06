@@ -1,7 +1,7 @@
 import { NextResponse } from 'next/server';
 export async function GET() {
   try {
-    const response = await fetch('https://redvisionweb.com/api/category', {
+    const response = await fetch(`${process.env.NEXT_PUBLIC_DATA_API}/api/category`, {
       method: 'GET',
       headers: {
         'Content-Type': 'application/json',

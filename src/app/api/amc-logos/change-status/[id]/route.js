@@ -7,7 +7,6 @@ import { ConnectDB } from '@/lib/db/ConnectDB';
 export async function PUT(req, { params }) {
     const { id } = params;
     const { addisstatus } = await req.json();
-    console.log(id,addisstatus)
     try {
         await ConnectDB();
         const amc = await AmcsLogoModel.findByIdAndUpdate(

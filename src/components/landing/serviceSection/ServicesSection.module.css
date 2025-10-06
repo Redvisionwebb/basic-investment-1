@@ -10,7 +10,6 @@
 
 .sliderWrapper {
   position: relative;
-  padding: 1rem 0;
 }
 
 .sliderContainer {
@@ -66,7 +65,7 @@
 .overlay {
   position: absolute;
   inset: 0;
-  background: rgba(0, 0, 0, 0.55);
+  background: var(--rv-secondary);
   z-index: 2;
 }
 

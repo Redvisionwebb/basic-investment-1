@@ -3,7 +3,7 @@ import { ConnectDB } from "@/lib/db/ConnectDB";
 
 import TeamModel from "@/lib/models/TeamModel";
 import axios from "axios";
-import { deleteFileIfExists, saveImageToLocal } from "@/lib/functions";
+import { saveImageToLocal } from "@/lib/functions";
 
 
 // POST: Create Team Member
@@ -46,12 +46,12 @@ export async function POST(req) {
 
     return NextResponse.json({ message: "Team member added successfully", data: newMember }, { status: 201 });
   } catch (error) {
-    console.error("Error creating team member:", error.message);
+    console.error("Error creating team member:", error);
      if (uploaded?.filename) {
       deleteFileIfExists("teams", uploaded.filename);
     }
 
-    return NextResponse.json({ error: error.message }, { status: 500 });
+    return NextResponse.json({ error: "Internal Server Error" }, { status: 500 });
   }
 }
 

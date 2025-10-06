@@ -1,19 +1,19 @@
 'use client';
 import axios from 'axios';
 import { useState } from 'react';
+import { IoCloseSharp } from 'react-icons/io5';
 import { toast } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
 
 const AddArnModal = ({ onClose }) => {
   const [arn, setArn] = useState('');
+  const [loading, setLoading] = useState(false);
   const [euins, setEuins] = useState([
     { euin: '', registrationDate: '', expiryDate: '' }
   ]);
 
   const handleAddEuin = () => {
-    setEuins([
-      ...euins,
-      { euin: '', registrationDate: '', expiryDate: '' }
-    ]);
+    setEuins([...euins, { euin: '', registrationDate: '', expiryDate: '' }]);
   };
 
   const handleRemoveEuin = (index) => {
@@ -30,91 +30,102 @@ const AddArnModal = ({ onClose }) => {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    console.log({ arn, euins });
+    setLoading(true);
 
-    const res = await axios.post('/api/admin/arn', {
-        arn,
-        euins
-      });
-  
-    if (res.status === 201) {
-        toast({
-            variant: '',
-            title: "ARN created successfully",
-            // description: "There was a problem with your request.",
-        });
-    } else {
-        toast({
-            variant: "destructive",
-            title: "Uh oh! Something went wrong.",
-            description: "There was a problem with your request.",
-        });
+    try {
+      const res = await axios.post(
+        `${process.env.NEXT_PUBLIC_NEXTAUTH_URL}/api/admin/arn`,
+        { arn, euins }
+      );
+
+      if (res.status === 201) {
+        toast.success('ARN created successfully ✅');
+        onClose();
+      } else {
+        toast.error('Something went wrong ❌');
+      }
+    } catch (error) {
+      console.error(error);
+      toast.error('Failed to create ARN ❌');
+    } finally {
+      setLoading(false);
     }
-    onClose();
   };
 
   return (
-    <div className="fixed inset-0 bg-[#0d2d476e] bg-opacity-10 flex items-center justify-center z-50">
-      <div className="bg-white p-6 rounded-lg w-full max-w-4xl sm:max-w-lg md:max-w-2xl max-h-[90vh] overflow-auto">
+    <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-2">
+      <div className="bg-white p-4 rounded-lg max-w-xl w-full max-h-[90vh] overflow-auto">
         <div className="flex justify-between items-center mb-4">
           <h3 className="text-lg font-semibold">Add ARN & EUIN</h3>
-          <button className="text-red-500 text-xl" onClick={onClose}>×</button>
+          <button className="text-red-500 text-2xl" onClick={onClose}>
+            <IoCloseSharp />
+          </button>
         </div>
-        <form onSubmit={handleSubmit} className="space-y-4">
+
+        <form onSubmit={handleSubmit} className="flex flex-col gap-3">
+          {/* ARN Input */}
           <div>
-            <label className="block font-medium mb-1">ARN Number</label>
+            <label className="block font-medium mb-1 text-sm">ARN Number</label>
             <input
               type="text"
               value={arn}
               onChange={(e) => setArn(e.target.value)}
-              className="w-full border px-3 py-2 rounded"
+              className="border p-2 border-gray-400 flex h-10 w-full bg-transparent rounded-md px-3 py-2 text-sm focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--rv-admin-bg-color)]"
               required
             />
           </div>
 
+          {/* EUINS */}
           {euins.map((euinData, index) => (
-            <div key={index} className="space-y-4">
+            <div key={index} >
               <div>
-                <label className="block font-medium mb-1">EUIN</label>
+                <label className="block font-medium mb-1 text-sm">EUIN</label>
                 <input
                   type="text"
                   value={euinData.euin}
                   onChange={(e) => handleEuinChange(index, 'euin', e.target.value)}
-                  className="w-full border px-3 py-2 rounded"
+                  className="border p-2 border-gray-400 flex h-10 w-full rounded-md px-3 py-2 text-sm focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--rv-admin-bg-color)]"
                   required
                 />
               </div>
 
-              <div className="grid sm:grid-cols-1 md:grid-cols-2 gap-4">
+              <div className="grid grid-cols-2 gap-4">
                 <div>
-                  <label className="block font-medium mb-1">Registration Date</label>
+                  <label className="block font-medium mb-1 text-sm">
+                    Registration Date
+                  </label>
                   <input
                     type="date"
                     value={euinData.registrationDate}
-                    onChange={(e) => handleEuinChange(index, 'registrationDate', e.target.value)}
-                    className="w-full border px-3 py-2 rounded"
+                    onChange={(e) =>
+                      handleEuinChange(index, 'registrationDate', e.target.value)
+                    }
+                    className="border p-2 border-gray-400 flex h-10 w-full rounded-md px-3 py-2 text-sm focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--rv-admin-bg-color)]"
                     required
                   />
                 </div>
 
                 <div>
-                  <label className="block font-medium mb-1">Expiry Date</label>
+                  <label className="block font-medium mb-1 text-sm">
+                    Expiry Date
+                  </label>
                   <input
                     type="date"
                     value={euinData.expiryDate}
-                    onChange={(e) => handleEuinChange(index, 'expiryDate', e.target.value)}
-                    className="w-full border px-3 py-2 rounded"
+                    onChange={(e) =>
+                      handleEuinChange(index, 'expiryDate', e.target.value)
+                    }
+                    className="border p-2 border-gray-400 flex h-10 w-full rounded-md px-3 py-2 text-sm focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--rv-admin-bg-color)]"
                     required
                   />
                 </div>
               </div>
 
-              {/* Remove EUIN */}
               {euins.length > 1 && (
                 <button
                   type="button"
                   onClick={() => handleRemoveEuin(index)}
-                  className="text-red-500"
+                  className="text-sm px-4 py-2 mt-2 rounded-md bg-red-600 text-white"
                 >
                   Remove EUIN
                 </button>
@@ -122,24 +133,41 @@ const AddArnModal = ({ onClose }) => {
             </div>
           ))}
 
-          {/* Add EUIN */}
-          <div className="text-right">
+          {/* Actions */}
+          <div className="grid grid-cols-1 w-full gap-3">
             <button
               type="button"
               onClick={handleAddEuin}
-              className="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded"
+              className="bg-[var(--rv-admin-bg-color)] hover:bg-[var(--rv-admin-bg-color)] text-white px-4 py-2 rounded-md"
             >
               Add Another EUIN
             </button>
-          </div>
 
-          <div className="text-right">
-            <button
-              type="submit"
-              className="bg-green-600 hover:bg-green-700 text-white px-4 py-2 rounded"
-            >
-              Save
-            </button>
+            <div className="grid grid-cols-2 w-full gap-3">
+              <button
+                type="button"
+                onClick={onClose}
+                className="px-4 py-2 bg-gray-300 rounded-md"
+                disabled={loading}
+              >
+                Cancel
+              </button>
+
+              <button
+                type="submit"
+                className="bg-[var(--rv-admin-bg-color)] text-white hover:bg-[var(--rv-admin-bg-color)] rounded-md px-4 py-2 flex items-center justify-center gap-2"
+                disabled={loading}
+              >
+                {loading ? (
+                  <>
+                    <span className="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin"></span>
+                    Saving...
+                  </>
+                ) : (
+                  'Save'
+                )}
+              </button>
+            </div>
           </div>
         </form>
       </div>

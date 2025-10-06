@@ -56,7 +56,7 @@ export function InputForm() {
         formData.append('content', content);
 
         try {
-            const response = await axios.post('/api/blogs/', formData, {
+            const response = await axios.post(`${process.env.NEXT_PUBLIC_NEXTAUTH_URL}/api/blogs/`, formData, {
                 headers: {
                     'Content-Type': 'multipart/form-data',
                 },
@@ -88,7 +88,7 @@ export function InputForm() {
     // const categories = ["Technology", "Health", "Education", "Entertainment", "Lifestyle"];
     const fetchCategories = async () => {
         try {
-            const response = await axios.get("/api/category/");
+            const response = await axios.get(`${process.env.NEXT_PUBLIC_NEXTAUTH_URL}/api/category/`);
             if (response.status === 200) {
                 setCategories(response.data)
             }
@@ -103,17 +103,16 @@ export function InputForm() {
 
     return (
         <Form {...form}>
-            <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-8 rounded px-7">
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
-                    {/* Username Field */}
+            <form onSubmit={form.handleSubmit(onSubmit)} className="flex flex-col items-start w-full gap-5 rounded-md p-3 bg-white ">
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-5 w-full">
                     <FormField
                         control={form.control}
                         name="posttitle"
                         render={({ field }) => (
                             <FormItem>
-                                <FormLabel className="font-semibold text-gray-700">Post Title</FormLabel>
+                                <FormLabel className="font-semibold">Post Title</FormLabel>
                                 <FormControl>
-                                    <Input placeholder="Post Title" {...field} aria-label="Post Title" className="border border-gray-500" />
+                                    <Input placeholder="Post Title" {...field} aria-label="Post Title" className="border border-gray-400 outline-none" />
                                 </FormControl>
                                 <FormMessage />
                             </FormItem>
@@ -126,9 +125,9 @@ export function InputForm() {
                         name="metatitle"
                         render={({ field }) => (
                             <FormItem>
-                                <FormLabel className="font-semibold text-gray-700">Meta Title</FormLabel>
+                                <FormLabel className="font-semibold">Meta Title</FormLabel>
                                 <FormControl>
-                                    <Input placeholder="Meta Title" {...field} aria-label="Meta Title" className="border border-gray-500" />
+                                    <Input placeholder="Meta Title" {...field} aria-label="Meta Title" className="border border-gray-400 outline-none" />
                                 </FormControl>
                                 <FormMessage />
                             </FormItem>
@@ -141,9 +140,9 @@ export function InputForm() {
                         name="description"
                         render={({ field }) => (
                             <FormItem>
-                                <FormLabel className="font-semibold text-gray-700">Post Description</FormLabel>
+                                <FormLabel className="font-semibold">Post Description</FormLabel>
                                 <FormControl>
-                                    <Input type="text" placeholder="Description" {...field} aria-label="Description" className="border border-gray-500" />
+                                    <Input type="text" placeholder="Description" {...field} aria-label="Description" className="border border-gray-400 outline-none" />
                                 </FormControl>
                                 <FormMessage />
                             </FormItem>
@@ -155,9 +154,9 @@ export function InputForm() {
                         name="keywords"
                         render={({ field }) => (
                             <FormItem>
-                                <FormLabel className="font-semibold text-gray-700">Post Keyword</FormLabel>
+                                <FormLabel className="font-semibold">Post Keyword</FormLabel>
                                 <FormControl>
-                                    <Input type="text" placeholder="Keywords" {...field} aria-label="Keywords" className="border border-gray-500" />
+                                    <Input type="text" placeholder="Keywords" {...field} aria-label="Keywords" className="border border-gray-400 outline-none" />
                                 </FormControl>
                                 <FormMessage />
                             </FormItem>
@@ -170,9 +169,9 @@ export function InputForm() {
                         name="category"
                         render={({ field }) => (
                             <FormItem>
-                                <FormLabel className="font-semibold text-gray-700">Select Category</FormLabel>
+                                <FormLabel className="font-semibold">Select Category</FormLabel>
                                 <FormControl>
-                                    <select {...field} className="bg-gray-50 border border-gray-500 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5">
+                                    <select {...field} className="bg-gray-50 border border-gray-400 outline-none text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5">
                                         <option value="">Select a category</option>
                                         {categories && categories?.map((category, index) => (
                                             <option key={index} value={category._id}>{category.title}</option>
@@ -190,7 +189,7 @@ export function InputForm() {
                         name="image"
                         render={({ field }) => (
                             <FormItem>
-                                <FormLabel className="font-semibold text-gray-700">Upload Image</FormLabel>
+                                <FormLabel className="font-semibold">Upload Image</FormLabel>
                                 <FormControl>
                                     <Input type="file" accept="image/*" onChange={(e) => {
                                         const file = e.target.files[0];
@@ -198,21 +197,24 @@ export function InputForm() {
                                             setSelectedImage(file);
                                             field.onChange(file); // Update react-hook-form with selected file
                                         }
-                                    }} aria-label="Image" className="border border-gray-500" />
+                                    }} aria-label="Image" className="border border-gray-400 outline-none" />
                                 </FormControl>
                                 <FormMessage />
                             </FormItem>
                         )}
                     />
                 </div>
-                <JoditEditor
+                <div className="w-full">
+                    <JoditEditor
                     ref={editor}
                     value={content}
                     tabIndex={1}
                     onBlur={newContent => setContent(newContent)}
                     onChange={newContent => { }}
+                    className="w-full"
                 />
-                <Button className="text-white bg-[var(--primary)]" type="submit">{!loading ? 'Submit' : 'Loading...'}</Button>
+                </div>
+                <Button className="text-white bg-[var(--rv-admin-bg-color)] hover:bg-[var(--rv-admin-bg-color)] "  type="submit">{!loading ? 'Submit' : 'Loading...'}</Button>
             </form>
         </Form>
     );
@@ -221,14 +223,14 @@ export function InputForm() {
 const AddPost = () => {
     return (
         <DefaultLayout>
-            <div className="">
+            <div className="flex flex-col gap-5">
                 <div className="flex justify-between">
-                    <h1 className='font-bold text-gray-700 text-2xl mb-7'>Add New Post</h1>
+                    <h1 className='font-bold text-2xl'>Add New Post</h1>
                     <Link href="/admin/manage-posts/manage">
-                        <Button className="text-white bg-[var(--primary)]" >All Post</Button>
+                        <Button className="text-white bg-[var(--rv-admin-bg-color)] hover:bg-[var(--rv-admin-bg-color)]" >All Post</Button>
                     </Link>
                 </div>
-                <div className='p-5 bg-gray-100 rounded '>
+                <div className=''>
                     <InputForm />
                     <Toaster />
                 </div>

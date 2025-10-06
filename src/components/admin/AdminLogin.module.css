@@ -1,0 +1,8 @@
+.loginPage {
+  background-color: var(--rv-bg-black1);
+  color: var(--rv-bg-white);
+}
+
+.fromBG {
+  background: var(--rv-bg-gradient);
+}

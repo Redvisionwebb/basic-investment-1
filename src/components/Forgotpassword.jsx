@@ -82,7 +82,7 @@ export default function ForgotPasswordModal({ isOpen, onClose,logintype }) {
           )}
           <button
             type="submit"
-            className="btn w-full mt-5"
+            className="btn btn-primary w-full mt-5"
           >
             Submit
           </button>

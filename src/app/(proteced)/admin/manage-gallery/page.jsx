@@ -40,6 +40,9 @@ import formatDate from "@/lib/formatDate";
 import { useRouter } from "next/navigation";
 import { toast } from "@/hooks/use-toast";
 import DefaultLayout from "@/components/admin/Layouts/DefaultLaout";
+import { FaFolderClosed } from "react-icons/fa6";
+import { IoCloseSharp } from "react-icons/io5";
+import { FiTrash2 } from "react-icons/fi";
 
 const DataTableDemo = () => {
     const router = useRouter();
@@ -51,6 +54,8 @@ const DataTableDemo = () => {
     const [columnVisibility, setColumnVisibility] = React.useState({});
     const [rowSelection, setRowSelection] = React.useState({});
     const [isModalOpen, setIsModalOpen] = React.useState(false);
+    const [showConfirm, setShowConfirm] = React.useState(false);
+    const [selectedId, setSelectedId] = React.useState(null);
 
     const openModal = () => {
         setIsModalOpen(true);
@@ -65,7 +70,7 @@ const DataTableDemo = () => {
     const fetchData = async () => {
         setLoading(true);
         try {
-            const res = await axios.get("/api/gallery/");
+            const res = await axios.get(`${process.env.NEXT_PUBLIC_NEXTAUTH_URL}/api/gallery/`);
             if (res.status === 200) {
                 setData(res.data);
             }
@@ -89,7 +94,7 @@ const DataTableDemo = () => {
         const formData = new FormData();
         formData.append('image', selectedImage);
         try {
-            const response = await axios.post('/api/gallery/', formData, {
+            const response = await axios.post(`${process.env.NEXT_PUBLIC_NEXTAUTH_URL}/api/gallery/`, formData, {
                 headers: {
                     'Content-Type': 'multipart/form-data',
                 },
@@ -116,23 +121,38 @@ const DataTableDemo = () => {
         }
     };
 
-    // Delete blog post function
-    const handleDelete = async (id) => {
+    const confirmDelete = (id) => {
+        setSelectedId(id);
+        setShowConfirm(true);
+    };
+
+    const CancelDelete = () => {
+        setShowConfirm(false);
+        setSelectedId(null);
+    };
+
+    const handleDelete = async () => {
+        if (!selectedId) return;
+        setLoading(true);
+
         try {
-            const res = await axios.delete(`/api/gallery/${id}`);
+            const res = await axios.delete(`${process.env.NEXT_PUBLIC_NEXTAUTH_URL}/api/gallery/${selectedId}`);
             if (res.status === 200) {
-                fetchData();
-                toast({
-                    variant: 'success',
-                    title: "Deleted successfully",
-                });
+                setData((prevData) => prevData.filter((blog) => blog._id !== selectedId));
+                toast({ variant: "success", title: "Deleted successfully" });
             } else {
-                console.error("Failed to change status");
+                toast({ variant: "destructive", title: "Failed to delete blog" });
             }
         } catch (error) {
-            console.error("Error changing status:", error);
+            toast({ variant: "destructive", title: "Error deleting blog" });
+            console.error(error);
+        } finally {
+            setLoading(false);
+            setShowConfirm(false);
+            setSelectedId(null);
         }
     };
+
 
     const columns = [
         {
@@ -157,28 +177,20 @@ const DataTableDemo = () => {
         },
         {
             id: "actions",
+            header: "Actions",
             enableHiding: false,
             cell: ({ row }) => {
-                const blog = row.original;
+                const image = row.original;
+
                 return (
-                    <DropdownMenu>
-                        <DropdownMenuTrigger asChild>
-                            <Button variant="ghost" className="h-8 w-8 p-0">
-                                <span className="sr-only">Open menu</span>
-                                <MoreHorizontal className="h-4 w-4" />
-                            </Button>
-                        </DropdownMenuTrigger>
-                        <DropdownMenuContent align="end">
-                            <DropdownMenuLabel>Actions</DropdownMenuLabel>
-                            <DropdownMenuSeparator />
-                            {/* <DropdownMenuItem onClick={() => router.push(`/admin/manage-popups/edit/${blog._id}`)}>
-                                Edit
-                            </DropdownMenuItem> */}
-                            <DropdownMenuItem onClick={() => handleDelete(blog._id)}>
-                                Delete
-                            </DropdownMenuItem>
-                        </DropdownMenuContent>
-                    </DropdownMenu>
+                    <div className="flex items-center gap-3">
+                        <button
+                            onClick={() => confirmDelete(image._id)}
+                            className="text-red-600 border border-red-600 rounded-md p-2"
+                        >
+                            <FiTrash2 size={16} />
+                        </button>
+                    </div>
                 );
             },
         },
@@ -205,98 +217,16 @@ const DataTableDemo = () => {
 
     return (
         <DefaultLayout>
-        <div>
-            <div className="flex justify-between">
-                <h1 className='font-bold text-gray-700 text-2xl mb-7'>Manage Gallery</h1>
-                <div className="" onClick={() => setIsModalOpen(true)}>
-                    <Button className="text-white bg-[var(--primary)]">Add New</Button>
-                </div>
-            </div>
-            {isModalOpen && (
-                <div className="fixed z-50 inset-0 overflow-y-auto">
-                    <div className="flex items-end justify-center min-h-screen pt-4 px-4 pb-20 text-center sm:block sm:p-0">
-                        <div className="fixed inset-0 transition-opacity" aria-hidden="true">
-                            <div className="absolute inset-0 bg-gray-500 opacity-75"></div>
-                        </div>
-                        <span
-                            className="hidden sm:inline-block sm:align-middle sm:h-screen"
-                            aria-hidden="true"
-                        >
-                            &#8203;
-                        </span>
-                        <div className="inline-block align-bottom bg-white rounded-lg px-4 pt-5 pb-4 text-left overflow-hidden shadow-xl transform transition-all sm:my-8 sm:align-middle sm:max-w-lg sm:w-full sm:p-6">
-                            <div className="hidden sm:block absolute top-0 right-0 pt-4 pr-4">
-                                <button
-                                    type="button"
-                                    onClick={() => onClose()}
-                                    className="bg-white rounded-md text-gray-400 hover:text-gray-500 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500"
-                                >
-                                    <span className="sr-only">Close</span>
-                                    <svg
-                                        className="h-6 w-6"
-                                        xmlns="http://www.w3.org/2000/svg"
-                                        fill="none"
-                                        viewBox="0 0 24 24"
-                                        stroke="currentColor"
-                                        aria-hidden="true"
-                                    >
-                                        <path
-                                            strokeLinecap="round"
-                                            strokeLinejoin="round"
-                                            strokeWidth="2"
-                                            d="M6 18L18 6M6 6l12 12"
-                                        />
-                                    </svg>
-                                </button>
-                            </div>
-
-                            <div>
-                                <h3 className="text-lg leading-6 font-medium text-gray-900 mb-4">
-                                    Add New Photo
-                                </h3>
-                                {/* Image Upload Field */}
-                                <div className="mb-4">
-                                    <label
-                                        htmlFor="imageUpload"
-                                        className="block text-sm font-medium text-gray-700"
-                                    >
-                                        Upload Image
-                                    </label>
-                                    <input
-                                        type="file"
-                                        id="imageUpload"
-                                        accept="image/*"
-                                        onChange={(e) => handleImageChange(e)} // Handle image file
-                                        className="mt-1 block w-full text-sm text-gray-900 bg-gray-50 rounded-lg border border-gray-300 cursor-pointer focus:outline-none focus:ring-blue-500 focus:border-blue-500"
-                                    />
-                                    <p className="mt-2 text-sm text-gray-500">
-                                        Supported formats: JPEG, PNG. WEBP.
-                                    </p>
-                                </div>
-                            </div>
-
-                            <div className="mt-5 sm:mt-4 sm:flex sm:flex-row-reverse">
-                                <button
-                                    type="button"
-                                    onClick={() => onSubmit()}
-                                    className="w-full inline-flex justify-center rounded-md border border-transparent shadow-sm px-4 py-2 bg-blue-600 text-base font-medium text-white hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 sm:ml-3 sm:w-auto sm:text-sm"
-                                >
-                                    save
-                                </button>
-                                <button
-                                    type="button"
-                                    onClick={() => onClose()}
-                                    className="mt-3 w-full inline-flex justify-center rounded-md border border-gray-300 shadow-sm px-4 py-2 bg-white text-base font-medium text-gray-700 hover:text-gray-500 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 sm:mt-0 sm:w-auto sm:text-sm"
-                                >
-                                    Cancel
-                                </button>
-                            </div>
-                        </div>
+            <div>
+                <div className="flex justify-between">
+                    <h1 className='font-bold text-2xl'>Manage Gallery</h1>
+                    <div className="" onClick={() => setIsModalOpen(true)}>
+                        <Button className="text-white bg-[var(--rv-admin-bg-color)] hover:bg-[var(--rv-admin-bg-color)]">Add New</Button>
                     </div>
                 </div>
-            )}
-            <div className="w-full">
-                {/* <div className="flex items-center py-4">
+
+                <div className="w-full py-4">
+                    {/* <div className="flex items-center py-4">
                     <Input
                         placeholder="Filter by title..."
                         value={(table.getColumn("title")?.getFilterValue()) ?? ""}
@@ -329,68 +259,141 @@ const DataTableDemo = () => {
                         </DropdownMenuContent>
                     </DropdownMenu>
                 </div> */}
-                <div className="rounded-md border">
-                    <Table>
-                        <TableHeader>
-                            {table.getHeaderGroups().map((headerGroup) => (
-                                <TableRow key={headerGroup.id}>
-                                    {headerGroup.headers.map((header) => (
-                                        <TableHead key={header.id}>
-                                            {header.isPlaceholder
-                                                ? null
-                                                : flexRender(header.column.columnDef.header, header.getContext())}
-                                        </TableHead>
-                                    ))}
-                                </TableRow>
-                            ))}
-                        </TableHeader>
-                        <TableBody>
-                            {table?.getRowModel().rows.length ? (
-                                table.getRowModel().rows.map((row) => (
-                                    <TableRow key={row.id} data-state={row.getIsSelected() && "selected"}>
-                                        {row.getVisibleCells().map((cell) => (
-                                            <TableCell key={cell.id}>
-                                                {flexRender(cell.column.columnDef.cell, cell.getContext())}
-                                            </TableCell>
+                    <div className="rounded-md">
+                        <Table>
+                            <TableHeader>
+                                {table.getHeaderGroups().map((headerGroup) => (
+                                    <TableRow key={headerGroup.id}>
+                                        {headerGroup.headers.map((header) => (
+                                            <TableHead key={header.id}>
+                                                {header.isPlaceholder
+                                                    ? null
+                                                    : flexRender(header.column.columnDef.header, header.getContext())}
+                                            </TableHead>
                                         ))}
                                     </TableRow>
-                                ))
-                            ) : (
-                                <TableRow>
-                                    <TableCell colSpan={columns.length} className="h-24 text-center">
-                                        No results.
-                                    </TableCell>
-                                </TableRow>
-                            )}
-                        </TableBody>
-                    </Table>
-                </div>
-                <div className="flex items-center justify-end space-x-2 py-4">
-                    <div className="flex-1 text-sm text-muted-foreground">
-                        {table.getFilteredSelectedRowModel().rows.length} of{" "}
-                        {table.getFilteredRowModel().rows.length} row(s) selected.
+                                ))}
+                            </TableHeader>
+                            <TableBody>
+                                {table?.getRowModel().rows.length ? (
+                                    table.getRowModel().rows.map((row) => (
+                                        <TableRow key={row.id} data-state={row.getIsSelected() && "selected"}>
+                                            {row.getVisibleCells().map((cell) => (
+                                                <TableCell key={cell.id}>
+                                                    {flexRender(cell.column.columnDef.cell, cell.getContext())}
+                                                </TableCell>
+                                            ))}
+                                        </TableRow>
+                                    ))
+                                ) : (
+                                    <TableRow>
+                                        <TableCell colSpan={columns.length} className="h-24 text-center">
+                                            No results.
+                                        </TableCell>
+                                    </TableRow>
+                                )}
+                            </TableBody>
+                        </Table>
                     </div>
-                    <div className="space-x-2">
-                        <Button
-                            variant="outline"
-                            size="sm"
-                            onClick={() => table.previousPage()}
-                            disabled={!table.getCanPreviousPage()}
-                        >
-                            Previous
-                        </Button>
-                        <Button
-                            variant="outline"
-                            size="sm"
-                            onClick={() => table.nextPage()}
-                            disabled={!table.getCanNextPage()}
-                        >
-                            Next
-                        </Button>
+                    <div className="flex items-center justify-end space-x-2 py-4">
+                        <div className="flex-1 text-sm text-muted-foreground">
+                            {table.getFilteredSelectedRowModel().rows.length} of{" "}
+                            {table.getFilteredRowModel().rows.length} row(s) selected.
+                        </div>
+                        <div className="space-x-2">
+                            <Button
+                                variant="outline"
+                                size="sm"
+                                onClick={() => table.previousPage()}
+                                disabled={!table.getCanPreviousPage()}
+                            >
+                                Previous
+                            </Button>
+                            <Button
+                                variant="outline"
+                                size="sm"
+                                onClick={() => table.nextPage()}
+                                disabled={!table.getCanNextPage()}
+                            >
+                                Next
+                            </Button>
+                        </div>
                     </div>
                 </div>
             </div>
-        </div>
+
+            {isModalOpen && (
+                <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-2">
+                    <div className="bg-white p-4 rounded shadow-lg">
+                        <div>
+                            <div className="w-full flex items-center justify-between gap-5">
+                                <p>Add New Photo</p>
+                                <p><IoCloseSharp className="text-2xl cursor-pointer" onClick={() => onClose()} /> </p>
+                            </div>
+
+                            <div className="mt-4 flex flex-col gap-1">
+                                <label
+                                    htmlFor="imageUpload"
+                                    className="block text-sm font-medium text-gray-700"
+                                >
+                                    Upload Image
+                                </label>
+                                <input
+                                    type="file"
+                                    id="imageUpload"
+                                    accept="image/*"
+                                    onChange={(e) => handleImageChange(e)}
+                                    className="border border-gray-400 flex h-10 w-full  bg-transparent shadow-input rounded-md px-3 py-2 text-sm 
+           file:border-0 file:bg-transparent file:text-sm file:font-medium 
+           placeholder:text-neutral-600 focus-visible:outline-none focus-visible:ring-[2px] 
+           focus-visible:ring-neutral-600 disabled:cursor-not-allowed disabled:opacity-50 
+           dark:shadow-[0px_0px_1px_1px_var(--neutral-700)] group-hover/input:shadow-none 
+           transition duration-400"
+                                />
+                                <p className=" text-sm text-gray-500">
+                                    Supported formats: JPEG, PNG. WEBP.
+                                </p>
+                            </div>
+                        </div>
+
+                        <div className="mt-4 flex justify-end gap-2">
+                            <button
+                                type="button"
+                                onClick={() => onClose()}
+                                className="px-4 py-2 bg-gray-300 rounded"
+                            >
+                                Cancel
+                            </button>
+                            <button
+                                type="button"
+                                onClick={() => onSubmit()}
+                                className="px-4 py-2 rounded text-white bg-[var(--rv-admin-bg-color)] hover:bg-[var(--rv-admin-bg-color)]"
+                            >
+                                save
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            )}
+            {showConfirm && (
+                <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-2">
+                    <div className="bg-white p-4 rounded shadow-lg">
+                        <p>Are you sure you want to delete this Member?</p>
+                        <div className="mt-4 flex justify-end gap-2">
+                            <button onClick={CancelDelete} className="px-4 py-2 bg-gray-300 rounded">
+                                Cancel
+                            </button>
+                            <button
+                                onClick={handleDelete}
+                                disabled={loading}
+                                className="px-4 py-2 bg-red-500 text-white rounded"
+                            >
+                                {loading ? "Deleting..." : "OK"}
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            )}
         </DefaultLayout>
     );
 };

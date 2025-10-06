@@ -1,0 +1,45 @@
+.calculatorBox {
+    border: 1px solid var(--rv-primary);
+    border-radius: 8px;
+    color: var(--rv-black);
+    height: 280px;
+    overflow: hidden;
+    padding: 24px;
+    position: relative;
+    /* width: 305px; */
+    width: 300px;
+    background-color: var(--rv-background);
+    transition: all 0.3s ease-in;
+}
+
+.cardsContainer {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    grid-gap: 10px;
+    max-width: 100%;
+    justify-items: center;
+    justify-content: space-between;
+}
+
+.boxImage {
+    position: absolute;
+    bottom: 10px;
+    right: 10px;
+    height: 60px;
+    width: 60px;
+    opacity: 0.5;
+    z-index: 1;
+    transition: opacity 0.3s ease;
+}
+
+
+.cardsContainer:hover .boxImage {
+    opacity: 1;
+}
+
+.cardsContainer:hover .calculatorBox {
+    opacity: 1;
+    background-color: var(--rv-secondary-dark);
+    transition: all 0.3s ease-in;
+    color: var(--rv-white);
+}

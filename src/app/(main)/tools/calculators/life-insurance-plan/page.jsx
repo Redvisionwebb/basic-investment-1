@@ -15,6 +15,7 @@ import { CalculatorReturnChart } from "@/components/charts/calculatorReturnChart
 import axios from "axios";
 import { calculators } from "@/data/calculators";
 import { useRouter } from "next/navigation";
+import InnerBanner from "@/components/innerBanner/InnerBanner";
 
 export default function Page() {
   const router = useRouter();
@@ -73,7 +74,7 @@ export default function Page() {
     },
     return: {
       label: "Loan Repayment",
-      color: "var(--rv-gray)",
+      color: "var(--rv-secondary)",
     },
   }
 
@@ -84,249 +85,252 @@ export default function Page() {
     },
     growth: {
       label: "Current Value",
-      color: "var(--rv-gray)",
+      color: "var(--rv-secondary)",
     },
   };
 
 
   return (
-    <div className="pt-20">
-      <div className="max-w-screen-xl mx-auto main_section">
-        <div className="">
-          <div className="mb-5 flex flex-col md:flex-row gap-5 justify-between">
-            <div className="">
-              <span className="text-2xl md:text-3xl font-bold uppercase">
-                Life Insurance Planning Calculator
-              </span>
-            </div>
-            <div className="flex justify-between gap-4">
-              <span>Explore other calculators</span>
-              <select
-                className="w-full border border-gray-500 rounded-lg p-2"
-                onChange={handleCalculatorChange}
-                defaultValue=""
-              >
-                <option value="" disabled>
-                  Select
-                </option>
-                {calculators.map((calc) => (
-                  <option key={calc.title} value={calc.route}>
-                    {calc.title}
+    <>
+      <InnerBanner title={'Life Insurance Calculator'} />
+      <div className="px-4">
+        <div className="max-w-screen-xl mx-auto section">
+          <div className="">
+            <div className="mb-5 flex flex-col md:flex-row gap-5 justify-between">
+              <div className="">
+                <span className="text-2xl md:text-3xl font-bold uppercase">
+                  Life Insurance Planning Calculator
+                </span>
+              </div>
+              <div className="flex justify-between gap-4">
+                <span>Explore other calculators</span>
+                <select
+                  className="w-full border border-gray-500 rounded-lg p-2"
+                  onChange={handleCalculatorChange}
+                  defaultValue=""
+                >
+                  <option value="" disabled>
+                    Select
                   </option>
-                ))}
-              </select>
+                  {calculators.map((calc) => (
+                    <option key={calc.title} value={calc.route}>
+                      {calc.title}
+                    </option>
+                  ))}
+                </select>
+              </div>
             </div>
-          </div>
-          <div>
             <div>
-              <div className="grid lg:grid-cols-2 grid-cols-1 gap-4 mb-4">
-                <div className="col-span-1 border border-gray-200 rounded-2xl bg-white p-5">
-                  <div className="insurance-calculator container mx-auto p-3 sticky top-0 z-10">
-                    <div className="input-fields mt-5 mb-10">
-                      <div>
-                        <div className="flex justify-between">
-                          <span>Loan Amount (₹)</span>
-                          <div>
-                            <span className="font-semibold text-[var(--rv-primary)]">
+              <div>
+                <div className="grid lg:grid-cols-2 grid-cols-1 gap-5">
+                  <div className="col-span-1 border border-[var(--rv-primary)] rounded-2xl bg-white p-5">
+                    <div className="insurance-calculator container mx-auto sticky top-0 z-10">
+                      <div className="input-fields">
+                        <div>
+                          <div className="flex justify-between">
+                            <span>Loan Amount (₹)</span>
+                            <div>
+                              <span className="font-semibold text-[var(--rv-primary)]">
 
-                            </span>
+                              </span>
+                              <input
+                                type="number"
+                                value={loanAmount}
+                                placeholder="0"
+                                onChange={(e) =>
+                                  setLoanAmount(parseFloat(e.target.value))
+                                }
+                                className="font-semibold text-[var(--rv-primary)] w-36 border px-2 py-2 rounded"
+                              />
+                            </div>
+                          </div>
+                          <Input
+                            type="range"
+                            min="10000"
+                            max="10000000"
+                            step="1000"
+                            value={isNaN(loanAmount) ? 0 : loanAmount}
+                            onChange={(e) =>
+                              setLoanAmount(parseFloat(e.target.value))
+                            }
+                            className="customRange w-full"
+                            style={{
+                              "--progress": `${(((isNaN(loanAmount) ? 0 : loanAmount) - 10000) /
+                                (10000000 - 10000)) *
+                                100}%`,
+                            }}
+                          />
+                        </div>
+                        <div className="items-center mt-5">
+                          <div className="flex justify-between">
+                            <span>Current FD Rate (%)</span>
                             <input
                               type="number"
-                              value={loanAmount}
+                              value={currentFdRate}
                               placeholder="0"
                               onChange={(e) =>
-                                setLoanAmount(parseFloat(e.target.value))
+                                setCurrentFdRate(parseFloat(e.target.value))
                               }
-                              className="font-semibold text-[var(--rv-primary)] w-36 border px-2 py-2 rounded"
+                              className="font-semibold text-[var(--rv-primary)] w-20 border px-2 py-2 rounded"
                             />
                           </div>
-                        </div>
-                        <input
-                          type="range"
-                          min="10000"
-                          max="10000000"
-                          step="1000"
-                          value={isNaN(loanAmount) ? 0 : loanAmount}
-                          onChange={(e) =>
-                            setLoanAmount(parseFloat(e.target.value))
-                          }
-                          className="customRange w-full"
-                          style={{
-                            "--progress": `${(((isNaN(loanAmount) ? 0 : loanAmount) - 10000) /
-                              (10000000 - 10000)) *
-                              100}%`,
-                          }}
-                        />
-                      </div>
-                      <div className="items-center mt-5">
-                        <div className="flex justify-between">
-                          <span>Current FD Rate (%)</span>
-                          <input
-                            type="number"
-                            value={currentFdRate}
-                            placeholder="0"
+                          <Input
+                            type="range"
+                            min="1"
+                            max="15"
+                            step="0.1"
+                            value={isNaN(currentFdRate) ? 0 : currentFdRate}
                             onChange={(e) =>
                               setCurrentFdRate(parseFloat(e.target.value))
                             }
-                            className="font-semibold text-[var(--rv-primary)] w-20 border px-2 py-2 rounded"
+                            className="customRange w-full"
+                            style={{
+                              "--progress": `${(((isNaN(currentFdRate) ? 0 : currentFdRate) - 1) / (15 - 1)) *
+                                100}%`,
+                            }}
                           />
                         </div>
-                        <input
-                          type="range"
-                          min="1"
-                          max="15"
-                          step="0.1"
-                          value={isNaN(currentFdRate) ? 0 : currentFdRate}
-                          onChange={(e) =>
-                            setCurrentFdRate(parseFloat(e.target.value))
-                          }
-                          className="customRange w-full"
-                          style={{
-                            "--progress": `${(((isNaN(currentFdRate) ? 0 : currentFdRate) - 1) / (15 - 1)) *
-                              100}%`,
-                          }}
-                        />
-                      </div>
-                      <div className="items-center mt-5">
-                        <div className="flex justify-between">
-                          <span>Inflation Rate (%)</span>
-                          <input
-                            type="number"
-                            value={inflationRate}
-                            placeholder="0"
+                        <div className="items-center mt-5">
+                          <div className="flex justify-between">
+                            <span>Inflation Rate (%)</span>
+                            <input
+                              type="number"
+                              value={inflationRate}
+                              placeholder="0"
+                              onChange={(e) =>
+                                setInflationRate(parseFloat(e.target.value))
+                              }
+                              className="font-semibold text-[var(--rv-primary)] w-20 border px-2 py-2 rounded"
+                            />
+                          </div>
+                          <Input
+                            type="range"
+                            min="1"
+                            max="30"
+                            step="1"
+                            value={isNaN(inflationRate) ? 0 : inflationRate}
                             onChange={(e) =>
                               setInflationRate(parseFloat(e.target.value))
                             }
-                            className="font-semibold text-[var(--rv-primary)] w-20 border px-2 py-2 rounded"
+                            className="customRange w-full"
+                            style={{
+                              "--progress": `${(((isNaN(inflationRate) ? 0 : inflationRate) - 1) / (30 - 1)) *
+                                100}%`,
+                            }}
                           />
                         </div>
-                        <input
-                          type="range"
-                          min="1"
-                          max="30"
-                          step="1"
-                          value={isNaN(inflationRate) ? 0 : inflationRate}
-                          onChange={(e) =>
-                            setInflationRate(parseFloat(e.target.value))
-                          }
-                          className="customRange w-full"
-                          style={{
-                            "--progress": `${(((isNaN(inflationRate) ? 0 : inflationRate) - 1) / (30 - 1)) *
-                              100}%`,
-                          }}
-                        />
-                      </div>
-                      <div className="items-center mt-5">
-                        <div className="flex justify-between">
-                          <span>
-                            For How Many Years You Want To Protect Your Household
-                            Expenses
-                          </span>
-                          <input
-                            type="number"
-                            value={protectionDuration}
-                            placeholder="0"
+                        <div className="items-center mt-5">
+                          <div className="flex justify-between">
+                            <span>
+                              For How Many Years You Want To Protect Your Household
+                              Expenses
+                            </span>
+                            <input
+                              type="number"
+                              value={protectionDuration}
+                              placeholder="0"
+                              onChange={(e) =>
+                                setProtectionDuration(parseFloat(e.target.value))
+                              }
+                              className="font-semibold text-[var(--rv-primary)] w-20 border px-2 py-2 rounded"
+                            />
+                          </div>
+                          <Input
+                            type="range"
+                            min="1"
+                            max="40"
+                            step="1"
+                            value={isNaN(protectionDuration) ? 0 : protectionDuration}
                             onChange={(e) =>
                               setProtectionDuration(parseFloat(e.target.value))
                             }
-                            className="font-semibold text-[var(--rv-primary)] w-20 border px-2 py-2 rounded"
+                            className="customRange w-full"
+                            style={{
+                              "--progress": `${(((isNaN(protectionDuration) ? 0 : protectionDuration) - 1) /
+                                (40 - 1)) *
+                                100}%`,
+                            }}
                           />
                         </div>
-                        <input
-                          type="range"
-                          min="1"
-                          max="40"
-                          step="1"
-                          value={isNaN(protectionDuration) ? 0 : protectionDuration}
-                          onChange={(e) =>
-                            setProtectionDuration(parseFloat(e.target.value))
-                          }
-                          className="customRange w-full"
-                          style={{
-                            "--progress": `${(((isNaN(protectionDuration) ? 0 : protectionDuration) - 1) /
-                              (40 - 1)) *
-                              100}%`,
-                          }}
-                        />
-                      </div>
-                      <div className="items-center mt-5">
-                        <div className="flex justify-between">
-                          <span>Monthly Expenses (₹)</span>
-                          <div>
+                        <div className="items-center mt-5">
+                          <div className="flex justify-between">
+                            <span>Monthly Expenses (₹)</span>
+                            <div>
 
-                            <input
-                              type="number"
-                              value={monthlyExpenses}
-                              placeholder="0"
-                              onChange={(e) =>
-                                setMonthlyExpenses(parseFloat(e.target.value))
-                              }
-                              className="font-semibold text-[var(--rv-primary)] w-36 border px-2 py-2 rounded"
-                            />
+                              <input
+                                type="number"
+                                value={monthlyExpenses}
+                                placeholder="0"
+                                onChange={(e) =>
+                                  setMonthlyExpenses(parseFloat(e.target.value))
+                                }
+                                className="font-semibold text-[var(--rv-primary)] w-36 border px-2 py-2 rounded"
+                              />
+                            </div>
                           </div>
+                          <Input
+                            type="range"
+                            min="0"
+                            max="500000"
+                            step="1000"
+                            value={isNaN(monthlyExpenses) ? 0 : monthlyExpenses}
+                            onChange={(e) =>
+                              setMonthlyExpenses(parseFloat(e.target.value))
+                            }
+                            className="customRange w-full"
+                            style={{
+                              "--progress": `${((isNaN(monthlyExpenses) ? 0 : monthlyExpenses) / 500000) * 100}%`,
+                            }}
+                          />
                         </div>
-                        <input
-                          type="range"
-                          min="0"
-                          max="500000"
-                          step="1000"
-                          value={isNaN(monthlyExpenses) ? 0 : monthlyExpenses}
-                          onChange={(e) =>
-                            setMonthlyExpenses(parseFloat(e.target.value))
-                          }
-                          className="customRange w-full"
-                          style={{
-                            "--progress": `${((isNaN(monthlyExpenses) ? 0 : monthlyExpenses) / 500000) * 100}%`,
-                          }}
-                        />
                       </div>
+
+                      {result && (
+                        <div className="mt-5">
+                          <div className="flex justify-between p-2">
+                            <p>You need Life Insurance Cover Of</p>
+                            <p className="font-bold text-lg">
+                              ₹{result?.totalInsuranceCover?.toLocaleString("en-IN")}
+                            </p>
+                          </div>
+                          <hr className="mb-3" />
+                          <div className="flex justify-between p-2">
+                            <p>Loan Repayment</p>
+                            <p className="font-bold text-lg">
+                              ₹{result?.loanRepayment?.toLocaleString("en-IN")}
+                            </p>
+                          </div>
+                          <hr className="mb-3" />
+                          <div className="flex justify-between p-2">
+                            <p>Household Expenses</p>
+                            <p className="font-bold text-lg">
+                              ₹{result?.householdExpenses?.toLocaleString("en-IN")}
+                            </p>
+                          </div>
+                          <hr />
+                        </div>
+                      )}
                     </div>
-
-                    {result && (
-                      <div className="mt-5">
-                        <div className="flex justify-between px-5 mb-3">
-                          <p>You need Life Insurance Cover Of</p>
-                          <p className="font-bold text-lg">
-                            ₹{result?.totalInsuranceCover?.toLocaleString()}
-                          </p>
-                        </div>
-                        <hr className="mb-3" />
-                        <div className="flex justify-between px-5 mb-3">
-                          <p>Loan Repayment</p>
-                          <p className="font-bold text-lg">
-                            ₹{result?.loanRepayment?.toLocaleString()}
-                          </p>
-                        </div>
-                        <hr className="mb-3" />
-                        <div className="flex justify-between px-5 mb-3">
-                          <p>Household Expenses</p>
-                          <p className="font-bold text-lg">
-                            ₹{result?.householdExpenses?.toLocaleString()}
-                          </p>
-                        </div>
-                        <hr />
-                      </div>
-                    )}
                   </div>
-                </div>
-                <div className="col-span-1 border border-gray-200 rounded-2xl bg-white p-5">
-                  <div className="mb-10">
-                    <SippieChart
-                      piedata={{
-                        totalInvestment: result?.totalInsuranceCover,
-                        futureValue: result?.loanRepayment,
-                      }}
-                      title={"Life Insurance"}
+                  <div className="col-span-1 flex flex-col gap-5">
+                    <div className="">
+                      <SippieChart
+                        piedata={{
+                          totalInvestment: result?.totalInsuranceCover,
+                          futureValue: result?.loanRepayment,
+                        }}
+                        title={"Life Insurance"}
 
-                      chartConfig={chartConfig}
-                    />
-                  </div>
-                  <div>
-                    <CalculatorReturnChart
-                      data={chartData}
-                      title={"Life Insurance"}
-                      chartConfig={chartConfig1}
-                    />
+                        chartConfig={chartConfig}
+                      />
+                    </div>
+                    <div>
+                      <CalculatorReturnChart
+                        data={chartData}
+                        title={"Life Insurance"}
+                        chartConfig={chartConfig1}
+                      />
+                    </div>
                   </div>
                 </div>
               </div>
@@ -334,6 +338,6 @@ export default function Page() {
           </div>
         </div>
       </div>
-    </div>
+    </>
   );
 }

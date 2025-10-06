@@ -28,7 +28,7 @@ export default function QRCodePopup() {
       {/* Small QR Button */}
       <div
         onClick={() => setOpen(true)}
-        className="w-[60px] h-[60px] border border-[var(--rv-primary)]  text-[var(--rv-primary)] cursor-pointer rounded-full flex items-center justify-center shadow-lg p-2"
+        className="w-[60px] h-[60px] border border-[var(--rv-primary)]  bg-white text-[var(--rv-primary)] cursor-pointer rounded-full flex items-center justify-center shadow-lg p-2"
       >
         {/* <QRCodeCanvas
           value={url}

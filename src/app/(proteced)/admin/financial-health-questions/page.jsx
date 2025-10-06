@@ -13,7 +13,7 @@ const FinancialHealthQuestions = () => {
 
   const fetchQuestions = async () => {
     try {
-      const res = await axios.get("/api/financialhealth");
+      const res = await axios.get(`${process.env.NEXT_PUBLIC_NEXTAUTH_URL}/api/financialhealth`);
       setQuestions(res.data);
       const anyEnabled = res.data.some((q) => q.status === true);
       setIsEnabled(anyEnabled);
@@ -29,7 +29,7 @@ const FinancialHealthQuestions = () => {
   const handleToggle = async () => {
     try {
       const newStatus = !isEnabled;
-      await axios.put("/api/financialhealth/status", { status: newStatus });
+      await axios.put(`${process.env.NEXT_PUBLIC_NEXTAUTH_URL}/api/financialhealth/status`, { status: newStatus });
       setIsEnabled(newStatus);
       fetchQuestions();
     } catch (err) {
@@ -39,7 +39,7 @@ const FinancialHealthQuestions = () => {
 
   const handleUpdate = async (question) => {
     try {
-      await axios.put(`/api/financialhealth/${question._id}`, {
+      await axios.put(`${process.env.NEXT_PUBLIC_NEXTAUTH_URL}/api/financialhealth/${question._id}`, {
         question: editedQuestion[question._id],
       });
 
@@ -52,7 +52,7 @@ const FinancialHealthQuestions = () => {
 
   return (
     <DefaultLayout>
-      <div className="p-4">
+      <div className="">
         <div className="flex justify-between items-center mb-6">
           <h1 className="text-2xl font-bold">Financial Health Questions</h1>
           <div className="flex items-center gap-3">
@@ -94,12 +94,12 @@ const FinancialHealthQuestions = () => {
             return (
               <div
                 key={question._id}
-                className="mb-6 p-4 border rounded shadow-sm bg-white"
+                className="mb-6 p-4 border border-gray-300 rounded shadow-sm bg-white"
               >
                 <div className="flex justify-between items-center mb-2">
                   <label className="font-semibold">Question {index + 1}</label>
                   <button
-                    className="text-blue-500 hover:text-blue-700 text-sm"
+                    className="bg-[var(--rv-admin-bg-color)] hover:bg-[var(--rv-admin-bg-color)] text-white py-2 px-4 rounded-md text-sm"
                     onClick={() => {
                       setEditMode((prev) => ({
                         ...prev,
@@ -111,7 +111,7 @@ const FinancialHealthQuestions = () => {
                       }));
                     }}
                   >
-                    ✏️ Edit
+                   Edit
                   </button>
                 </div>
 
@@ -124,7 +124,7 @@ const FinancialHealthQuestions = () => {
                       [question._id]: e.target.value,
                     }))
                   }
-                  className="w-full p-2 mt-1 mb-2 border rounded"
+                  className="w-full p-2 mt-1 mb-2 border border-gray-300 rounded"
                   disabled={!isEditing}
                 />
 
@@ -132,7 +132,7 @@ const FinancialHealthQuestions = () => {
 
                 {isEditing && (
                   <button
-                    className="mt-4 bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700"
+                    className="mt-4 bg-[var(--rv-admin-bg-color)] hover:bg-[var(--rv-admin-bg-color)] text-white px-4 py-2 rounded"
                     onClick={() => handleUpdate(question)}
                   >
                     Update

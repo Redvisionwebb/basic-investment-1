@@ -7,7 +7,6 @@ export async function POST(request) {
         await ConnectDB();
 
         const { services } = await request.json();
-        // console.log(services);
         await ServicesModel.deleteMany({});
 
         for (let service of services) {

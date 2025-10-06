@@ -44,6 +44,7 @@ import { Toast } from "@radix-ui/react-toast";
 import { Toaster } from "@/components/ui/toaster";
 import { toast } from "@/hooks/use-toast";
 import DefaultLayout from "@/components/admin/Layouts/DefaultLaout";
+import { FiEdit2, FiTrash2 } from "react-icons/fi";
 
 const DataTableDemo = () => {
     const router = useRouter();
@@ -61,7 +62,7 @@ const DataTableDemo = () => {
     const fetchData = async () => {
         setLoading(true);
         try {
-            const res = await axios.get("/api/category/");
+            const res = await axios.get(`${process.env.NEXT_PUBLIC_NEXTAUTH_URL}/api/category/`);
             if (res.status === 200) {
                 setData(res.data);
             }
@@ -78,7 +79,7 @@ const DataTableDemo = () => {
     // Delete blog post function
     const handleDelete = async (id) => {
         try {
-            const res = await axios.delete(`/api/category/${id}`);
+            const res = await axios.delete(`${process.env.NEXT_PUBLIC_NEXTAUTH_URL}/api/category/${id}`);
             if (res.status === 201) {
                 setData((prevData) => prevData.filter((cate) => cate._id !== id));
             } else {
@@ -105,37 +106,37 @@ const DataTableDemo = () => {
             header: "Last Update",
             cell: ({ row }) => <div className="capitalize">{formatDate(row.getValue("updatedAt"))}</div>,
         },
+    
         {
             id: "actions",
-            enableHiding: false,
+            header: "Actions",
+           enableHiding: false,
             cell: ({ row }) => {
                 const cate = row.original;
+
                 return (
-                    <DropdownMenu>
-                        <DropdownMenuTrigger asChild>
-                            <Button  variant="ghost" className="h-8 w-8 p-0 ">
-                                <span className="sr-only">Open menu</span>
-                                <MoreHorizontal className="h-4 w-4" />
-                            </Button>
-                        </DropdownMenuTrigger>
-                        <DropdownMenuContent align="end">
-                            <DropdownMenuLabel>Actions</DropdownMenuLabel>
-                            <DropdownMenuSeparator />
-                            <DropdownMenuItem onClick={() => {
+                    <div className="flex items-center gap-3">
+                        <button
+                            onClick={() => {
                                 setEditCategoryId(cate._id);
                                 setCategorytitle(cate.title);
                                 setDialogOpen(true);
-                            }}>
-                                Edit
-                            </DropdownMenuItem>
-                            <DropdownMenuItem onClick={() => handleDelete(cate._id)}>
-                                Delete
-                            </DropdownMenuItem>
-                        </DropdownMenuContent>
-                    </DropdownMenu>
+                            }}
+                            className="text-[var(--rv-admin-bg-color)] border border-[var(--rv-admin-bg-color)] rounded-md p-2"
+                        >
+                            <FiEdit2 size={16} />
+                        </button>
+
+                        <button
+                            onClick={() => handleDelete(cate._id)}
+                            className="text-red-600 border border-red-600 rounded-md p-2"
+                        >
+                            <FiTrash2 size={16} />
+                        </button>
+                    </div>
                 );
             },
-        },
+        }
     ];
 
     const table = useReactTable({
@@ -159,7 +160,7 @@ const DataTableDemo = () => {
 
     const handleSubmit = async () => {
         try {
-            const res = await axios.post('/api/category/', { categorytitle });
+            const res = await axios.post(`${process.env.NEXT_PUBLIC_NEXTAUTH_URL}/api/category/`, { categorytitle });
             if (res.status === 201) {
                 setData((prevData) => [
                     ...prevData,
@@ -185,7 +186,7 @@ const DataTableDemo = () => {
 
     const handleUpdate = async () => {
         try {
-            const res = await axios.put(`/api/category/${editCategoryId}`, { categorytitle });
+            const res = await axios.put(`${process.env.NEXT_PUBLIC_NEXTAUTH_URL}/api/category/${editCategoryId}`, { categorytitle });
             if (res.status === 201) {
                 fetchData()
                 setDialogOpen(false)
@@ -210,16 +211,16 @@ const DataTableDemo = () => {
         <DefaultLayout>
             <Toaster />
             <div className="flex justify-between">
-                <h1 className='font-bold text-gray-700 text-2xl mb-7'>All Categories</h1>
+                <h1 className='font-bold text-2xl '>All Categories</h1>
                 <Dialog open={dialogOpen} onOpenChange={setDialogOpen}>
                     <DialogTrigger asChild>
-                        <Button className="text-white" onClick={() => {
+                        <Button className="bg-[var(--rv-admin-bg-color)] text-white hover:bg-[var(--rv-admin-bg-color)]" onClick={() => {
                             setDialogOpen(true);
-                            setCategorytitle(""); // Clear title for new category
-                            setEditCategoryId(""); // Reset edit state
+                            setCategorytitle("");
+                            setEditCategoryId("");
                         }}>Add New</Button>
                     </DialogTrigger>
-                    <DialogContent className="sm:max-w-[425px]">
+                    <DialogContent className="sm:max-w-[425px] bg-white">
                         <DialogHeader>
                             <DialogTitle>{editCategoryId ? "Edit Category" : "Add New Category"}</DialogTitle>
                             <DialogDescription>
@@ -233,10 +234,11 @@ const DataTableDemo = () => {
                                 placeholder="Enter title"
                                 value={categorytitle} // Set the input value to categorytitle
                                 onChange={(e) => setCategorytitle(e.target.value)}
+                                className="border border-gray-300"
                             />
                         </div>
                         <DialogFooter>
-                            <Button className="text-white" type="submit" onClick={editCategoryId ? handleUpdate : handleSubmit}>
+                            <Button className="bg-[var(--rv-admin-bg-color)] text-white hover:bg-[var(--rv-admin-bg-color)]" type="submit" onClick={editCategoryId ? handleUpdate : handleSubmit}>
                                 {editCategoryId ? "Update Category" : "Save Post"}
                             </Button>
                         </DialogFooter>
@@ -251,7 +253,7 @@ const DataTableDemo = () => {
                         onChange={(event) =>
                             table.getColumn("title")?.setFilterValue(event.target.value)
                         }
-                        className="max-w-sm"
+                        className="max-w-xl border border-gray-300"
                     />
                     <DropdownMenu>
                         <DropdownMenuContent align="end">
@@ -272,7 +274,7 @@ const DataTableDemo = () => {
                         </DropdownMenuContent>
                     </DropdownMenu>
                 </div>
-                <div className="rounded-md border">
+                <div className="rounded-md">
                     <Table>
                         <TableHeader>
                             {table.getHeaderGroups().map((headerGroup) => (
