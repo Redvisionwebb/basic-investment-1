@@ -8,7 +8,7 @@ import Image from 'next/image';
 const UsefulLinksPage = () => {
   const [usefulLink, setUsefulLink] = useState([]);
   const fetchLinks = async () => {
-    const res = await fetch(`${process.env.NEXT_PUBLIC_DATA_API}/api/open-apis/useful-links?apikey=${process.env.NEXT_PUBLIC_API_KEY}`);
+    const res = await fetch(`${process.env.NEXT_PUBLIC_NEXTAUTH_URL}/api/open-apis/useful-links`);
     if (res.ok) {
       const data = await res.json();
       setUsefulLink(data)

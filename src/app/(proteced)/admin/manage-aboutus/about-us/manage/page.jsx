@@ -57,37 +57,38 @@ const DataTableAboutUs = () => {
 
         fetchData();
     }, []);
+    
 
-    const confirmDelete = (id) => {
-        setSelectedId(id);
-        setShowConfirm(true);
-    };
+    // const confirmDelete = (id) => {
+    //     setSelectedId(id);
+    //     setShowConfirm(true);
+    // };
 
-    const CancelDelete = () => {
-        setShowConfirm(false);
-        setSelectedId(null);
-    };
+    // const CancelDelete = () => {
+    //     setShowConfirm(false);
+    //     setSelectedId(null);
+    // };
 
-    const handleDelete = async () => {
-        if (!selectedId) return;
-        setLoading(true);
-        try {
-            const res = await axios.delete(`${process.env.NEXT_PUBLIC_NEXTAUTH_URL}/api/aboutus/${selectedId}`);
-            if (res.status === 200) {
-                setData(prev => prev.filter(item => item._id !== selectedId));
-                toast.success("Deleted successfully ✅");
-            } else {
-                toast.error("Failed to delete ❌");
-            }
-        } catch (error) {
-            toast.error("Error deleting About Us ❌");
-            console.error(error);
-        } finally {
-            setLoading(false);
-            setShowConfirm(false);
-            setSelectedId(null);
-        }
-    };
+    // const handleDelete = async () => {
+    //     if (!selectedId) return;
+    //     setLoading(true);
+    //     try {
+    //         const res = await axios.delete(`${process.env.NEXT_PUBLIC_NEXTAUTH_URL}/api/aboutus/${selectedId}`);
+    //         if (res.status === 200) {
+    //             setData(prev => prev.filter(item => item._id !== selectedId));
+    //             toast.success("Deleted successfully ✅");
+    //         } else {
+    //             toast.error("Failed to delete ❌");
+    //         }
+    //     } catch (error) {
+    //         toast.error("Error deleting About Us ❌");
+    //         console.error(error);
+    //     } finally {
+    //         setLoading(false);
+    //         setShowConfirm(false);
+    //         setSelectedId(null);
+    //     }
+    // };
 
     const columns = [
         {
@@ -110,11 +111,11 @@ const DataTableAboutUs = () => {
                     <div className="flex items-center gap-3">
                         <button
                             onClick={() => router.push(`/admin/manage-aboutus/about-us/edit/${blog._id}`)}
-                            className="text-[var(--rv-admin-bg-color)] border border-[var(--rv-admin-bg-color)] rounded-md p-2"
+                            className="text-[#2367f8] border border-[#2367f8] rounded-md p-2"
                         >
                             <FiEdit2 size={16} />
                         </button>
-                        <button
+                        {/* <button
                             onClick={() => confirmDelete(blog._id)}
                             className="text-red-600 border border-red-600 rounded-md p-2 flex items-center justify-center"
                             disabled={loading}
@@ -125,7 +126,7 @@ const DataTableAboutUs = () => {
                                   <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8v8z"></path>
                                 </svg>
                             ) : <FiTrash2 size={16} />}
-                        </button>
+                        </button> */}
                     </div>
                 );
             },
@@ -152,9 +153,9 @@ const DataTableAboutUs = () => {
 
             <div className="flex justify-between mb-4">
                 <h1 className="font-bold text-2xl">Manage About Us Sections</h1>
-                <Link href="/admin/manage-aboutus/about-us/add">
-                    <Button className="text-white bg-[var(--rv-admin-bg-color)] hover:bg-[var(--rv-admin-bg-color)]">Add New</Button>
-                </Link>
+                {(!data || data?.length === 0) && (<Link href="/admin/manage-aboutus/about-us/add">
+                    <Button className="text-white bg-[#2367f8] hover:bg-[#2367f8]">Add New</Button>
+                </Link>) }
             </div>
 
             {loading && data.length === 0 ? (
@@ -213,7 +214,7 @@ const DataTableAboutUs = () => {
                 </>
             )}
 
-            {showConfirm && (
+            {/* {showConfirm && (
                 <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50">
                     <div className="bg-white p-4 rounded shadow-lg">
                         <p>Are you sure you want to delete this About Us?</p>
@@ -234,7 +235,7 @@ const DataTableAboutUs = () => {
                         </div>
                     </div>
                 </div>
-            )}
+            )} */}
         </DefaultLayout>
     );
 };

@@ -16,7 +16,6 @@ import dynamic from "next/dynamic";
 import { useParams, useRouter } from "next/navigation";
 import { DefaultContext } from "react-icons";
 import DefaultLayout from "@/components/admin/Layouts/DefaultLaout";
-import Image from "next/image";
 // Dynamically import JoditEditor with SSR disabled
 const JoditEditor = dynamic(() => import("jodit-react"), { ssr: false });
 
@@ -53,41 +52,55 @@ export function InputForm({ postId }) {
         }
     }, [postId]);
 
-    const onSubmit = async (data) => {
-        setLoading(true);
-        const formData = new FormData();
-        formData.append('image', selectedImage);
-        formData.append('link', data.link);
+const onSubmit = async (data) => {
+    setLoading(true);
 
-        try {
-            let response;
-            response = await axios.put(`${process.env.NEXT_PUBLIC_NEXTAUTH_URL}/api/advertisement/${postId}`, formData, {
-                headers: {
-                    'Content-Type': 'multipart/form-data',
-                },
+    // Image validation (optional, max 1MB)
+    if (selectedImage && selectedImage.size > 1024 * 1024) {
+        toast({
+            variant: "destructive",
+            title: "Image too large",
+            description: "Please select an image smaller than 1MB.",
+        });
+        setLoading(false);
+        return;
+    }
+
+    const formData = new FormData();
+    if (selectedImage) formData.append("image", selectedImage);
+    formData.append("link", data.link);
+
+    try {
+        const response = await axios.put(
+            `${process.env.NEXT_PUBLIC_NEXTAUTH_URL}/api/advertisement/${postId}`,
+            formData,
+            { headers: { "Content-Type": "multipart/form-data" } }
+        );
+
+        if (response.status === 200) {
+            toast({ title: "✅ Advertisement updated successfully" });
+            form.reset();
+            setSelectedImage(null);
+            router.push("/admin/manage-advertisement/manage");
+        } else {
+            toast({
+                variant: "destructive",
+                title: "Uh oh! Something went wrong.",
+                description: "There was a problem with your request.",
             });
-            if (response.status === 200) {
-                toast({
-                    variant: '',
-                    title: `Post Updated successfully`,
-                });
-                form.reset();
-                setSelectedImage(null);
-                router.push("/admin/manage-advertisement/manage");
-            } else {
-                toast({
-                    variant: "destructive",
-                    title: "Uh oh! Something went wrong.",
-                    description: "There was a problem with your request.",
-                });
-            }
-        } catch (error) {
-            console.error('Error:', error);
-            alert("An unexpected error occurred.");
-        } finally {
-            setLoading(false);
         }
-    };
+    } catch (error) {
+        console.error("Error:", error);
+        toast({
+            variant: "destructive",
+            title: "Unexpected error",
+            description: "Something went wrong. Please try again later.",
+        });
+    } finally {
+        setLoading(false);
+    }
+};
+
 
     return (
         <Form {...form}>
@@ -128,16 +141,14 @@ export function InputForm({ postId }) {
                             {previousImage && (
                                 <div className="mt-4">
                                     <p className="text-sm text-gray-500">Previous Image:</p>
-                                 <Image src={previousImage}
-                    width={100}
-                    height={100} alt="Previous Image" className="max-w-sm rounded border border-gray-400 h-auto w-40" />
+                                    <img src={previousImage} alt="Previous Image" className="max-w-sm rounded border border-gray-400 h-auto w-40" />
                                 </div>
                             )}
                         </FormItem>
                     )}
                 />
 
-                <Button className="text-white bg-[var(--rv-admin-bg-color)] hover:bg-[var(--rv-admin-bg-color)]" type="submit">{!loading ? 'Submit' : 'Loading...'}</Button>
+                <Button className="text-white bg-[#2367f8] hover:bg-[#2367f8]" type="submit">{!loading ? 'Submit' : 'Loading...'}</Button>
             </form>
         </Form>
     );
@@ -154,7 +165,7 @@ const EditPost = () => {
                         Edit Advertisement
                     </h1>
                     <Link href="/admin/manage-advertisement/manage">
-                        <Button className="text-white bg-[var(--rv-admin-bg-color)] hover:bg-[var(--rv-admin-bg-color)]">All Advertisement</Button>
+                        <Button className="text-white bg-[#2367f8] hover:bg-[#2367f8]">All Advertisement</Button>
                     </Link>
                 </div>
                 <InputForm postId={postId} />

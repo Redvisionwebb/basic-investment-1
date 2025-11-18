@@ -23,7 +23,7 @@ export default function TopTaxSavingFunds() {
         : subcategory;
 
       const response = await axios.get(
-        `${process.env.NEXT_PUBLIC_DATA_API}/api/open-apis/fund-performance/fp-data?categorySchemes=${sanitizedSchemeType}&apikey=${process.env.NEXT_PUBLIC_API_KEY}`
+        `${process.env.NEXT_PUBLIC_NEXTAUTH_URL}/api/open-apis/fund-performance/fp-data?categorySchemes=${sanitizedSchemeType}`
       );
 
       if (response.status === 200) {
@@ -87,7 +87,7 @@ export default function TopTaxSavingFunds() {
   return (
     <section className={`${styles.sectionWrapper} px-4 `}>
       <div className="max-w-screen-xl mx-auto section">
-         <HomeHeading title={`Top Performing Funds`} center="true" />
+         <HomeHeading title={`Mutual Fund Performance Over Time`} center="true" />
         <div className="">
           <div className="text-center">
             <div className="flex justify-center mt-3 sm:space-x-6">
@@ -171,7 +171,7 @@ export default function TopTaxSavingFunds() {
             <div className="text-center p-4">
               <Link href="/performance/fund-performance">
                 <button className={`btn btn-primary`}>
-                  Show all top performing Funds
+                  Show historical performance for all funds
                 </button>
               </Link>
             </div>

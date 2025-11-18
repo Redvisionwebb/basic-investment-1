@@ -53,7 +53,7 @@ const Footer = ({ siteData, services, arnData, socialmedialinks }) => {
     },
     {
       title: "Code of Conduct",
-      link: "/AMFI_Code-of-Conduct1.pdf", // Put the actual path where your PDF is stored
+      link: "/AMFI_Code-of-Conduct.pdf", // Put the actual path where your PDF is stored
       download: true, // custom flag for download
     },
   ];
@@ -74,7 +74,7 @@ const Footer = ({ siteData, services, arnData, socialmedialinks }) => {
     },
     {
       title: "Code of Conduct ",
-      link: "/images/AMFI_Code-of-Conduct.pdf",
+      link: "/AMFI_Code-of-Conduct.pdf",
       target: "_black",
     },
     {
@@ -148,7 +148,6 @@ const Footer = ({ siteData, services, arnData, socialmedialinks }) => {
                   ) : (
                     <Link
                       href={sub.link}
-                      target="blank"
                       className="hover:text-[var(--rv-primary)]"
                     >
                       <p>{sub.title}</p>
@@ -196,25 +195,87 @@ const Footer = ({ siteData, services, arnData, socialmedialinks }) => {
 
         <div className="flex gap-x-3 justify-center"></div>
         <div className="text-gray-50 py-3 md:px-1 px-4 text-center">
-          <p className="py-1 text-center font-bold text-[var(--rv-primary)]">
-            {siteData?.websiteName} is an AMFI Registered Mutual Fund
-            Distributor
-            {arn?.[0]?.arn && <> | ARN: {String(arn[0].arn)}</>}
-            {arn?.[0]?.euins?.length > 0 &&
-              arn[0].euins[0]?.registrationDate &&
-              arn[0].euins[0]?.expiryDate && (
-                <>
-                  {" | Current Validity: "}
-                  {new Date(
-                    String(arn[0].euins[0].registrationDate)
-                  ).toLocaleDateString("en-IN")}
-                  {" to "}
-                  {new Date(
-                    String(arn[0].euins[0].expiryDate)
-                  ).toLocaleDateString("en-IN")}
-                </>
-              )}
-          </p>
+            <div className="text-center mt-4 leading-relaxed">
+                <p className="font-semibold text-lg mb-2">
+                  {siteData?.websiteName} is AMFI Registered Mutual Fund
+                  Distributor
+                </p>
+
+                {arn?.length > 0 ? (
+                  arn.map((item, index) => {
+                    const regDate =
+                      item.registrationDate &&
+                      new Date(item.registrationDate)
+                        .toLocaleDateString("en-GB")
+                        .replace(/\//g, "-");
+
+                    const expDate =
+                      item.expiryDate &&
+                      new Date(item.expiryDate)
+                        .toLocaleDateString("en-GB")
+                        .replace(/\//g, "-");
+
+                    const showArnValidity =
+                      regDate && expDate && regDate !== expDate; // ✅ Show only if different
+
+                    return (
+                      <p
+                        key={index}
+                        className="text-gray-100 font-medium text-center mb-2 flex flex-wrap justify-center gap-2"
+                      >
+                        <span>
+                          ARN:{" "}
+                          <span className="text-white">
+                            {item.arn || "N/A"}
+                          </span>
+                          {showArnValidity && (
+                            <span className="text-gray-300 ml-1">
+                              (Validity: {regDate} TO {expDate})
+                            </span>
+                          )}
+                        </span>
+
+                        {/* Inline EUINs */}
+                        {item.euins?.length > 0 &&
+                          item.euins.map((euin, euinIndex) => {
+                            const euinRegDate =
+                              euin.registrationDate &&
+                              new Date(euin.registrationDate)
+                                .toLocaleDateString("en-GB")
+                                .replace(/\//g, "-");
+
+                            const euinExpDate =
+                              euin.expiryDate &&
+                              new Date(euin.expiryDate)
+                                .toLocaleDateString("en-GB")
+                                .replace(/\//g, "-");
+
+                            const showEuinValidity =
+                              euinRegDate &&
+                              euinExpDate &&
+                              euinRegDate !== euinExpDate; // ✅ Only show if different
+
+                            return (
+                              <span key={euinIndex} className="text-gray-100">
+                                || EUIN:{" "}
+                                <span className="text-white">
+                                  {euin.euin || "N/A"}
+                                </span>
+                                {showEuinValidity && (
+                                  <span className="text-gray-300 ml-1">
+                                    (Validity: {euinRegDate} TO {euinExpDate})
+                                  </span>
+                                )}
+                              </span>
+                            );
+                          })}
+                      </p>
+                    );
+                  })
+                ) : (
+                  <p className="text-gray-500 text-sm">No ARN data available</p>
+                )}
+              </div>
 
           <div className={styles.footersabiLink}>
             <ul>
@@ -263,10 +324,6 @@ const Footer = ({ siteData, services, arnData, socialmedialinks }) => {
                 alt="AMFI Logo"
                 className="rounded"
               />
-              <div>
-                <p>ARN - {arn?.[0]?.arn || "N/A"}</p>
-                <p>EUIN - {arn?.[0]?.euins?.[0]?.euin || "N/A"}</p>
-              </div>
             </div>
 
             {/* Mutual Fund Logo */}

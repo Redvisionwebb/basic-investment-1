@@ -56,7 +56,7 @@ export function InputForm() {
         formData.append('image', selectedImage);
       }
 
-      const response = await axios.post(`${process.env.NEXT_PUBLIC_NEXTAUTH_URL}/api/admin/site-settings`, data);
+      const response = await axios.post(`${process.env.NEXT_PUBLIC_NEXTAUTH_URL}/api/admin/site-settings/`, data);
 
       if (response.status === 201) {
         toast.success("Data uploaded successfully!");
@@ -440,7 +440,7 @@ export function InputForm() {
           <Button
             type="submit"
             disabled={loading}
-            className="text-white bg-[var(--rv-admin-bg-color)] hover:bg-[var(--rv-admin-bg-color)] flex items-center gap-2"
+            className="text-white bg-[#2367f8] hover:bg-[#1e56d9] flex items-center gap-2"
           >
             {loading ? (
               <>
@@ -463,9 +463,9 @@ const AddPost = () => {
     <DefaultLayout>
       <div className="flex flex-col gap-5">
         <div className="">
-          <h3 className="font-bold text-2xl mb-4">
+          <h1 className="font-bold text-2xl mb-4">
             Site Settings
-          </h3>
+          </h1>
           <InputForm />
         </div>
         <div className="">

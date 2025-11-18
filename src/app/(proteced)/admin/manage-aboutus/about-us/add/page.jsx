@@ -32,33 +32,93 @@ export function InputForm() {
 
   const { setValue } = form;
 
-  const onSubmit = async (data) => {
-    setLoading(true);
-    try {
-      const formData = new FormData();
-      formData.append("title", data.title);
-      formData.append("description", data.description);
-      if (selectedImage) formData.append("image", selectedImage);
+ const onSubmit = async (data) => {
+  setLoading(true);
+  form.clearErrors(); // Clear previous inline errors
 
-      const response = await axios.post(`${process.env.NEXT_PUBLIC_NEXTAUTH_URL}/api/aboutus`, formData, {
-        headers: { "Content-Type": "multipart/form-data" },
+  try {
+    // 🧩 Frontend image size validation
+    if (selectedImage && selectedImage.size > 1024 * 1024) { // 1MB
+      form.setError("image", {
+        type: "manual",
+        message: "Image size exceeds more than 1MB.",
       });
-
-      if (response.status === 201) {
-        toast.success("About Us entry created successfully ✅");
-        form.reset();
-        setSelectedImage(null);
-        router.push("/admin/manage-aboutus/about-us/manage");
-      } else {
-        toast.error("Failed to submit ❌");
-      }
-    } catch (error) {
-      console.error(error);
-      toast.error("Something went wrong ❌");
-    } finally {
+      toast({
+        variant: "destructive",
+        title: "File Too Large",
+        description: "Please upload an image smaller than 1MB.",
+      });
       setLoading(false);
+      return;
     }
-  };
+
+    const formData = new FormData();
+    if (data.title) formData.append("title", data.title);
+    if (data.description) formData.append("description", data.description);
+    if (selectedImage) formData.append("image", selectedImage);
+
+    const response = await axios.post(
+      `${process.env.NEXT_PUBLIC_NEXTAUTH_URL}/api/aboutus`,
+      formData,
+      { headers: { "Content-Type": "multipart/form-data" } }
+    );
+
+    if (response.status === 201) {
+      toast({
+        title: "✅ About Us entry created successfully",
+      });
+      form.reset();
+      setSelectedImage(null);
+      router.push("/admin/manage-aboutus/about-us/manage");
+    } else {
+      toast({
+        variant: "destructive",
+        title: "Failed to submit",
+        description: "Unexpected server response.",
+      });
+    }
+  } catch (error) {
+    console.error("❌ Error:", error);
+
+    if (axios.isAxiosError(error)) {
+      if (error.response) {
+        const { status, data } = error.response;
+        if (status === 400) {
+          form.setError("image", {
+            type: "manual",
+            message: "Image size exceeds more than 1MB.",
+          });
+          toast({
+            variant: "destructive",
+            title: "Upload Error",
+            description: data?.message || "Image size exceeds more than 1MB.",
+          });
+        } else {
+          toast({
+            variant: "destructive",
+            title: `Error ${status}`,
+            description: data?.message || "Something went wrong while submitting the form.",
+          });
+        }
+      } else {
+        toast({
+          variant: "destructive",
+          title: "Network Error",
+          description: "Unable to reach the server. Please try again later.",
+        });
+      }
+    } else {
+      toast({
+        variant: "destructive",
+        title: "Unexpected Error",
+        description: error.message || "An unexpected error occurred.",
+      });
+    }
+  } finally {
+    setLoading(false);
+  }
+};
+
 
   return (
     <>
@@ -132,7 +192,7 @@ export function InputForm() {
           <Button
             type="submit"
             disabled={loading}
-            className="flex items-center gap-2 text-white bg-[var(--rv-admin-bg-color)] hover:bg-[var(--rv-admin-bg-color)]"
+            className="flex items-center gap-2 text-white bg-[#2367f8] hover:bg-[#2367f8]"
           >
             {loading ? (
               <>
@@ -157,7 +217,7 @@ const AddAboutUsPost = () => (
       <div className="flex justify-between">
         <h1 className="font-bold text-2xl">Add About Us</h1>
         <Link href="/admin/manage-aboutus/about-us/manage">
-          <Button className="text-white bg-[var(--rv-admin-bg-color)] hover:bg-[var(--rv-admin-bg-color)]">Manage About Us</Button>
+          <Button className="text-white bg-[#2367f8] hover:bg-[#2367f8]">Manage About Us</Button>
         </Link>
       </div>
       <InputForm />

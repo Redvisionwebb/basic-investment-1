@@ -12,7 +12,7 @@ import './loader.css'
 
 const Loader = () => {
   return (
-    <div className="fixed inset-0 bg-white/60 flex items-center justify-center z-[99999] p-2">
+    <div className="fixed inset-0 bg-white/60 flex items-center justify-center z-50 p-2">
       <div className="spinner">
         <div></div>
         <div></div>

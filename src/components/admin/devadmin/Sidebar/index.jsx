@@ -6,11 +6,12 @@ import Link from "next/link";
 import Image from "next/image";
 import SidebarItem from "./SidebarItem";
 import useLogoSrc from "@/hooks/useLogoSrc";
-import { useSidebar } from "@/context/SidebarContext";
 import { RxDashboard } from "react-icons/rx";
 import { FaServicestack, FaStar, FaSignInAlt } from "react-icons/fa";
-import { MdKeyboardDoubleArrowLeft } from "react-icons/md";
+import { MdAnalytics, MdKeyboardDoubleArrowLeft } from "react-icons/md";
 import { BiLogOut } from "react-icons/bi";
+import { useSidebar } from "@/context/SidebarContext";
+import { FaRobot } from "react-icons/fa6";
 export const menuGroups = [
   {
     name: "MAIN MENU",
@@ -40,6 +41,18 @@ export const menuGroups = [
         permission: "manage_login",
       },
       {
+        icon: <FaRobot />,
+        label: "Software & Robo User",
+        route: "/devadmin/manage-robo-users",
+        permission: "software_robo_user",
+      },
+      {
+        icon: <MdAnalytics />,
+        label: "Analytics Settings",
+        route: "/devadmin/manage-analytics",
+        permission: "analytics_settings",
+      },
+      {
         icon: <BiLogOut />,
         label: "Logout",
         type: "logout",
@@ -48,7 +61,6 @@ export const menuGroups = [
     ],
   },
 ];
-
 
 const Sidebar = () => {
   const logoSrc = useLogoSrc();
@@ -96,7 +108,7 @@ const Sidebar = () => {
           {isMobile && (
             <button
               onClick={closeSidebar}
-              className="w-8 h-8 flex items-center justify-center bg-[var(--rv-admin-bg-color)] text-white rounded-lg text-2xl cursor-pointer hover:bg-[var(--rv-admin-bg-color)] transition-colors"
+              className="w-8 h-8 flex items-center justify-center bg-[#2367f8] text-white rounded-lg text-2xl cursor-pointer hover:bg-[#145efd] transition-colors"
             >
               <MdKeyboardDoubleArrowLeft />
             </button>

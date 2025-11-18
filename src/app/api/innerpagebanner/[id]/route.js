@@ -68,6 +68,13 @@ export async function PUT(req, { params }) {
         const image = formData.get('image');
         const file = formData.get('image');
         const title = formData.get('title');
+              // Validate file size (1 MB = 1 * 1024 * 1024 bytes)
+    if (file && file.size > 1 * 1024 * 1024) {
+      return NextResponse.json(
+        { error: "File size exceeds 1 MB limit" },
+        { status: 400 }
+      );
+    }
 
         // Find the existing innerpagebanner
         const innerpagebanner = await InnerBannerPageModel.findById(id);

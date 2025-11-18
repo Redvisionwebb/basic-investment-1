@@ -8,7 +8,7 @@ export default function PrivacyPolicy() {
     const [data, setData] = useState('');
     const [mainData, setMainData] = useState("");
     const fetchdata = async () => {
-        const data = await fetch("/api/admin/site-settings");
+        const data = await fetch(`${process.env.NEXT_PUBLIC_NEXTAUTH_URL}/api/admin/site-settings`);
         if (data.ok) {
             const maindata = await data.json();
             setMainData(maindata[0])
@@ -16,7 +16,7 @@ export default function PrivacyPolicy() {
     };
     const fetchPolicy = async () => {
         try {
-            const response = await axios.get(`${process.env.NEXT_PUBLIC_DATA_API}/api/open-apis/privacy-policy?apikey=${process.env.NEXT_PUBLIC_API_KEY}`);
+            const response = await axios.get(`${process.env.NEXT_PUBLIC_NEXTAUTH_URL}/api/open-apis/privacy-policy`);
             if (response.status === 200 && response.data && response.data[0]) {
                 const data = response.data[0];
                 setData(data.pvp);

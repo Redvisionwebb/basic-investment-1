@@ -62,6 +62,13 @@ export async function PUT(req, { params }) {
     const description = formData.get('description');
     const socialMedia = formData.get('socialMedia'); // JSON stringified array
 
+          // Validate file size (1 MB = 1 * 1024 * 1024 bytes)
+    if (file && file.size > 1 * 1024 * 1024) {
+      return NextResponse.json(
+        { error: "File size exceeds 1 MB limit" },
+        { status: 400 }
+      );
+    }
     const teamMember = await TeamModel.findById(id);
     if (!teamMember) {
       return NextResponse.json({ error: 'Team member not found' }, { status: 404 });

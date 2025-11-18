@@ -67,6 +67,13 @@ export async function PUT(req, { params }) {
     await ConnectDB(); // Ensure DB connection
 
     const file = data.get("image");
+          // Validate file size (1 MB = 1 * 1024 * 1024 bytes)
+    if (file && file.size > 1 * 1024 * 1024) {
+      return NextResponse.json(
+        { error: "File size exceeds 1 MB limit" },
+        { status: 400 }
+      );
+    }
 
     // Find the blog by ID
     const blog = await BlogsModel.findById(id);

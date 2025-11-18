@@ -2,7 +2,7 @@
 import { NextResponse } from "next/server";
 import { ConnectDB } from "@/lib/db/ConnectDB";
 import AdminServiceModel from "@/lib/models/AdminServiceModel";
-import { saveImageToLocal } from "@/lib/functions";
+import { saveImageToLocal, slugify } from "@/lib/functions";
 
 // -------------------- PUT --------------------
 export async function PUT(req) {
@@ -17,6 +17,7 @@ export async function PUT(req) {
 
     const updatePayload = {
       name: formData.get("name"),
+      link: slugify(formData.get("name")),
       description: formData.get("description"),
       metaTitle: formData.get("metaTitle"),
       metaKeywords: formData.get("metaKeywords"),

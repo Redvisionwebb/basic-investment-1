@@ -1,17 +1,30 @@
 "use client";
 import Link from "next/link";
 import { FaWhatsapp } from "react-icons/fa";
-import styles from "./social.module.css"
-export default function SocialMediaSidebar({sitedata}) {
-  // console.log(sitedata)
+import { motion } from "framer-motion";
+
+export default function SocialMediaSidebar({ sitedata }) {
   return (
-    <div className={`${styles.social_midia_f}`}>
+    <div className={`fixed bottom-44 right-4 z-30`}>
       <ul className="flex flex-col space-y-3">
-        <li>
-          <Link href={`http://wa.me/${sitedata?.whatsAppNo}`} target="_blank" className="text-white p-3 block bg-[#6BB543] transition  rounded-full">
-            <FaWhatsapp size={30} />
+        <motion.li
+          animate={{
+            y: [0, -10, 0],
+          }}
+          transition={{
+            repeat: Infinity,
+            duration: 1.5,
+            ease: "easeInOut",
+          }}
+        >
+          <Link
+            href={`http://wa.me/${sitedata?.whatsAppNo}`}
+            target="_blank"
+            className="text-white p-3 block bg-[#6BB543] transition rounded-full"
+          >
+            <FaWhatsapp size={35} />
           </Link>
-        </li>
+        </motion.li>
       </ul>
     </div>
   );

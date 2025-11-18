@@ -17,7 +17,7 @@ const Page = () => {
         ? schemeType.replace(/&/g, "%26")
         : schemeType;
       const response = await axios.get(
-        `${process.env.NEXT_PUBLIC_DATA_API}/api/open-apis/fund-performance/fp-data?categorySchemes=${sanitizedSchemeType}&apikey=${process.env.NEXT_PUBLIC_API_KEY}`
+        `${process.env.NEXT_PUBLIC_NEXTAUTH_URL}/api/open-apis/fund-performance/fp-data?categorySchemes=${sanitizedSchemeType}`
       );
       if (response.status === 200) {
         setPerformanceData(response.data.data);
@@ -44,18 +44,13 @@ const Page = () => {
       fetchPerformanceData(data.schemeName);
     }
   }, []);
-
   return (
     <div>
-      <InnerBanner title={schemeName} subpages="Performance" />
-      <div className="px-4">
-        <div className="">
-          <MutualFundTable
-            performanceData={performanceData}
-            schemeName={schemeName}
-          />
-        </div>
-      </div>
+      <InnerBanner title={schemeName} />
+      <MutualFundTable
+        performanceData={performanceData}
+        schemeName={schemeName}
+      />
     </div>
   );
 };

@@ -9,7 +9,6 @@ const VideoSchema = new mongoose.Schema({
     },
     videoUrl: {
         type: String,
-        required: true
     },
     embedUrl: {
         type: String,

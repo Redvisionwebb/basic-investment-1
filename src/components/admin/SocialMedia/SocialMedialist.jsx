@@ -6,7 +6,6 @@ import axios from 'axios';
 import { toast } from 'react-toastify';
 import AddSocialModal from './AddSocialMedia';
 import { FiEdit2, FiTrash2 } from 'react-icons/fi';
-import Link from 'next/link';
 
 const SocialMediaTable = () => {
   const [socials, setSocials] = useState([]);
@@ -54,13 +53,13 @@ const SocialMediaTable = () => {
   return (
     <div className="overflow-x-auto flex flex-col items-start w-full gap-5 rounded-md p-3 bg-white">
       <div className="flex justify-between items-center gap-5 w-full">
-        <h3 className="text-xl font-semibold">Social Media Links</h3>
+        <h2 className="text-xl font-semibold">Social Media Links</h2>
         <button
           onClick={() => {
             setEditData(null);
             setShowModal(true);
           }}
-          className="text-sm text-white bg-[var(--rv-admin-bg-color)] hover:bg-[var(--rv-admin-bg-color)] px-5 py-2 rounded-lg"
+          className="text-sm text-white bg-[#2367f8] hover:bg-[#2367f8] px-5 py-2 rounded-lg"
         >
           Add Social Media
         </button>
@@ -83,9 +82,9 @@ const SocialMediaTable = () => {
                 <td className="border border-gray-300 px-4 py-2">{index + 1}</td>
                 <td className="border border-gray-300 px-4 py-2">{item.title}</td>
                 <td className="border border-gray-300 px-4 py-2">
-                  <Link href={item.url} className="text-blue-500" target="_blank" rel="noopener noreferrer">
+                  <a href={item.url} className="text-blue-500" target="_blank" rel="noopener noreferrer">
                     {item.url}
-                  </Link>
+                  </a>
                 </td>
                 <td className="border border-gray-300 px-4 py-2">
                   <button
@@ -102,7 +101,7 @@ const SocialMediaTable = () => {
                       setEditData(item);
                       setShowModal(true);
                     }}
-                    className="text-[var(--rv-admin-bg-color)] border border-[var(--rv-admin-bg-color)] rounded-md p-2"
+                    className="text-[#2367f8] border border-[#2367f8] rounded-md p-2"
                   >
                     <FiEdit2 size={16} />
                   </button>

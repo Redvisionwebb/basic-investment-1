@@ -6,15 +6,16 @@ import Image from "next/image";
 import SidebarItem from "./SidebarItem";
 import useLogoSrc from "@/hooks/useLogoSrc";
 import { MdKeyboardDoubleArrowLeft } from "react-icons/md";
-import { useSidebar } from "@/context/SidebarContext";
+
 import { menuGroups } from "@/data/menu";
+import { useSidebar } from "@/context/SidebarContext";
 
 const Sidebar = () => {
   const logoSrc = useLogoSrc();
   const [pageName, setPageName] = useState("dashboard");
   const { sidebarOpen, closeSidebar, isMobile } = useSidebar();
   const [filteredMenu, setFilteredMenu] = useState([]);
-  // 👇 ye state sabhi items ke liye ek hi jagah control karega
+  const [loading, setLoading] = useState(true); // 🟢 Added loading state
   const [openIndex, setOpenIndex] = useState(null);
 
   const handleToggle = (index) => {
@@ -23,25 +24,27 @@ const Sidebar = () => {
 
   useEffect(() => {
     const fetchPermissions = async () => {
+      setLoading(true);
       try {
-        const res = await fetch("/api/permissions");
+        const res = await fetch(`${process.env.NEXT_PUBLIC_NEXTAUTH_URL}/api/permissions`);
         const data = await res.json();
 
-        // Get list of enabled permissions
-        const enabledPermissions = data.filter(p => p.enabled).map(p => p.permission);
+        const enabledPermissions = data
+          .filter((p) => p.enabled)
+          .map((p) => p.permission);
 
-        // Filter menuGroups based on enabled permissions
-        const newFilteredMenu = menuGroups.map(group => ({
+        const newFilteredMenu = menuGroups.map((group) => ({
           ...group,
-          menuItems: group.menuItems
-            .filter(item => enabledPermissions.includes(item.permission))
+          menuItems: group.menuItems.filter((item) =>
+            enabledPermissions.includes(item.permission)
+          ),
         }));
 
         setFilteredMenu(newFilteredMenu);
-        console.log(newFilteredMenu);
-        
       } catch (error) {
         console.error("Failed to fetch permissions:", error);
+      } finally {
+        setLoading(false);
       }
     };
 
@@ -66,8 +69,7 @@ const Sidebar = () => {
             ? `fixed w-80 ${sidebarOpen ? "translate-x-0" : "-translate-x-full"}`
             : `relative ${sidebarOpen ? "w-80" : "w-0 -ml-0"}`
           }
-          flex flex-col
-          overflow-hidden
+          flex flex-col overflow-hidden
         `}
       >
         <div className="flex items-center justify-between p-4 border-b border-gray-300">
@@ -84,7 +86,7 @@ const Sidebar = () => {
           {isMobile && (
             <button
               onClick={closeSidebar}
-              className="w-8 h-8 flex items-center justify-center bg-[var(--rv-admin-bg-color)] text-white rounded-lg text-2xl cursor-pointer hover:bg-[var(--rv-admin-bg-color)] transition-colors"
+              className="w-8 h-8 flex items-center justify-center bg-[#2367f8] text-white rounded-lg text-2xl cursor-pointer hover:bg-[#145efd] transition-colors"
             >
               <MdKeyboardDoubleArrowLeft />
             </button>
@@ -92,25 +94,42 @@ const Sidebar = () => {
         </div>
 
         <div className="flex-1 overflow-y-auto px-4 py-4">
-          {filteredMenu?.map((group, gIdx) => (
-            <div key={gIdx} className="mb-4">
-              <h3 className="text-sm font-medium text-gray-600 uppercase mb-3">
-                {group?.name}
-              </h3>
-              <ul className="space-y-1">
-                {group?.menuItems?.map((item, idx) => (
-                  <SidebarItem
-                    key={idx}
-                    item={item}
-                    pageName={pageName}
-                    setPageName={setPageName}
-                    isOpen={openIndex === `${gIdx}-${idx}`}
-                    onToggle={() => handleToggle(`${gIdx}-${idx}`)}
-                  />
-                ))}
-              </ul>
+          {/* 🟢 Skeleton Loader */}
+          {loading ? (
+            <div className="animate-pulse">
+              {[...Array(3)].map((_, gIdx) => (
+                <div key={gIdx} className="mb-6">
+                  <div className="h-3 w-32 bg-gray-300 rounded mb-3"></div>
+                  {[...Array(4)].map((_, i) => (
+                    <div
+                      key={i}
+                      className="h-8 bg-gray-200 rounded mb-2 w-full"
+                    ></div>
+                  ))}
+                </div>
+              ))}
             </div>
-          ))}
+          ) : (
+            filteredMenu?.map((group, gIdx) => (
+              <div key={gIdx} className="mb-4">
+                <h3 className="text-sm font-medium text-gray-600 uppercase mb-3">
+                  {group?.name}
+                </h3>
+                <ul className="space-y-1">
+                  {group?.menuItems?.map((item, idx) => (
+                    <SidebarItem
+                      key={idx}
+                      item={item}
+                      pageName={pageName}
+                      setPageName={setPageName}
+                      isOpen={openIndex === `${gIdx}-${idx}`}
+                      onToggle={() => handleToggle(`${gIdx}-${idx}`)}
+                    />
+                  ))}
+                </ul>
+              </div>
+            ))
+          )}
         </div>
       </aside>
     </>

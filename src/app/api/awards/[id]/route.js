@@ -74,6 +74,13 @@ export async function PUT(req, { params }) {
     const name = formData.get("name");
     const presentedBy = formData.get("presentedBy");
     const date = formData.get("date");
+          // Validate file size (1 MB = 1 * 1024 * 1024 bytes)
+        if (file && file.size > 1 * 1024 * 1024) {
+          return NextResponse.json(
+            { error: "File size exceeds 1 MB limit" },
+            { status: 400 }
+          );
+        }
 
     const award = await AwardModel.findById(id);
     if (!award) {

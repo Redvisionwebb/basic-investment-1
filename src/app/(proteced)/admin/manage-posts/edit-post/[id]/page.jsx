@@ -16,7 +16,6 @@ import { Toaster } from "@/components/ui/toaster";
 import Link from "next/link";
 import { useParams, useRouter } from "next/navigation";
 import DefaultLayout from "@/components/admin/Layouts/DefaultLaout";
-import Image from "next/image";
 
 const FormSchema = z.object({
     posttitle: z.string().min(2, { message: "Post title must be at least 2 characters." }),
@@ -66,45 +65,78 @@ export function InputForm({ postId }) {
         }
     }, [postId]);
 
-    const onSubmit = async (data) => {
-        setLoading(true);
-        const formData = new FormData();
-        formData.append('image', selectedImage);
-        formData.append('posttitle', data.posttitle);
-        formData.append('metatitle', data.metatitle);
-        formData.append('description', data.description);
-        formData.append('category', data.category);
-        formData.append('content', content);
-        formData.append('keywords', data.keywords);
-        try {
-            let response;
-            response = await axios.put(`${process.env.NEXT_PUBLIC_NEXTAUTH_URL}/api/blogs/${postId}`, formData, {
-                headers: {
-                    'Content-Type': 'multipart/form-data',
-                },
-            });
-            if (response.status === 200) {
-                toast({
-                    variant: '',
-                    title: `Post Updated successfully`,
-                });
-                form.reset();
-                setSelectedImage(null);
-                router.push("/admin/manage-posts/manage"); // Redirect to post management
-            } else {
-                toast({
-                    variant: "destructive",
-                    title: "Uh oh! Something went wrong.",
-                    description: "There was a problem with your request.",
-                });
-            }
-        } catch (error) {
-            console.error('Error:', error);
-            alert("An unexpected error occurred.");
-        } finally {
-            setLoading(false);
-        }
-    };
+const onSubmit = async (data) => {
+  setLoading(true);
+
+  // Validate image size (max 1MB)
+  if (selectedImage && selectedImage.size > 1024 * 1024) {
+    toast({
+      variant: "destructive",
+      title: "Image too large",
+      description: "Image size should not exceed 1MB.",
+    });
+    setLoading(false);
+    return; // Stop submission
+  }
+
+  const formData = new FormData();
+  if (selectedImage) formData.append("image", selectedImage);
+  formData.append("posttitle", data.posttitle);
+  formData.append("metatitle", data.metatitle);
+  formData.append("description", data.description);
+  formData.append("category", data.category);
+  formData.append("content", content);
+  formData.append("keywords", data.keywords);
+
+  try {
+    const response = await axios.put(
+      `${process.env.NEXT_PUBLIC_NEXTAUTH_URL}/api/blogs/${postId}`,
+      formData,
+      {
+        headers: { "Content-Type": "multipart/form-data" },
+      }
+    );
+
+    if (response.status === 200) {
+      toast({
+        title: "✅ Post updated successfully",
+      });
+      form.reset();
+      setSelectedImage(null);
+      router.push("/admin/manage-posts/manage");
+    } else {
+      toast({
+        variant: "destructive",
+        title: "Update failed",
+        description: "Server returned an unexpected response.",
+      });
+    }
+  } catch (err) {
+    console.error("Update error:", err);
+
+    if (axios.isAxiosError(err)) {
+      toast({
+        variant: "destructive",
+        title: err.response?.status
+          ? `Error ${err.response.status}`
+          : "Network Error",
+        description:
+          err.response?.data?.message ||
+          "An unexpected error occurred while updating the post.",
+      });
+    } else {
+      toast({
+        variant: "destructive",
+        title: "Unexpected Error",
+        description: err.message || "Something went wrong.",
+      });
+    }
+  } finally {
+    setLoading(false);
+  }
+};
+
+
 
     const fetchCategories = async () => {
         try {
@@ -225,9 +257,7 @@ export function InputForm({ postId }) {
                                 {previousImage && (
                                     <div className="mt-4">
                                         <p className="text-sm text-gray-500">Previous Image:</p>
-                                     <Image src={previousImage}
-                    width={100}
-                    height={100} alt="Previous Image" className="max-w-sm rounded border border-gray-300 h-auto w-40" />
+                                        <img src={previousImage} alt="Previous Image" className="max-w-sm rounded border border-gray-300 h-auto w-40" />
                                     </div>
                                 )}
                             </FormItem>
@@ -241,7 +271,7 @@ export function InputForm({ postId }) {
                     onBlur={newContent => setContent(newContent)}
                     onChange={newContent => { }}
                 />
-                <Button className="text-white bg-[var(--rv-admin-bg-color)] hover:bg-[var(--rv-admin-bg-color)]" type="submit">{!loading ? 'Update' : 'Loading...'}</Button>
+                <Button className="text-white bg-[#2367f8] hover:bg-[#2367f8]" type="submit">{!loading ? 'Update' : 'Loading...'}</Button>
             </form>
         </Form>
     );
@@ -258,7 +288,7 @@ const EditPost = () => {
                         Edit Post
                     </h1>
                     <Link href="/admin/manage-posts/manage">
-                        <Button className="text-white bg-[var(--rv-admin-bg-color)] hover:bg-[var(--rv-admin-bg-color)]">All Posts</Button>
+                        <Button className="text-white bg-[#2367f8] hover:bg-[#2367f8]">All Posts</Button>
                     </Link>
                 </div>
                 <InputForm postId={postId} />

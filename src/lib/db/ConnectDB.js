@@ -7,22 +7,25 @@ if (!cached) {
 }
  
 export async function ConnectDB() {
-  if (cached.conn) {
-    return cached.conn;
-  }
+  if (cached.conn) return cached.conn;
  
   if (!cached.promise) {
     const uri = process.env.MONGODB_URI;
-    cached.promise = mongoose
-      .connect(uri)
-      .then((mongoose) => mongoose);
+    if (!uri) {
+      throw new Error("❌ MONGODB_URI environment variable not set");
+    }
+ 
+    cached.promise = mongoose.connect(uri, {
+      bufferCommands: false, // recommended for serverless environments
+    }).then((mongoose) => mongoose);
   }
  
   try {
     cached.conn = await cached.promise;
-  } catch (e) {
+    console.log("✅ MongoDB connected successfully");
+  } catch (err) {
     cached.promise = null;
-    throw e;
+    throw null;
   }
  
   return cached.conn;

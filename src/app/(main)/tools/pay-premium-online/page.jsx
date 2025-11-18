@@ -97,7 +97,7 @@ export default function PayPremium() {
                                         key={index}
                                         className=" basis-1/2 sm:basis-1/3 md:basis-1/4 lg:basis-1/5"
                                     >
-                                        <Link href={partners.logourl || "#"} target="_blank">
+                                        <Link href={logo.adminlogourl || logo?.logourl || ""} target="_blank">
                                             <div className="bg-white p-2 border border-black/50 rounded-lg hover:shadow-xl transition-all duration-300 flex items-center justify-center h-[100px]">
                                                 {/* eslint-disable-next-line @next/next/no-img-element */}
                                                 <img

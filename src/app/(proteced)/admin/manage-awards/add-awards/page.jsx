@@ -38,41 +38,61 @@ export function AwardInputForm() {
     },
   });
 
-  const onSubmit = async (data) => {
-    setLoading(true);
-    const formData = new FormData();
-    formData.append('image', selectedImage);
-    formData.append('name', data.name);
-    formData.append('presentedBy', data.presentedBy);
-    formData.append('date', data.date);
+const onSubmit = async (data) => {
+  setLoading(true);
 
-    try {
-      const response = await axios.post(`${process.env.NEXT_PUBLIC_NEXTAUTH_URL}/api/awards`, formData, {
-        headers: { 'Content-Type': 'multipart/form-data' },
-      });
+  // Image validation: max 1MB
+  if (selectedImage && selectedImage.size > 1024 * 1024) {
+    toast({
+      variant: "destructive",
+      title: "Image too large",
+      description: "Image size should not exceed 1MB.",
+    });
+    setLoading(false);
+    return; // Stop submission
+  }
 
-      if (response.status === 201) {
-        toast({
-          variant: '',
-          title: "Award added successfully",
-        });
-        form.reset();
-        router.push("/admin/manage-awards/manage");
-        setSelectedImage(null);
-      } else {
-        toast({
-          variant: "destructive",
-          title: "Uh oh! Something went wrong.",
-          description: "There was a problem with your request.",
-        });
+  const formData = new FormData();
+  if (selectedImage) formData.append("image", selectedImage);
+  formData.append("name", data.name);
+  formData.append("presentedBy", data.presentedBy);
+  formData.append("date", data.date);
+
+  try {
+    const response = await axios.post(
+      `${process.env.NEXT_PUBLIC_NEXTAUTH_URL}/api/awards`,
+      formData,
+      {
+        headers: { "Content-Type": "multipart/form-data" },
       }
-    } catch (error) {
-      console.error('Error:', error);
-      alert("An unexpected error occurred.");
-    } finally {
-      setLoading(false);
+    );
+
+    if (response.status === 201) {
+      toast({
+        title: "✅ Award added successfully",
+      });
+      form.reset();
+      setSelectedImage(null);
+      router.push("/admin/manage-awards/manage");
+    } else {
+      toast({
+        variant: "destructive",
+        title: "Submission failed",
+        description: "There was a problem with your request.",
+      });
     }
-  };
+  } catch (error) {
+    console.error("Submission error:", error);
+    toast({
+      variant: "destructive",
+      title: "Unexpected error",
+      description: "Something went wrong while submitting the award.",
+    });
+  } finally {
+    setLoading(false);
+  }
+};
+
 
   return (
     <Form {...form}>
@@ -153,7 +173,7 @@ export function AwardInputForm() {
           )}
         />
 
-        <Button className="text-white bg-[var(--rv-admin-bg-color)] hover:bg-[var(--rv-admin-bg-color)]" type="submit">
+        <Button className="text-white bg-[#2367f8] hover:bg-[#2367f8]" type="submit">
           {!loading ? 'Submit' : 'Uploading...'}
         </Button>
       </form>
@@ -168,7 +188,7 @@ const AddAward = () => {
         <div className="flex justify-between">
           <h1 className='font-bold text-2xl '>Add New Award</h1>
           <Link href="/admin/manage-awards/manage">
-            <Button className="text-white bg-[var(--rv-admin-bg-color)] hover:bg-[var(--rv-admin-bg-color)]">All Awards</Button>
+            <Button className="text-white bg-[#2367f8] hover:bg-[#2367f8]">All Awards</Button>
           </Link>
         </div>
 

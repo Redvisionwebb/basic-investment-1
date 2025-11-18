@@ -36,6 +36,10 @@ const ServicesSchema = new mongoose.Schema(
                 },
             },
         ],
+        updateServices: {
+            type: Boolean,
+            default: false
+        },
     },
     {
         timestamps: true,

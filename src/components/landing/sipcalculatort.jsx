@@ -51,8 +51,8 @@ export default function SipCalculator({ siteData }) {
             text: 'This is a test email sent from Nodemailer!',
         }
         try {
-            const response = await axios.post('/api/leads/', data);
-            const info = await axios.post('/api/email/', emaildata);
+            const response = await axios.post(`${process.env.NEXT_PUBLIC_NEXTAUTH_URL}/api/leads/`, data);
+            const info = await axios.post(`${process.env.NEXT_PUBLIC_NEXTAUTH_URL}/api/email/`, emaildata);
             if (response.status === 201) {
                 form.reset();
             } else {

@@ -15,7 +15,6 @@ import { Toaster } from "@/components/ui/toaster";
 import Link from "next/link";
 import { useParams, useRouter } from "next/navigation";
 import DefaultLayout from "@/components/admin/Layouts/DefaultLaout";
-import Image from "next/image";
 
 const FormSchema = z.object({
   name: z.string().min(2, { message: "Award name must be at least 2 characters." }),
@@ -57,43 +56,60 @@ export function AwardEditForm({ awardId }) {
   }, [awardId]);
 
   const onSubmit = async (data) => {
-    setLoading(true);
+  setLoading(true);
 
-    const formData = new FormData();
-    formData.append("name", data.name);
-    formData.append("presentedBy", data.presentedBy);
-    formData.append("date", data.date);
-    if (selectedImage) formData.append("image", selectedImage);
+  // Image validation: max 1MB
+  if (selectedImage && selectedImage.size > 1024 * 1024) {
+    toast({
+      variant: "destructive",
+      title: "Image too large",
+      description: "Image size should not exceed 1MB.",
+    });
+    setLoading(false);
+    return; // Stop submission
+  }
 
-    try {
-      const response = await axios.put(`${process.env.NEXT_PUBLIC_NEXTAUTH_URL}/api/awards/${awardId}`, formData, {
+  const formData = new FormData();
+  formData.append("name", data.name);
+  formData.append("presentedBy", data.presentedBy);
+  formData.append("date", data.date);
+  if (selectedImage) formData.append("image", selectedImage);
+
+  try {
+    const response = await axios.put(
+      `${process.env.NEXT_PUBLIC_NEXTAUTH_URL}/api/awards/${awardId}`,
+      formData,
+      {
         headers: { "Content-Type": "multipart/form-data" },
-      });
-
-      if (response.status === 200) {
-        toast({
-          title: "Award updated successfully",
-        });
-        form.reset();
-        router.push("/admin/manage-awards/manage");
-      } else {
-        toast({
-          variant: "destructive",
-          title: "Uh oh! Something went wrong.",
-          description: "Update request failed.",
-        });
       }
-    } catch (error) {
-      console.error("Error:", error);
+    );
+
+    if (response.status === 200) {
+      toast({
+        title: "✅ Award updated successfully",
+      });
+      form.reset();
+      setSelectedImage(null);
+      router.push("/admin/manage-awards/manage");
+    } else {
       toast({
         variant: "destructive",
-        title: "Unexpected error",
-        description: "Please try again later.",
+        title: "Update failed",
+        description: "There was a problem with your request.",
       });
-    } finally {
-      setLoading(false);
     }
-  };
+  } catch (error) {
+    console.error("Update error:", error);
+    toast({
+      variant: "destructive",
+      title: "Unexpected error",
+      description: "Something went wrong. Please try again later.",
+    });
+  } finally {
+    setLoading(false);
+  }
+};
+
 
   return (
     <Form {...form}>
@@ -165,16 +181,14 @@ export function AwardEditForm({ awardId }) {
               {previousImage && (
                 <div className="mt-4">
                   <p className="text-sm text-gray-500">Previous Image:</p>
-               <Image src={previousImage}
-                    width={100}
-                    height={100} alt="Previous" className="w-40 border rounded" />
+                  <img src={previousImage} alt="Previous" className="w-40 border rounded" />
                 </div>
               )}
             </FormItem>
           )}
         />
 
-        <Button className="text-white bg-[var(--rv-admin-bg-color)] hover:bg-[var(--rv-admin-bg-color)]" type="submit">
+        <Button className="text-white bg-[#2367f8] hover:bg-[#2367f8]" type="submit">
           {!loading ? 'Update Award' : 'Updating...'}
         </Button>
       </form>
@@ -192,7 +206,7 @@ const EditAward = () => {
       <div className="flex justify-between">
         <h1 className='font-bold text-2xl'>Edit Award</h1>
         <Link href="/admin/manage-awards/manage">
-          <Button className="text-white bg-[var(--rv-admin-bg-color)] hover:bg-[var(--rv-admin-bg-color)]">All Awards</Button>
+          <Button className="text-white bg-[#2367f8] hover:bg-[#2367f8]">All Awards</Button>
         </Link>
       </div>
       <AwardEditForm awardId={awardId} />

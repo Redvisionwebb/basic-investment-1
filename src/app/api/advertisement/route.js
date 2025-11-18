@@ -19,8 +19,24 @@ export async function POST(req) {
     const formData = await req.formData();
     const file = formData.get("image");
     const link = formData.get("link");
-    uploaded = await saveImageToLocal("advertisement", file);
+    
 
+      if (file && file.size > 1 * 1024 * 1024) {
+                     return NextResponse.json(
+                       { error: "File size exceeds 1 MB limit" },
+                       { status: 400 }
+                     );
+                   }
+                    if (file) {
+                     try {
+                            uploaded = await saveImageToLocal("advertisement", file);
+                     } catch (uploadError) {
+                       return NextResponse.json(
+                         { error: "Image upload failed" },
+                         { status: 500 }
+                       );
+                     }
+                   }
     await AdvertisementModel.create({
       image: {
         url: uploaded.url,

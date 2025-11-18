@@ -30,6 +30,8 @@ import DefaultLayout from "@/components/admin/Layouts/DefaultLaout";
 import { FiEdit2, FiTrash2 } from "react-icons/fi";
 import Loader from "@/components/admin/common/Loader";
 
+const MAX_BLOGS = 50; // maximum allowed blogs
+
 const DataTableDemo = () => {
     const router = useRouter();
     const [data, setData] = React.useState([]);
@@ -41,6 +43,13 @@ const DataTableDemo = () => {
     const [showConfirm, setShowConfirm] = React.useState(false);
     const [selectedId, setSelectedId] = React.useState(null);
 
+    // Pagination state
+    const [pagination, setPagination] = React.useState({
+        pageIndex: 0,
+        pageSize: 10, // Change to 20 if you want all 16 in one page
+    });
+
+    // Fetch data
     React.useEffect(() => {
         const fetchData = async () => {
             setLoading(true);
@@ -51,6 +60,7 @@ const DataTableDemo = () => {
                 }
             } catch (error) {
                 console.error("Failed to fetch blogs", error);
+                toast({ variant: "destructive", title: "Failed to fetch blogs" });
             }
             setLoading(false);
         };
@@ -58,6 +68,7 @@ const DataTableDemo = () => {
         fetchData();
     }, []);
 
+    // Confirm delete
     const confirmDelete = (id) => {
         setSelectedId(id);
         setShowConfirm(true);
@@ -123,7 +134,7 @@ const DataTableDemo = () => {
                     <div className="flex items-center gap-3">
                         <button
                             onClick={() => router.push(`/admin/manage-posts/edit-post/${blog._id}`)}
-                            className="text-[var(--rv-admin-bg-color)] border border-[var(--rv-admin-bg-color)] rounded-md p-2"
+                            className="text-[#2367f8] border border-[#2367f8] rounded-md p-2"
                         >
                             <FiEdit2 size={16} />
                         </button>
@@ -150,27 +161,32 @@ const DataTableDemo = () => {
         onColumnFiltersChange: setColumnFilters,
         onColumnVisibilityChange: setColumnVisibility,
         onRowSelectionChange: setRowSelection,
+        onPaginationChange: setPagination, // ✅ pagination control
         state: {
             sorting,
             columnFilters,
             columnVisibility,
             rowSelection,
+            pagination,
         },
     });
 
     return (
         <DefaultLayout>
             {loading ? (
-                <div className="">
-                    <Loader />
-                </div>
+                <Loader />
             ) : (
                 <>
-
-                    <div className="flex justify-between">
-                        <h1 className="font-bold text-2xl">Add New Post</h1>
-                        <Link href="/admin/manage-posts/add-post">
-                            <Button className="text-white bg-[var(--rv-admin-bg-color)] hover:bg-[var(--rv-admin-bg-color)]">Add New Post</Button>
+                    <div className="flex justify-between mb-4">
+                        <h1 className="font-bold text-2xl">All Posts</h1>
+                        <Link href={data.length >= MAX_BLOGS ? "#" : "/admin/manage-posts/add-post"}>
+                            <Button
+                                className="text-white bg-[#2367f8] hover:bg-[#2367f8]"
+                                disabled={data.length >= MAX_BLOGS}
+                                title={data.length >= MAX_BLOGS ? "Maximum 50 posts reached" : ""}
+                            >
+                                Add New Post
+                            </Button>
                         </Link>
                     </div>
 
@@ -185,6 +201,7 @@ const DataTableDemo = () => {
                                 className="max-w-xl border border-gray-300"
                             />
                         </div>
+
                         <div className="rounded-md">
                             <Table>
                                 <TableHeader>
@@ -201,7 +218,7 @@ const DataTableDemo = () => {
                                     ))}
                                 </TableHeader>
                                 <TableBody>
-                                    {table?.getRowModel().rows.length ? (
+                                    {table.getRowModel().rows.length ? (
                                         table.getRowModel().rows.map((row) => (
                                             <TableRow key={row.id}>
                                                 {row.getVisibleCells().map((cell) => (
@@ -221,7 +238,44 @@ const DataTableDemo = () => {
                                 </TableBody>
                             </Table>
                         </div>
+
+                        {/* Pagination Controls */}
+                        <div className="flex items-center justify-between mt-4">
+                            <div className="flex gap-2">
+                                <Button
+                                    onClick={() => table.previousPage()}
+                                    disabled={!table.getCanPreviousPage()}
+                                >
+                                    Previous
+                                </Button>
+                                <Button
+                                    onClick={() => table.nextPage()}
+                                    disabled={!table.getCanNextPage()}
+                                >
+                                    Next
+                                </Button>
+                            </div>
+
+                            <div>
+                                Page {table.getState().pagination.pageIndex + 1} of {table.getPageCount()}
+                            </div>
+
+                            <div>
+                                <select
+                                    value={table.getState().pagination.pageSize}
+                                    onChange={(e) => table.setPageSize(Number(e.target.value))}
+                                    className="border border-gray-300 rounded p-1"
+                                >
+                                    {[5, 10, 20, 50].map((size) => (
+                                        <option key={size} value={size}>
+                                            Show {size}
+                                        </option>
+                                    ))}
+                                </select>
+                            </div>
+                        </div>
                     </div>
+
                     {showConfirm && (
                         <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50">
                             <div className="bg-white p-4 rounded shadow-lg">

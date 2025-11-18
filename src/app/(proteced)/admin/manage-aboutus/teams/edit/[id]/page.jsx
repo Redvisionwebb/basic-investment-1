@@ -15,7 +15,6 @@ import { Toaster } from "@/components/ui/toaster";
 import DefaultLayout from "@/components/admin/Layouts/DefaultLaout";
 import Link from "next/link";
 import dynamic from "next/dynamic";
-import Image from "next/image";
 
 const JoditEditor = dynamic(() => import("jodit-react"), { ssr: false });
 
@@ -68,8 +67,26 @@ export function InputForm({ postId }) {
     }
   }, [postId]);
 
-  const onSubmit = async (data) => {
-    setLoading(true);
+const onSubmit = async (data) => {
+  setLoading(true);
+  form.clearErrors(); // Clear previous errors
+
+  try {
+    // 🖼️ Image size validation
+    if (selectedImage && selectedImage.size > 1024 * 1024) {
+      form.setError("image", {
+        type: "manual",
+        message: "Image size exceeds more than 1MB.",
+      });
+      toast({
+        variant: "destructive",
+        title: "File Too Large",
+        description: "Please upload an image smaller than 1MB.",
+      });
+      setLoading(false);
+      return;
+    }
+
     const formData = new FormData();
     formData.append("name", data.name);
     formData.append("designation", data.designation);
@@ -78,27 +95,64 @@ export function InputForm({ postId }) {
     formData.append("socialMedia", JSON.stringify(data.socialMedia));
     if (selectedImage) formData.append("image", selectedImage);
 
-    try {
-      const res = await axios.put(`${process.env.NEXT_PUBLIC_NEXTAUTH_URL}/api/teams/${postId}`, formData, {
-        headers: { "Content-Type": "multipart/form-data" },
-      });
+    const res = await axios.put(
+      `${process.env.NEXT_PUBLIC_NEXTAUTH_URL}/api/teams/${postId}`,
+      formData,
+      { headers: { "Content-Type": "multipart/form-data" } }
+    );
 
-      if (res.status === 200) {
-        toast({ title: "Team member updated successfully." });
-      } else {
-        throw new Error("Update failed");
-      }
-    } catch (err) {
-      console.error("Update error:", err);
+    if (res.status === 200) {
+      toast({ title: "✅ Team member updated successfully" });
+      router.push("/admin/manage-aboutus/teams/manage");
+    } else {
       toast({
         variant: "destructive",
         title: "Update failed",
-        description: "Something went wrong.",
+        description: "Unexpected server response.",
       });
-    } finally {
-      setLoading(false);
     }
-  };
+  } catch (err) {
+    console.error("Update error:", err);
+
+    if (axios.isAxiosError(err)) {
+      if (err.response) {
+        const { status, data } = err.response;
+        if (status === 400) {
+          form.setError("image", {
+            type: "manual",
+            message: "Image size exceeds more than 1MB.",
+          });
+          toast({
+            variant: "destructive",
+            title: "Upload Error",
+            description: data?.message || "Image size exceeds more than 1MB.",
+          });
+        } else {
+          toast({
+            variant: "destructive",
+            title: `Error ${status}`,
+            description: data?.message || "Something went wrong while updating.",
+          });
+        }
+      } else {
+        toast({
+          variant: "destructive",
+          title: "Network Error",
+          description: "Unable to reach the server. Please try again later.",
+        });
+      }
+    } else {
+      toast({
+        variant: "destructive",
+        title: "Unexpected Error",
+        description: err.message || "An unexpected error occurred.",
+      });
+    }
+  } finally {
+    setLoading(false);
+  }
+};
+
 
   return (
     <Form {...form}>
@@ -155,9 +209,7 @@ export function InputForm({ postId }) {
             {previousImage && (
               <div className="mt-4">
                 <p className="text-sm text-gray-500">Previous Image:</p>
-             <Image src={previousImage}
-                    width={100}
-                    height={100} alt="Previous" className="max-w-sm rounded border-gray-400 border h-auto w-40" />
+                <img src={previousImage} alt="Previous" className="max-w-sm rounded border-gray-400 border h-auto w-40" />
               </div>
             )}
           </FormItem>
@@ -181,7 +233,7 @@ export function InputForm({ postId }) {
           </div>
         ))}
 
-        <Button type="submit" className="text-white bg-[var(--rv-admin-bg-color)] hover:bg-[var(--rv-admin-bg-color)]">
+        <Button type="submit" className="text-white bg-[#2367f8] hover:bg-[#2367f8]">
           {loading ? "Updating..." : "Update Member"}
         </Button>
       </form>
@@ -199,7 +251,7 @@ const EditTeam = () => {
         <div className="flex justify-between">
           <h1 className="text-2xl font-bold">Edit Team Member</h1>
           <Link href="/admin/manage-aboutus/teams/manage">
-            <Button className="text-white bg-[var(--rv-admin-bg-color)] hover:bg-[var(--rv-admin-bg-color)]">All Team Members</Button>
+            <Button className="text-white bg-[#2367f8] hover:bg-[#2367f8]">All Team Members</Button>
           </Link>
         </div>
         <InputForm postId={postId} />

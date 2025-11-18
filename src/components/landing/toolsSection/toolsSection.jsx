@@ -8,39 +8,46 @@ import Link from "next/link";
 const tools = [
   {
     icon: <FaCalculator />,
-    title: "Financial Calculators",
-    description: "Lorem ipsum dolor sit amet, consectetuer adipiscing elit, sed diam nonummy.",
-    link: "calculators"
+    title: "Smart Calculators",
+    description: "Estimate potential returns, plan for your goals, and see how your money can grow over time.",
+    link: "/tools/calculators"
   },
   {
     icon: <FaCalculator />,
-    title: "Risk Profile",
-    description: "Lorem ipsum dolor sit amet, consectetuer adipiscing elit, sed diam nonummy.",
-    link: "risk-profile"
+    title: "Digital Onboarding",
+    description: "Open your account online in minutes — completely paperless and hassle-free.",
+    link: "/login"
   },
   {
     icon: <FaCalculator />,
-    title: "Pay Premium Online",
-    description: "Lorem ipsum dolor sit amet, consectetuer adipiscing elit, sed diam nonummy.",
-    link: "pay-premium-online"
+    title: "Online Payments",
+    description: "Pay mutual fund or insurance premiums securely and quickly, anytime",
+    link: "/tools/pay-premium-online"
   },
   {
     icon: <FaCalculator />,
-    title: "Useful Links",
-    description: "Lorem ipsum dolor sit amet, consectetuer adipiscing elit, sed diam nonummy.",
-    link: "useful-links"
+    title: "Quick Resources ",
+    description: "Access all important forms, updates, and resources in one place for convenience.",
+    link: "/tools/useful-links"
   },
+  // {
+  //   icon: <FaCalculator />,
+  //   title: "Know Your Risk",
+  //   description: "Check your risk comfort level with simple assessments to stay aligned with your investment approach.",
+  //   link: "financial-health"
+  // },
+  {
+  icon: <FaCalculator />,
+  title: "Financial Health",
+  description: "Evaluate your overall financial well-being with smart tools designed to guide better money decisions.",
+  link: "/tools/financial-health"
+}
+,
   {
     icon: <FaCalculator />,
-    title: "Financial Health",
-    description: "Lorem ipsum dolor sit amet, consectetuer adipiscing elit, sed diam nonummy.",
-    link: "financial-health"
-  },
-  {
-    icon: <FaCalculator />,
-    title: "Fund Performance",
-    description: "Lorem ipsum dolor sit amet, consectetuer adipiscing elit, sed diam nonummy.",
-    link: "fund-performance"
+    title: "Fund Tracking",
+    description: "Monitor mutual fund performance over time with clear, easy-to-read reports and insights.",
+    link: "/performance/fund-performance"
   },
 ];
 
@@ -53,9 +60,9 @@ export default function ToolsSection() {
 
           {/* Top Header */}
           <div className="grid md:grid-cols-[40%_60%] gap-4 items-center">
-            <HomeHeading title={`Investing <br /> Made Simple`} />
+            <HomeHeading title={`Investing <br /> Made Easy`} />
             <p className="text-black">
-              Investing made easy with smart and simple tools that break down complexity, give you real-time visibility into your portfolio, and let you invest with confidence.
+              Investing doesn’t have to be complicated. Our tools help you see your portfolio clearly, track investments in real time, and invest easily and confidently.
             </p>
           </div>
 
@@ -65,7 +72,7 @@ export default function ToolsSection() {
               <div key={index} className={styles.toolCard}>
                 {tool.link ? (
                   <Link 
-                   href={`/tools/${tool.link}`}
+                   href={`${tool?.link}`}
                   >
                     <p className="text-3xl text-[var(--rv-primary)]">{tool.icon}</p>
                     <h3 className={styles.toolTitle}>{tool.title}</h3>

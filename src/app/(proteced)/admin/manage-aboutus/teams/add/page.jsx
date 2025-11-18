@@ -64,44 +64,95 @@ const TeamForm = () => {
     name: "socialMedia",
   });
 
-  const onSubmit = async (data) => {
-    setLoading(true);
+ const onSubmit = async (data) => {
+  setLoading(true);
+  form.clearErrors(); // Clear previous errors
+
+  try {
+    // 🖼️ Image size validation
+    if (selectedImage && selectedImage.size > 1024 * 1024) {
+      form.setError("image", {
+        type: "manual",
+        message: "Image size exceeds more than 1MB.",
+      });
+      toast({
+        variant: "destructive",
+        title: "File Too Large",
+        description: "Please upload an image smaller than 1MB.",
+      });
+      setLoading(false);
+      return;
+    }
 
     const formData = new FormData();
     formData.append("name", data.name);
     formData.append("designation", data.designation);
     formData.append("experience", data.experience.toString());
-    formData.append("description", data.description); // use synced field
+    formData.append("description", data.description);
     if (selectedImage) formData.append("image", selectedImage);
     formData.append("socialMedia", JSON.stringify(data.socialMedia));
 
-    try {
-      const res = await axios.post(`${process.env.NEXT_PUBLIC_NEXTAUTH_URL}/api/teams`, formData, {
-        headers: {
-          "Content-Type": "multipart/form-data",
-        },
-      });
+    const res = await axios.post(`${process.env.NEXT_PUBLIC_NEXTAUTH_URL}/api/teams`, formData, {
+      headers: { "Content-Type": "multipart/form-data" },
+    });
 
-      if (res.status === 201) {
-        toast({ title: "Team member added successfully!" });
-        form.reset();
-        setDescription("");
-        setSelectedImage(null);
-        router.push("/admin/manage-aboutus/teams/manage");
-      } else {
-        throw new Error("Failed to submit");
-      }
-    } catch (error) {
-      console.error(error);
+    if (res.status === 201) {
+      toast({
+        title: "✅ Team member added successfully",
+      });
+      form.reset();
+      setDescription("");
+      setSelectedImage(null);
+      router.push("/admin/manage-aboutus/teams/manage");
+    } else {
       toast({
         variant: "destructive",
-        title: "Error",
-        description: "Something went wrong while submitting the form.",
+        title: "Submission failed",
+        description: "Unexpected server response.",
       });
-    } finally {
-      setLoading(false);
     }
-  };
+  } catch (error) {
+    console.error("❌ Error:", error);
+
+    if (axios.isAxiosError(error)) {
+      if (error.response) {
+        const { status, data } = error.response;
+        if (status === 400) {
+          form.setError("image", {
+            type: "manual",
+            message: "Image size exceeds more than 1MB.",
+          });
+          toast({
+            variant: "destructive",
+            title: "Upload Error",
+            description: data?.message || "Image size exceeds more than 1MB.",
+          });
+        } else {
+          toast({
+            variant: "destructive",
+            title: `Error ${status}`,
+            description: data?.message || "Something went wrong while submitting the form.",
+          });
+        }
+      } else {
+        toast({
+          variant: "destructive",
+          title: "Network Error",
+          description: "Unable to reach the server. Please try again later.",
+        });
+      }
+    } else {
+      toast({
+        variant: "destructive",
+        title: "Unexpected Error",
+        description: error.message || "An unexpected error occurred.",
+      });
+    }
+  } finally {
+    setLoading(false);
+  }
+};
+
 
   return (
     <Form {...form}>
@@ -233,7 +284,7 @@ const TeamForm = () => {
           <Button
             type="button"
             onClick={() => append({ name: "", link: "" })}
-            className="text-white bg-[var(--rv-admin-bg-color)] hover:bg-[var(--rv-admin-bg-color)]"
+            className="text-white bg-[#2367f8] hover:bg-[#2367f8]"
           >
             + Add Social Link
           </Button>
@@ -246,7 +297,7 @@ const TeamForm = () => {
           </p>
         ))}
 
-        <Button type="submit" className="text-white bg-[var(--rv-admin-bg-color)] hover:bg-[var(--rv-admin-bg-color)]">
+        <Button type="submit" className="text-white bg-[#2367f8] hover:bg-[#2367f8]">
           {loading ? "Submitting..." : "Submit"}
         </Button>
       </form>
@@ -261,7 +312,7 @@ const AddPost = () => {
         <div className="flex justify-between">
           <h1 className="text-2xl font-bold">Add Team Member</h1>
           <Link href="/admin/manage-aboutus/teams/manage">
-            <Button className="text-white bg-[var(--rv-admin-bg-color)] hover:bg-[var(--rv-admin-bg-color)]">All Team Members</Button>
+            <Button className="text-white bg-[#2367f8] hover:bg-[#2367f8]">All Team Members</Button>
           </Link>
         </div>
         <TeamForm />

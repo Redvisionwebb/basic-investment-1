@@ -1,7 +1,9 @@
 import Colortheme from "@/components/colorTheme/colortheme";
 import Footer from "@/components/footer/footer";
 import NavBar from "@/components/navbar/navbar";
-import QRCodePopup from "@/components/qrCode/qrcode";
+import QRCode from "@/components/qrCode/qrcode";
+import SocialMediaSidebar from "@/components/socialMedia";
+import Tickers from "@/components/tickers";
 import WebPopup from "@/components/webpopup";
 import { getArn, getServiceData, getSiteData, getSocialMedia } from "@/lib/functions";
 
@@ -14,11 +16,13 @@ export default async function Layout({ children }) {
 
     return (
         <div>
+             <Tickers />
             <NavBar services={services} />
             {children}
             <Footer services={services} siteData={siteData} socialMedia={socialMedia} arnData={arnData} />
             <WebPopup />
-            <QRCodePopup />
+               <SocialMediaSidebar sitedata={siteData} />
+      <QRCode siteData={siteData} />
             <Colortheme />
         </div>
     );

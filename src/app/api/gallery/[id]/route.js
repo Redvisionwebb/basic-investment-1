@@ -1,7 +1,7 @@
 import { NextResponse } from 'next/server';
 import { ConnectDB } from '@/lib/db/ConnectDB';
 
-import Gallery from '@/lib/models/Gallery';
+import GalleryModel from '@/lib/models/Gallery';
 import { deleteFileIfExists, saveImageToLocal } from '@/lib/functions';
 import axios from 'axios';
 
@@ -12,7 +12,7 @@ export async function DELETE(req, { params }) {
         await ConnectDB();
 
         // Find the gallery by ID
-        const gallery = await Gallery.findById(id);
+        const gallery = await GalleryModel.findById(id);
 
         if (!gallery) {
             return NextResponse.json({ error: 'gallery not found' }, { status: 404 });
@@ -25,7 +25,7 @@ export async function DELETE(req, { params }) {
                 console.warn("Image file not found or already deleted:", publicId);
               }
             }
-        await Gallery.findByIdAndDelete(id);
+        await GalleryModel.findByIdAndDelete(id);
         return NextResponse.json({ message: 'gallery deleted successfully' }, { status: 200 });
     } catch (error) {
         console.error('Error deleting gallery:', error);
@@ -39,7 +39,7 @@ export async function GET(req, { params }) {
 
     try {
         await ConnectDB(); // Ensure DB connection
-        const gallery = await Gallery.findById(id); // Properly await the findById function
+        const gallery = await GalleryModel.findById(id); // Properly await the findById function
 
         if (!gallery) {
             return NextResponse.json({ error: 'gallery not found' }, { status: 404 });
@@ -60,10 +60,16 @@ export async function PUT(req, { params }) {
         const formData = await req.formData();
         const image = formData.get('image');
     const file = formData.get('image');
-
+          // Validate file size (1 MB = 1 * 1024 * 1024 bytes)
+    if (file && file.size > 1 * 1024 * 1024) {
+      return NextResponse.json(
+        { error: "File size exceeds 1 MB limit" },
+        { status: 400 }
+      );
+    }
 
         // Find the existing gallery
-        const gallery = await Gallery.findById(id);
+        const gallery = await GalleryModel.findById(id);
         if (!gallery) {
             return NextResponse.json({ error: 'gallery not found' }, { status: 404 });
         }

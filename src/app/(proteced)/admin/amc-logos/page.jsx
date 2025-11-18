@@ -1,82 +1,64 @@
-"use client"
+"use client";
 import { useEffect, useState } from "react";
 import axios from "axios";
 import { ToastContainer, toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 import Image from "next/image";
 import DefaultLayout from "@/components/admin/Layouts/DefaultLaout";
-import Loader from "@/components/admin/common/Loader";
 import { FaEye, FaEyeSlash } from "react-icons/fa";
 
 const AmcsLogo = () => {
   const [loading, setLoading] = useState(false);
-  const [showModal, setShowModal] = useState(false);
-  const [showEditModal, setShowEditModal] = useState(false);
-  const [modalPurpose, setModalPurpose] = useState("");
   const [category, setCategory] = useState("");
-  const [amcsLogoData, setAmcsLogoData] = useState({
-    logoname: "",
-    logourl: "",
-    logo: "",
-    logocategory: "",
-    id: ""
-  });
   const [packageData, setAllCategory] = useState([]);
-  const [selectedOption, setSelectedOption] = useState("");
-  const [isOptionSelected, setIsOptionSelected] = useState(false);
   const [logoCategory, setLogoCategory] = useState("");
   const [allAmcsLogos, setAllAmcsLogos] = useState([]);
   const [showCategories, setShowCategories] = useState(false);
+  const [showUrlModal, setShowUrlModal] = useState(false);
+  const [selectedId, setSelectedId] = useState(null);
+  const [adminUrl, setAdminUrl] = useState("");
+  const [loadingCategories, setLoadingCategories] = useState(true);
+  const [loadingLogos, setLoadingLogos] = useState(false);
 
-  const changeTextColor = () => {
-    setIsOptionSelected(true);
-  };
-
-  const toggleModal = (purpose) => {
-    setModalPurpose(purpose);
-    setShowModal((prevState) => !prevState);
-  };
-
-  const closeModal = () => setShowModal(false);
-
+  // 🟩 Fetch Categories
   const fetchCategories = async () => {
-    setLoading(true);
+    setLoadingCategories(true);
     try {
       const res = await fetch(`${process.env.NEXT_PUBLIC_NEXTAUTH_URL}/api/amc-category`);
-
       const data = await res.json();
       setAllCategory(data);
       if (data.length > 0 && !logoCategory) {
-        setLogoCategory(data[0]._id); // Set initial logo category
+        setLogoCategory(data[0]._id);
       }
     } catch (error) {
       console.error("Error fetching categories:", error);
     } finally {
-      setLoading(false);
+      setLoadingCategories(false);
     }
   };
 
+  // 🟩 Fetch AMC Logos
   const fetchAllLogos = async () => {
-    setLoading(true);
+    setLoadingLogos(true);
     try {
       const res = await fetch(`${process.env.NEXT_PUBLIC_NEXTAUTH_URL}/api/amc-logos`, {
         method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({
-          categoryID: logoCategory || "", // Only include if logoCategory exists
-        }),
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ categoryID: logoCategory || "" }),
       });
 
       const data = await res.json();
-      setAllAmcsLogos(data.data); // Make sure to access `data.data` as returned from backend
+      setAllAmcsLogos(data.data || []);
     } catch (error) {
       console.error("Error fetching AMC logos:", error);
     } finally {
-      setLoading(false);  // stop loader
+      setLoadingLogos(false);
     }
   };
+
+  useEffect(() => {
+    fetchCategories();
+  }, [category]);
 
   useEffect(() => {
     if (logoCategory) {
@@ -84,141 +66,41 @@ const AmcsLogo = () => {
     }
   }, [logoCategory]);
 
-
-  useEffect(() => {
-    fetchCategories();
-  }, [category]);
-
-
-
-  const handleAddCategory = async () => {
-    try {
-      const response = await axios.post(`${process.env.NEXT_PUBLIC_NEXTAUTH_URL}/api/category/`, { category });
-      if (response.status === 201) {
-        toast("Category added successfully.");
-        setCategory("");
-        fetchCategories();
-        fetchAllLogos();
-      } else {
-        fetchCategories()
-      }
-    } catch (error) {
-      console.error("Error:", error);
-      alert("An unexpected error occurred.");
-    }
-    setShowModal(false);
-  };
-
+  // 🟩 Handle Status Change
   const handleStatusChange = async (id, addisstatus) => {
     try {
-      const response = await axios.put(`${process.env.NEXT_PUBLIC_NEXTAUTH_URL}/api/amc-logos/change-status/${id}`, { addisstatus: !addisstatus });
+      const response = await axios.put(
+        `${process.env.NEXT_PUBLIC_NEXTAUTH_URL}/api/amc-logos/change-status/${id}`,
+        { addisstatus: !addisstatus }
+      );
       if (response.status === 200) {
         toast.success("Status updated successfully.");
         fetchAllLogos();
       }
     } catch (error) {
       console.error("Error updating status:", error);
-      alert("An unexpected error occurred.");
+      toast.error("Error updating status.");
     }
   };
 
-  const handleAddAmcsLogo = async () => {
+  // 🟩 Handle Save Admin URL
+  const handleSaveAdminUrl = async () => {
+    if (!selectedId) return;
     try {
-      const formData = new FormData();
-      formData.append("logoname", amcsLogoData.logoname);
-      formData.append("logourl", amcsLogoData.logourl);
-      formData.append("logo", amcsLogoData.logo);
-      formData.append("logocategory", amcsLogoData.logocategory);
-      const response = await axios.post(`${process.env.NEXT_PUBLIC_NEXTAUTH_URL}/api/amc-logo`, formData, {
-        headers: {
-          "Content-Type": "multipart/form-data",
-        },
-      });
-      if (response.status === 201) {
-        toast.success("AMCS logo added successfully.");
-        setAmcsLogoData({
-          logoname: "",
-          logourl: "",
-          logo: "",
-          logocategory: "",
-          id: ''
-        });
-        fetchCategories();
-        fetchAllLogos();
-      }
-    } catch (error) {
-      console.error("Error adding AMCS logo:", error);
-      alert("An unexpected error occurred.");
-    }
-    closeModal();
-  };
-
-  const handleEditAmcsLogo = async (id) => {
-    try {
-      const formData = new FormData();
-      formData.append("logoname", amcsLogoData.logoname);
-      formData.append("logourl", amcsLogoData.logourl);
-      formData.append("logo", amcsLogoData.logo);
-      formData.append("logocategory", amcsLogoData.logocategory);
-      const response = await axios.put(`${process.env.NEXT_PUBLIC_NEXTAUTH_URL}/api/amc-logo/${id}`, formData, {
-        headers: {
-          "Content-Type": "multipart/form-data",
-        },
+      const response = await axios.put(`${process.env.NEXT_PUBLIC_NEXTAUTH_URL}/api/amc-logos/change-status/${selectedId}`, {
+        adminlogourl: adminUrl,
       });
       if (response.status === 200) {
-        toast.success("AMCS logo edited successfully.");
-        setAmcsLogoData({
-          logoname: "",
-          logourl: "",
-          logo: "",
-          logocategory: "",
-          id: ""
-        });
-        fetchCategories();
+        toast.success("Admin URL updated successfully.");
+        setShowUrlModal(false);
+        setAdminUrl("");
         fetchAllLogos();
       }
     } catch (error) {
-      console.error("Error adding AMCS logo:", error);
-      alert("An unexpected error occurred.");
-    }
-    setShowEditModal(false);
-  };
-
-  const handleDeleteAmcLogo = async (id) => {
-    try {
-      const response = await axios.delete(`${process.env.NEXT_PUBLIC_NEXTAUTH_URL}/api/amc-logo/${id}`);
-      if (response.status === 201) {
-        toast.success("Category deleted successfully.");
-        fetchAllLogos();
-      } else {
-        alert(response.statusText);
-      }
-    } catch (error) {
-      console.error("Error:", error);
-      alert("An unexpected error occurred.");
+      console.error("Error updating admin URL:", error);
+      toast.error("Error updating admin URL.");
     }
   };
-
-  const handleEditModelOpen = async (id) => {
-    setShowEditModal(true)
-    try {
-      const response = await axios.get(`${process.env.NEXT_PUBLIC_NEXTAUTH_URL}/api/amc-logo/${id}`);
-      if (response.status === 200) {
-        setAmcsLogoData({
-          logoname: response.data.logoname,
-          logourl: response.data.logourl,
-          logo: response.data.logo,
-          logocategory: response.data.logocategory,
-          id: response.data._id
-        });
-        fetchCategories();
-        fetchAllLogos();
-      }
-    } catch (error) {
-      console.error("Error adding AMCS logo:", error);
-      alert("An unexpected error occurred.");
-    }
-  }
 
   return (
     <>
@@ -228,37 +110,51 @@ const AmcsLogo = () => {
           {/* Header */}
           <div className="bg-white p-3 rounded-md">
             <div className="flex flex-col gap-2">
-              <h5 className="font-bold">All Amcs Logo</h5>
-              <div className="grid lg:grid-cols-6 md:grid-cols-4 sm:grid-cols-2 grid-cols-1 gap-3">
-                {packageData.map((item, index) => (
-                  <div className="mx-1" key={index}>
-                    <button
-                      className={`w-full p-2 rounded-md
-                    ${logoCategory === item._id
-                          ? "bg-[var(--rv-admin-bg-color)] hover:bg-[var(--rv-admin-bg-color)] text-white"
-                          : "bg-gray-200 hover:bg-gray-300 text-black"
+              <h5 className="font-bold">All AMCs Logo</h5>
+
+              {/* 🟦 Category Buttons / Skeleton */}
+              {loadingCategories ? (
+                <div className="grid lg:grid-cols-6 md:grid-cols-4 sm:grid-cols-2 grid-cols-1 gap-3 mt-3">
+                  {Array.from({ length: 6 }).map((_, i) => (
+                    <div key={i} className="h-10 rounded-md bg-gray-200 animate-pulse"></div>
+                  ))}
+                </div>
+              ) : (
+                <div className="grid lg:grid-cols-6 md:grid-cols-4 sm:grid-cols-2 grid-cols-1 gap-3">
+                  {packageData.map((item, index) => (
+                    <div className="mx-1" key={index}>
+                      <button
+                        className={`w-full p-2 rounded-md ${
+                          logoCategory === item._id
+                            ? "bg-[#2367f8] text-white"
+                            : "bg-gray-200 text-black hover:bg-gray-300"
                         }`}
-                      onClick={() => setLogoCategory(item._id)}
-                    >
-                      {item.title}
-                    </button>
+                        onClick={() => setLogoCategory(item._id)}
+                      >
+                        {item.title}
+                      </button>
+                    </div>
+                  ))}
+                </div>
+              )}
+            </div>
+          </div>
+
+          {/* 🟩 AMC Logos Grid / Skeleton */}
+          <div className="">
+            {loadingLogos ? (
+              <div className="grid lg:grid-cols-5 md:grid-cols-3 sm:grid-cols-2 grid-cols-1 gap-5 mt-5">
+                {Array.from({ length: 10 }).map((_, i) => (
+                  <div
+                    key={i}
+                    className="rounded-[10px] border-2 bg-white p-4 animate-pulse h-52 flex flex-col justify-center items-center"
+                  >
+                    <div className="w-32 h-20 bg-gray-300 rounded mb-4"></div>
+                    <div className="h-4 w-24 bg-gray-200 rounded"></div>
                   </div>
                 ))}
               </div>
-            </div>
-          </div>
-          {loading ? (
-            <div className="flex justify-center items-center h-40">
-              <Loader />
-            </div>
-          ) : showCategories ? (
-            <TableThree
-              packageData={packageData}
-              onDelete={fetchCategories}
-              allamcslogodata={allAmcsLogos}
-            />
-          ) : (
-            <div className="">
+            ) : (
               <div className="max-w-full grid lg:grid-cols-5 md:grid-cols-3 sm:grid-cols-2 grid-cols-1 gap-5">
                 {allAmcsLogos.filter((logo) => logo.logocategory == logoCategory).length === 0 ? (
                   <div>No Data Found</div>
@@ -268,17 +164,29 @@ const AmcsLogo = () => {
                     .map((item, index) => (
                       <div
                         key={index}
-                        className={`rounded-[10px] border-2 ${item.addisstatus ? "border-green-500" : "border-red-500"
-                          } bg-white p-2 shadow-1 dark:bg-gray-dark dark:shadow-card sm:p-4 text-center flex flex-col items-center`}
+                        className={`rounded-[10px] border-2 ${
+                          item.addisstatus ? "border-green-500" : "border-red-500"
+                        } bg-white p-2 shadow-1 text-center flex flex-col items-center`}
                       >
-                        <div className="flex items-center justify-center gap-3 mb-3 w-full">
+                        <div className="flex justify-end gap-3 mb-3 w-full">
                           <button
-                            className={`flex justify-center rounded-md w-10 h-10 items-center font-medium text-2xl text-white ${item.addisstatus ? "bg-green-500" : "bg-red-500"
-                              }`}
+                            className={`flex justify-center rounded-md w-10 h-10 items-center font-medium text-2xl text-white ${
+                              item.addisstatus ? "bg-green-500" : "bg-red-500"
+                            }`}
                             type="button"
                             onClick={() => handleStatusChange(item._id, item.addisstatus)}
                           >
                             {item.addisstatus ? <FaEye /> : <FaEyeSlash />}
+                          </button>
+                          <button
+                            className="px-3 py-1 rounded bg-blue-500 text-white"
+                            onClick={() => {
+                              setSelectedId(item._id);
+                              setAdminUrl(item.adminlogourl || "");
+                              setShowUrlModal(true);
+                            }}
+                          >
+                            🔗
                           </button>
                         </div>
 
@@ -299,16 +207,45 @@ const AmcsLogo = () => {
                             />
                           )}
                         </div>
-
                         <p className="font-semibold">{item.logoname}</p>
                       </div>
                     ))
                 )}
               </div>
-            </div>
-          )}
+            )}
+          </div>
         </div>
       </DefaultLayout>
+
+      {/* 🟨 Modal for Admin URL */}
+      {showUrlModal && (
+        <div className="fixed inset-0 bg-black/50 flex justify-center items-center z-50">
+          <div className="bg-white p-6 rounded shadow-lg w-96">
+            <h3 className="text-lg font-bold mb-4">Update Admin URL</h3>
+            <input
+              type="text"
+              value={adminUrl}
+              onChange={(e) => setAdminUrl(e.target.value)}
+              className="w-full border p-2 rounded mb-4"
+              placeholder="Enter Admin URL"
+            />
+            <div className="flex justify-end gap-3">
+              <button
+                className="px-4 py-2 bg-gray-400 text-white rounded"
+                onClick={() => setShowUrlModal(false)}
+              >
+                Cancel
+              </button>
+              <button
+                className="px-4 py-2 bg-green-600 text-white rounded"
+                onClick={handleSaveAdminUrl}
+              >
+                Save
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
     </>
   );
 };

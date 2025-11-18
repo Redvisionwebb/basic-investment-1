@@ -14,6 +14,7 @@ export async function POST(req) {
         let updatedImage = image;
         
         const data = await SiteSettingsModel.find({});
+        
 
            if (image && image.size > 0) {
                     // If there's a new image, handle the old image deletion

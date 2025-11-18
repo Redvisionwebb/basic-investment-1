@@ -1,0 +1,7 @@
+.loginPage {
+    background-color: var(--rv-bg-white);
+    color: var(--rv-bg-black);
+}
+.bg{
+    background-image: url(../../../public/images/login/bg.png);
+}

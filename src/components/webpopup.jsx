@@ -8,12 +8,12 @@ function WebPopup() {
     const [status, setStatus] = useState(false);
     const [content, setContent] = useState("");
     const fetchPopup = async () => {
-        const res = await axios.get("/api/webpopups");
+        const res = await axios.get(`${process.env.NEXT_PUBLIC_NEXTAUTH_URL}/api/webpopups`);
         setContent(res.data[0])
     };
 
     const fetchPopupStatus = async () => {
-        const res = await axios.get("/api/webpopups");
+        const res = await axios.get(`${process.env.NEXT_PUBLIC_NEXTAUTH_URL}/api/webpopups`);
         const status = res?.data[0]?.status;
         setStatus(status)
     };

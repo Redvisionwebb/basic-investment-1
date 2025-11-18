@@ -1,0 +1,49 @@
+.qr {
+    position: fixed;
+    bottom: 2.5rem;
+    right: 0.7rem;
+    transform: translateY(-50%);
+    z-index: 99;
+}
+
+.qr ul li {
+    list-style: none;
+    padding: 5px;
+    margin-bottom: 5px;
+    border-radius: 50px 0 0 50px;
+}
+
+.qrLink {
+    display: flex;
+    align-items: center;
+    position: relative;
+}
+
+
+/* QR box hidden by default */
+
+.qrBox {
+    position: absolute;
+    right: 60px;
+    width: 160px;
+    height: auto;
+    top: 0;
+    transform: translateY(-20%) scale(0.9);
+    opacity: 0;
+    background: #fff;
+    padding: 8px;
+    border-radius: 8px;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+    transition: all 0.3s ease-in-out;
+    pointer-events: none;
+    z-index: 100;
+}
+
+
+/* Show on hover */
+
+.qrLink:hover .qrBox {
+    opacity: 1;
+    transform: translateY(-50%) scale(1);
+    pointer-events: auto;
+}

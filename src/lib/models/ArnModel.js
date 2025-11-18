@@ -9,6 +9,8 @@ const euinSchema = new mongoose.Schema({
 const arnSchema = new mongoose.Schema(
   {
     arn: { type: String, required: true },
+    registrationDate: { type: Date, required: true }, // ✅ Added
+    expiryDate: { type: Date, required: true },       // ✅ Added
     euins: [euinSchema],
   },
   { timestamps: true }

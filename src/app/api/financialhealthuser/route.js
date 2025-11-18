@@ -10,6 +10,6 @@ LoadDB()
 
 
 export async function GET(request) {
-    const users = await FinancialHealthUsersModel.find({});
+    const users = await FinancialHealthUsersModel.find({}).sort({ createdAt: -1 });;
     return NextResponse.json(users, { status: 200 })
 }

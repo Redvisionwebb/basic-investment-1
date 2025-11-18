@@ -1,0 +1,93 @@
+.card {
+  position: relative;
+  background: #fff;
+  border-radius: 18px;
+  padding: 40px 30px;
+  box-shadow: 0px 10px 25px rgba(0,0,0,0.07);
+  overflow: hidden;
+  transition: all 0.3s ease;
+}
+
+.card:hover {
+  transform: translateY(-5px);
+  box-shadow: 0px 14px 30px rgba(0,0,0,0.12);
+}
+
+/* Curved Top Background */
+.bgCurve {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 160px;
+  background: linear-gradient(45deg, #ff6a8f, #e84552);
+  border-bottom-left-radius: 120px;
+  border-bottom-right-radius: 180px;
+  z-index: 1;
+}
+
+/* Avatar Circle */
+.avatarBox {
+  position: relative;
+  margin-top: 40px;
+  z-index: 2;
+  width: 90px;
+}
+
+.avatar {
+  width: 90px;
+  height: 90px;
+  border-radius: 50%;
+  border: 4px solid #fff;
+  object-fit: cover;
+}
+
+.number {
+  position: absolute;
+  right: -12px;
+  bottom: -5px;
+  background: #ff4d6d;
+  color: #fff;
+  width: 38px;
+  height: 38px;
+  font-size: 14px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+/* Stars */
+.stars {
+  color: #ff4d6d;
+  margin-top: 12px;
+  font-size: 18px;
+  letter-spacing: 2px;
+}
+
+/* Text */
+.message {
+  margin-top: 16px;
+  color: #444;
+  font-size: 15px;
+  line-height: 1.6;
+}
+
+/* Name + Role */
+.details {
+  margin-top: 20px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.name {
+  font-size: 20px;
+  font-weight: 700;
+  color: #1a1a1a;
+}
+
+.role {
+  color: #ff4d6d;
+  font-weight: 500;
+}

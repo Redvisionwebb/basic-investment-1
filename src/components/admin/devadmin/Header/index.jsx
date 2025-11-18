@@ -6,6 +6,7 @@ import { MdKeyboardDoubleArrowRight, MdKeyboardDoubleArrowLeft } from "react-ico
 import { useSidebar } from "@/context/SidebarContext";
 
 
+
 const Header = () => {
   const { sidebarOpen, toggleSidebar } = useSidebar();
   const [siteData, setSiteData] = useState({});
@@ -20,12 +21,12 @@ const Header = () => {
   }, []);
 
   return (
-    <header className="sticky top-0  w-full flex items-center justify-between bg-gray-100 border-b border-gray-300 py-4 px-4 transition-all">
+    <header className="sticky top-0 z-30 w-full flex items-center justify-between bg-gray-100 border-b border-gray-300 py-4 px-4 transition-all">
       <div className="flex items-center gap-5">
         {/* Arrow toggle button */}
         <div
           onClick={toggleSidebar}
-          className="w-8 h-8 flex items-center justify-center bg-[var(--rv-admin-bg-color)] text-white rounded-lg text-2xl cursor-pointer hover:bg-[var(--rv-admin-bg-color)] transition-colors"
+          className="w-8 h-8 flex items-center justify-center bg-[#2367f8] text-white rounded-lg text-2xl cursor-pointer hover:bg-[#145efd] transition-colors"
         >
           {sidebarOpen ? <MdKeyboardDoubleArrowLeft /> : <MdKeyboardDoubleArrowRight />}
         </div>

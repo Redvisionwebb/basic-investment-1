@@ -62,6 +62,13 @@ export async function PUT(req, { params }) {
         const designation = formData.get('designation');
         const auther_url = formData.get('auther_url');
     const file = formData.get('image');
+          // Validate file size (1 MB = 1 * 1024 * 1024 bytes)
+        if (file && file.size > 1 * 1024 * 1024) {
+          return NextResponse.json(
+            { error: "File size exceeds 1 MB limit" },
+            { status: 400 }
+          );
+        }
 
         // Find the existing homeBanner
         const homeBanner = await HomeBannerModel.findById(id);

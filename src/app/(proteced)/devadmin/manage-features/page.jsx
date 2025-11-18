@@ -12,7 +12,7 @@ export default function SelectSectionsPage() {
   useEffect(() => {
     const fetchPermissions = async () => {
       try {
-        const res = await fetch("/api/permissions");
+        const res = await fetch(`${process.env.NEXT_PUBLIC_NEXTAUTH_URL}/api/permissions`);
         const data = await res.json();
         const enabledPermissions = data
           .filter((p) => p.enabled)
@@ -34,7 +34,7 @@ export default function SelectSectionsPage() {
 
     setSelectedPermissions(newSelected);
 
-    await fetch("/api/permissions", {
+    await fetch(`${process.env.NEXT_PUBLIC_NEXTAUTH_URL}/api/permissions`, {
       method: "PATCH",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({
@@ -61,7 +61,7 @@ export default function SelectSectionsPage() {
           <div key={group.name} className="mb-8">
             <div className="overflow-x-auto rounded-lg shadow border border-gray-300 bg-white">
               <table className="w-full text-left border-collapse">
-                <thead className="bg-[var(--rv-admin-bg-color)] text-white text-base uppercase">
+                <thead className="bg-[#2367f8] text-white text-base uppercase">
                   <tr>
                     <th className="px-6 py-3">Menu Name</th>
                     <th className="px-6 py-3 text-center">Status</th>
@@ -82,7 +82,7 @@ export default function SelectSectionsPage() {
                           <button
                             onClick={() => togglePermission(item.permission)}
                             className={`relative inline-flex h-6 w-12 items-center rounded-full transition ${
-                              isActive ? "bg-[var(--rv-admin-bg-color)]" : "bg-gray-300"
+                              isActive ? "bg-green-500" : "bg-gray-300"
                             }`}
                           >
                             <span

@@ -144,7 +144,7 @@ const DataTableDemo = () => {
                     <div className="flex items-center gap-3">
                         <button
                             onClick={() => router.push(`/admin/manage-homebanner/edit-post/${blog._id}`)}
-                            className="text-[var(--rv-admin-bg-color)] border border-[var(--rv-admin-bg-color)] rounded-md p-2"
+                            className="text-[#2367f8] border border-[#2367f8] rounded-md p-2"
                         >
                             <FiEdit2 size={16} />
                         </button>
@@ -184,9 +184,15 @@ const DataTableDemo = () => {
         <DefaultLayout>
             <div className="flex justify-between">
                 <h1 className='font-bold text-2xl'>Add New Home Banner</h1>
-                <Link href="/admin/manage-homebanner/add-homebanner">
-                    <Button className="text-white bg-[var(--rv-admin-bg-color)] hover:bg-[var(--rv-admin-bg-color)]">Add New</Button>
-                </Link>
+              {data.length < 5 && (
+  <Link href="/admin/manage-homebanner/add-homebanner">
+    <Button className="text-white bg-[#2367f8] hover:bg-[#2367f8]">Add New</Button>
+  </Link>
+)}
+{data.length >= 5 && (
+  <p className="text-red-500 font-medium">You already have 5 banners. Cannot add more.</p>
+)}
+
             </div>
             <div className="w-full">
                 <div className="flex items-center py-4">

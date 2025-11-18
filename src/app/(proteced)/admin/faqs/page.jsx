@@ -144,7 +144,7 @@ const AdminServices = () => {
               </div>
             </div>
             <button
-              className="text-sm text-white bg-[var(--rv-admin-bg-color)] px-5 py-2 rounded-lg flex items-center gap-2 disabled:opacity-50"
+              className="text-sm text-white bg-[#2367f8] px-5 py-2 rounded-lg flex items-center gap-2 disabled:opacity-50"
               onClick={handleAddSingleService}
               disabled={adding}
             >
@@ -212,7 +212,7 @@ const AdminServices = () => {
 
         {/* Save Button */}
         <button
-          className="text-sm text-white bg-[var(--rv-admin-bg-color)] px-5 py-2 rounded-lg flex items-center gap-2 disabled:opacity-50"
+          className="text-sm text-white bg-[#2367f8] px-5 py-2 rounded-lg flex items-center gap-2 disabled:opacity-50"
           onClick={handleSaveServices}
           disabled={saving}
         >

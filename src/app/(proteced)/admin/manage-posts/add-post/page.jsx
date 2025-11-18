@@ -44,45 +44,79 @@ export function InputForm() {
         },
     });
 
-    const onSubmit = async (data) => {
-        setLoading(true)
-        const formData = new FormData();
-        formData.append('image', selectedImage);
-        formData.append('posttitle', data.posttitle);
-        formData.append('metatitle', data.metatitle);
-        formData.append('description', data.description);
-        formData.append('category', data.category);
-        formData.append('keywords', data.keywords);
-        formData.append('content', content);
+   const onSubmit = async (data) => {
+  setLoading(true);
 
-        try {
-            const response = await axios.post(`${process.env.NEXT_PUBLIC_NEXTAUTH_URL}/api/blogs/`, formData, {
-                headers: {
-                    'Content-Type': 'multipart/form-data',
-                },
-            });
-            if (response.status === 201) {
-                toast({
-                    variant: '',
-                    title: "Data uploaded successfully",
-                    // description: "There was a problem with your request.",
-                });
-                form.reset();
-                router.push("/admin/manage-posts/manage")
-                setSelectedImage(null);
-            } else {
-                toast({
-                    variant: "destructive",
-                    title: "Uh oh! Something went wrong.",
-                    description: "There was a problem with your request.",
-                });
-            }
-        } catch (error) {
-            console.error('Error:', error);
-            alert("An unexpected error occurred.");
-        }
-        finally { setLoading(false) }
-    };
+  // Validate image size (max 1MB)
+  if (selectedImage && selectedImage.size > 1024 * 1024) {
+    toast({
+      variant: "destructive",
+      title: "File Too Large",
+      description: "Image size exceeds 1MB. Please upload a smaller file.",
+    });
+    setLoading(false);
+    return;
+  }
+
+  const formData = new FormData();
+  if (selectedImage) formData.append('image', selectedImage);
+  formData.append('posttitle', data.posttitle);
+  formData.append('metatitle', data.metatitle);
+  formData.append('description', data.description);
+  formData.append('category', data.category);
+  formData.append('keywords', data.keywords);
+  formData.append('content', content);
+
+  try {
+    const response = await axios.post(
+      `${process.env.NEXT_PUBLIC_NEXTAUTH_URL}/api/blogs/`,
+      formData,
+      { headers: { 'Content-Type': 'multipart/form-data' } }
+    );
+
+    if (response.status === 201) {
+      toast({
+        title: "✅ Data uploaded successfully",
+      });
+      form.reset();
+      setSelectedImage(null);
+      router.push("/admin/manage-posts/manage");
+    } else {
+      toast({
+        variant: "destructive",
+        title: "Uh oh! Something went wrong",
+        description: "Unexpected server response.",
+      });
+    }
+  } catch (err) {
+    console.error("Error:", err);
+
+    if (axios.isAxiosError(err)) {
+      if (err.response) {
+        toast({
+          variant: "destructive",
+          title: `Error ${err.response.status}`,
+          description: err.response.data?.message || "Something went wrong on the server.",
+        });
+      } else {
+        toast({
+          variant: "destructive",
+          title: "Network Error",
+          description: "Unable to reach the server. Please try again later.",
+        });
+      }
+    } else {
+      toast({
+        variant: "destructive",
+        title: "Unexpected Error",
+        description: err.message || "An unexpected error occurred.",
+      });
+    }
+  } finally {
+    setLoading(false);
+  }
+};
+
 
     // Sample categories; replace with your actual categories
     // const categories = ["Technology", "Health", "Education", "Entertainment", "Lifestyle"];
@@ -214,7 +248,7 @@ export function InputForm() {
                     className="w-full"
                 />
                 </div>
-                <Button className="text-white bg-[var(--rv-admin-bg-color)] hover:bg-[var(--rv-admin-bg-color)] "  type="submit">{!loading ? 'Submit' : 'Loading...'}</Button>
+                <Button className="text-white bg-[#2367f8] hover:bg-[#2367f8] "  type="submit">{!loading ? 'Submit' : 'Loading...'}</Button>
             </form>
         </Form>
     );
@@ -227,7 +261,7 @@ const AddPost = () => {
                 <div className="flex justify-between">
                     <h1 className='font-bold text-2xl'>Add New Post</h1>
                     <Link href="/admin/manage-posts/manage">
-                        <Button className="text-white bg-[var(--rv-admin-bg-color)] hover:bg-[var(--rv-admin-bg-color)]" >All Post</Button>
+                        <Button className="text-white bg-[#2367f8] hover:bg-[#2367f8]" >All Post</Button>
                     </Link>
                 </div>
                 <div className=''>

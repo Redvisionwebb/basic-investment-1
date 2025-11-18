@@ -1,11 +1,13 @@
 import {
   FaRegNewspaper, FaQuoteRight, FaAward, FaRegWindowMaximize, FaVideo, FaAd, FaHome,
   FaInfoCircle, FaImage, FaQuestionCircle, FaServicestack, FaCogs, FaBalanceScale,
-  FaHeartbeat, FaUsers, FaBuilding
+  FaHeartbeat, FaUsers, FaBuilding,
+  FaSteam
 } from "react-icons/fa";
 import { BiLogOut } from "react-icons/bi";
 import { RxDashboard } from "react-icons/rx";
 import { TbLockPassword } from "react-icons/tb";
+import { MdSwitchAccount } from "react-icons/md";
 
 export const menuGroups = [
   {
@@ -33,6 +35,7 @@ export const menuGroups = [
           { label: "Manage HomeBanner", route: "/admin/manage-homebanner/manage", permission: "manage_homebanner_list" },
         ],
       },
+      
       {
         icon: <FaInfoCircle />,
         label: "Manage Aboutus",
@@ -41,21 +44,8 @@ export const menuGroups = [
         children: [
           {
             label: "Aboutus",
-            route: "#",
+            route: "/admin/manage-aboutus/about-us/manage",
             permission: "aboutus",
-            children: [
-              { label: "Add AboutUs", route: "/admin/manage-aboutus/about-us/add", permission: "add_aboutus" },
-              { label: "Manage AboutUs", route: "/admin/manage-aboutus/about-us/manage", permission: "manage_aboutus_list" },
-            ],
-          },
-          {
-            label: "Teams",
-            route: "#",
-            permission: "teams",
-            children: [
-              { label: "Add Teams", route: "/admin/manage-aboutus/teams/add", permission: "add_teams" },
-              { label: "Manage Teams", route: "/admin/manage-aboutus/teams/manage", permission: "manage_teams_list" },
-            ],
           },
           {
             label: "Mission Vission Values",
@@ -63,6 +53,26 @@ export const menuGroups = [
             permission: "mission_vission_values",
           },
         ],
+      },
+      {
+        icon: <FaSteam />,
+        label: "Teams",
+            route: "#",
+            permission: "teams",
+            children: [
+              { label: "Add Teams", route: "/admin/manage-aboutus/teams/add", permission: "add_teams" },
+              { label: "Manage Teams", route: "/admin/manage-aboutus/teams/manage", permission: "manage_teams_list" },
+            ],
+      },
+         {
+        icon: <MdSwitchAccount />,
+        label: "Stats",
+            route: "#",
+            permission: "stats",
+            children: [
+              { label: "Add Stats", route: "/admin/manage-Stats/add", permission: "add_stats" },
+              { label: "Manage Stats", route: "/admin/manage-Stats/manage", permission: "manage_stats_list" },
+            ],
       },
       {
         icon: <FaImage />,
@@ -134,11 +144,16 @@ export const menuGroups = [
           { label: "Manage Advertisement", route: "/admin/manage-advertisement/manage", permission: "manage_advertisement_list" },
         ],
       },
-      {
+         {
         icon: <FaImage />,
         label: "Manage Gallery",
-        route: "/admin/manage-gallery",
+        route: "#",
         permission: "manage_gallery",
+        children: [
+          { label: "Add Gallery", route: "/admin/manage-gallery/add-image", permission: "add_post" },
+          { label: "Manage Gallery", route: "/admin/manage-gallery/manage", permission: "manage_gallery_list" },
+          { label: "Manage Category", route: "/admin/manage-gallery/category", permission: "manage_category" },
+        ],
       },
       {
         icon: <FaQuestionCircle />,

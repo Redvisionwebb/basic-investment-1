@@ -24,6 +24,10 @@ const AmcsLogoSchema = new mongoose.Schema({
     type: Boolean,
     default: false, // New field with default value
   },
+  adminlogourl: {
+      type: String,
+      default: null, // New field for admin updated URL
+    },
 }, { timestamps: true });
 
 const AmcsLogoModel = mongoose.models.Amcs_Logo || mongoose.model("Amcs_Logo", AmcsLogoSchema);

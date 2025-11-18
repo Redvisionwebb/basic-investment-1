@@ -16,7 +16,6 @@ import dynamic from "next/dynamic";
 import { useParams, useRouter } from "next/navigation";
 import { DefaultContext } from "react-icons";
 import DefaultLayout from "@/components/admin/Layouts/DefaultLaout";
-import Image from "next/image";
 // Dynamically import JoditEditor with SSR disabled
 const JoditEditor = dynamic(() => import("jodit-react"), { ssr: false });
 
@@ -60,43 +59,96 @@ export function InputForm({ postId }) {
         }
     }, [postId]);
 
-    const onSubmit = async (data) => {
-        setLoading(true);
-        const formData = new FormData();
-        formData.append('image', selectedImage);
-        formData.append('title', data.title);
-        formData.append('designation', data.designation);
-        formData.append('auther_url', data.auther_url);
+const onSubmit = async (data) => {
+  setLoading(true);
+  form.clearErrors(); // clear old inline errors
 
-        try {
-            let response;
-            response = await axios.put(`${process.env.NEXT_PUBLIC_NEXTAUTH_URL}/api/homebanner/${postId}`, formData, {
-                headers: {
-                    'Content-Type': 'multipart/form-data',
-                },
-            });
-            if (response.status === 200) {
-                toast({
-                    variant: '',
-                    title: `Post Updated successfully`,
-                });
-                form.reset();
-                setSelectedImage(null);
-                router.push("/admin/manage-homebanner/manage");
-            } else {
-                toast({
-                    variant: "destructive",
-                    title: "Uh oh! Something went wrong.",
-                    description: "There was a problem with your request.",
-                });
-            }
-        } catch (error) {
-            console.error('Error:', error);
-            alert("An unexpected error occurred.");
-        } finally {
-            setLoading(false);
+  try {
+    // 🧩 Client-side file size validation (1 MB max)
+    if (selectedImage && selectedImage.size > 1024 * 1024) {
+      form.setError("image", {
+        type: "manual",
+        message: "Image size exceeds more than 1MB.",
+      });
+      toast({
+        variant: "destructive",
+        title: "File Too Large",
+        description: "Please upload an image smaller than 1MB.",
+      });
+      setLoading(false);
+      return;
+    }
+
+    const formData = new FormData();
+    if (selectedImage) formData.append("image", selectedImage);
+    if (data.title) formData.append("title", data.title);
+    if (data.designation) formData.append("designation", data.designation);
+    if (data.auther_url) formData.append("auther_url", data.auther_url);
+
+    const response = await axios.put(
+      `${process.env.NEXT_PUBLIC_NEXTAUTH_URL}/api/homebanner/${postId}`,
+      formData,
+      { headers: { "Content-Type": "multipart/form-data" } }
+    );
+
+    if (response.status === 200) {
+      toast({
+        title: "✅ Post updated successfully",
+      });
+      form.reset();
+      setSelectedImage(null);
+      router.push("/admin/manage-homebanner/manage");
+    } else {
+      throw new Error("Unexpected response from server");
+    }
+  } catch (error) {
+    console.error("❌ Error:", error);
+
+    if (axios.isAxiosError(error)) {
+      if (error.response) {
+        const { status, data } = error.response;
+
+        // 🟥 Handle 400 error (image too large, invalid input, etc.)
+        if (status === 400) {
+          form.setError("image", {
+            type: "manual",
+            message: "Image size exceeds more than 1MB.",
+          });
+          toast({
+            variant: "destructive",
+            title: "Upload Error",
+            description: data?.message || "Image size exceeds more than 1MB.",
+          });
+        } else {
+          // 🟠 Other backend errors (500, etc.)
+          toast({
+            variant: "destructive",
+            title: `Error ${status}`,
+            description:
+              data?.message || "Something went wrong while updating the banner.",
+          });
         }
-    };
+      } else {
+        // 🌐 Network or CORS issues
+        toast({
+          variant: "destructive",
+          title: "Network Error",
+          description: "Unable to reach the server. Please try again later.",
+        });
+      }
+    } else {
+      // 🟡 Non-Axios or unexpected JS errors
+      toast({
+        variant: "destructive",
+        title: "Unexpected Error",
+        description: error.message || "An unexpected error occurred.",
+      });
+    }
+  } finally {
+    setLoading(false);
+  }
+};
+
 
     return (
         <Form {...form}>
@@ -165,16 +217,14 @@ export function InputForm({ postId }) {
                             {previousImage && (
                                 <div className="mt-4">
                                     <p className="text-sm text-gray-500">Previous Image:</p>
-                                 <Image src={previousImage}
-                    width={100}
-                    height={100} alt="Previous Image" className="max-w-sm rounded border h-auto w-40" />
+                                    <img src={previousImage} alt="Previous Image" className="max-w-sm rounded border h-auto w-40" />
                                 </div>
                             )}
                         </FormItem>
                     )}
                 />
 
-                <Button className="text-white bg-[var(--rv-admin-bg-color)] hover:bg-[var(--rv-admin-bg-color)]" type="submit">{!loading ? 'Submit' : 'Loading...'}</Button>
+                <Button className="text-white bg-[#2367f8] hover:bg-[#2367f8]" type="submit">{!loading ? 'Submit' : 'Loading...'}</Button>
             </form>
         </Form>
     );
@@ -191,7 +241,7 @@ const EditPost = () => {
                         Edit Advertisement
                     </h1>
                     <Link href="/admin/manage-homebanner/manage">
-                        <Button className="text-white bg-[var(--rv-admin-bg-color)] hover:bg-[var(--rv-admin-bg-color)]">All Advertisement</Button>
+                        <Button className="text-white bg-[#2367f8] hover:bg-[#2367f8]">All Advertisement</Button>
                     </Link>
                 </div>
                 <InputForm postId={postId} />

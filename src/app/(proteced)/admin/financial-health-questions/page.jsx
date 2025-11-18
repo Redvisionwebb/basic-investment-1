@@ -99,7 +99,7 @@ const FinancialHealthQuestions = () => {
                 <div className="flex justify-between items-center mb-2">
                   <label className="font-semibold">Question {index + 1}</label>
                   <button
-                    className="bg-[var(--rv-admin-bg-color)] hover:bg-[var(--rv-admin-bg-color)] text-white py-2 px-4 rounded-md text-sm"
+                    className="bg-[#2367f8] hover:bg-[#2367f8] text-white py-2 px-4 rounded-md text-sm"
                     onClick={() => {
                       setEditMode((prev) => ({
                         ...prev,
@@ -132,7 +132,7 @@ const FinancialHealthQuestions = () => {
 
                 {isEditing && (
                   <button
-                    className="mt-4 bg-[var(--rv-admin-bg-color)] hover:bg-[var(--rv-admin-bg-color)] text-white px-4 py-2 rounded"
+                    className="mt-4 bg-[#2367f8] hover:bg-[#2367f8] text-white px-4 py-2 rounded"
                     onClick={() => handleUpdate(question)}
                   >
                     Update

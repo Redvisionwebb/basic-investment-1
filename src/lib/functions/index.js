@@ -11,200 +11,408 @@ import SocialMediaModel from "../models/SocialMedia";
 import TeamModel from "../models/TeamModel";
 import TestimonialModel from "../models/TestimonialModel";
 import VideoModel from "../models/VideoModel";
-import fs from "fs";
-import path from "path";
 import AdminModel from "../models/AdminModel";
 import bcrypt from "bcryptjs";
 import AdminServiceModel from "../models/AdminServiceModel";
+import BotLeadsModel from "../models/Botlead";
+import RiskUsersModel from "../models/RiskUsersModel";
+import LeadsModel from "../models/LeadsModel";
+import FinancialHealthUsersModel from "../models/FinancialHealthUsersModel";
+import RoboModel from "../models/RoboModel";
+import LoginGroupModel from "../models/LoginModel";
+import fs from "fs";
+import path from "path";
+import StatsModel from "../models/StatModel";
+import AnalyticsModel from "../models/AnalyticsModel";
+
+
+const toPlain = (data) => JSON.parse(JSON.stringify(data || null));
 
 export async function getSiteData() {
-  await ConnectDB();
-  const data = await SiteSettingsModel?.findOne({}).select("-_id");
-  return data ? data.toObject() : {};
+  try {
+    await ConnectDB();
+    const data = await SiteSettingsModel.findOne().lean();
+    return toPlain(data || {});
+  } catch (error) {
+    return toPlain({});
+  }
 }
 
 export async function getMissionVission() {
-  await ConnectDB();
-  const data = await MissionVisionModel?.findOne({}).select("-_id");
-  return data ? data.toObject() : {};
+  try {
+    await ConnectDB();
+    const data = await MissionVisionModel.findOne().lean();
+    return toPlain(data || {});
+  } catch (error) {
+    return toPlain({});
+  }
 }
+
 export async function getAboutusteams() {
-  await ConnectDB();
-  const data = await TeamModel?.find({}).select('-_id');  // Use find() instead of findOne()
-  return data ? data.map(service => service.toObject()) : [];
-};
+  try {
+    await ConnectDB();
+    const data = await TeamModel.find().lean();
+    return toPlain(data || []);
+  } catch (error) {
+    return toPlain([]);
+  }
+}
 
 export async function getSocialMedia() {
-  await ConnectDB();
-  const data = await SocialMediaModel?.find({}).select("-_id");
-  return data ? data.map((service) => service.toObject()) : [];
+  try {
+    await ConnectDB();
+    const data = await SocialMediaModel.find().lean();
+    return toPlain(data || []);
+  } catch (error) {
+    return toPlain([]);
+  }
 }
 
 export async function getArn() {
-  await ConnectDB();
-  const data = await ArnModel?.find({}).select("-_id");
-  return data ? data.map((service) => service.toObject()) : [];
+  try {
+    await ConnectDB();
+    const data = await ArnModel.find().lean();
+    return toPlain(data || []);
+  } catch (error) {
+    return toPlain([]);
+  }
 }
 
 export async function getServiceData() {
-  await ConnectDB();
-  const data = await AdminServiceModel.find({}).lean(); // plain JS objects, not Mongoose docs
-  return data ? JSON.parse(JSON.stringify(data)) : [];
-};
+  try {
+    await ConnectDB();
+    const data = await AdminServiceModel.find().lean();
+    return toPlain(data || []);
+  } catch (error) {
+    return toPlain([]);
+  }
+}
 
 export async function getServiceDataBySlug(slug) {
-  await ConnectDB();
-  const data = await AdminServiceModel.findOne({ name: slug }).lean();
-  console.log(data);
-   // plain JS objects, not Mongoose docs
-  return data ? JSON.parse(JSON.stringify(data)) : [];
-};
+  try {
+    await ConnectDB();
+    const data = await AdminServiceModel.findOne({ name: slug }).lean();
+    return toPlain(data || {});
+  } catch (error) {
+    return toPlain({});
+  }
+}
 
 export async function getTestimonials() {
-  await ConnectDB();
-  const data = await TestimonialModel?.find({}).select("-_id"); // Use find() instead of findOne()
-  return data ? data.map((service) => service.toObject()) : [];
+  try {
+    await ConnectDB();
+    const data = await TestimonialModel.find().sort({ createdAt: -1 }).lean();
+    return toPlain(data || []);
+  } catch (error) {
+    return toPlain([]);
+  }
 }
 
 export async function getAwards() {
-  await ConnectDB();
-  const data = await AwardModel.find({}).select("-_id"); // Fetch all awards without _id
-  return data ? data.map((award) => award.toObject()) : [];
+  try {
+    await ConnectDB();
+    const data = await AwardModel.find().sort({ createdAt: -1 }).lean();
+    return toPlain(data || []);
+  } catch (error) {
+    return toPlain([]);
+  }
 }
 
 export async function getTeams() {
-  await ConnectDB();
-  const data = await TeamModel?.find({}).select("-_id"); // Use find() instead of findOne()
-  return data ? data.map((service) => service.toObject()) : [];
+  try {
+    await ConnectDB();
+    const data = await TeamModel.find().sort({ createdAt: -1 }).lean();
+    return toPlain(data || []);
+  } catch (error) {
+    return toPlain([]);
+  }
 }
 
 export async function getAboutus() {
-  await ConnectDB();
-  const data = await AboutUsModel?.find({}).select("-_id"); // Use find() instead of findOne()
-  return data ? data.map((service) => service.toObject()) : [];
+  try {
+    await ConnectDB();
+    const data = await AboutUsModel.find().lean();
+    return toPlain(data || []);
+  } catch (error) {
+    return toPlain([]);
+  }
 }
+
+export async function getAllStats() {
+  try {
+    await ConnectDB();
+    const data = await StatsModel.find().lean();
+    return toPlain(data || []);
+  } catch (error) {
+    console.error("Error fetching stats:", error);
+    return toPlain([]);
+  }
+}
+
 export async function getLatestBlogs() {
-  await ConnectDB();
-
-  const blogs = await BlogsModel.find({})
-    .sort({ createdAt: -1 }) // Sort by newest first
-    .limit(3) // Get only the latest 3
-    .select("-_id"); // Exclude the MongoDB _id if not needed
-
-  return blogs ? blogs.map((blog) => blog.toObject()) : [];
+  try {
+    await ConnectDB();
+    const blogs = await BlogsModel.find({})
+      .sort({ createdAt: -1 })
+      .limit(3)
+      .select("-category")
+      .lean();
+    return toPlain(blogs || []);
+  } catch (error) {
+    return toPlain([]);
+  }
 }
 
 export async function getAddisLogos() {
-  await ConnectDB();
-  const logos = await AmcsLogoModel.find({ addisstatus: true });
-  return logos.map((logo) => logo.toObject());
+  try {
+    await ConnectDB();
+    const logos = await AmcsLogoModel.find({ addisstatus: true }).lean();
+    return toPlain(logos || []);
+  } catch (error) {
+    return toPlain([]);
+  }
 }
 
 export async function getBlogs() {
-  await ConnectDB();
-  const data = await BlogsModel?.find({}).select("-_id"); // Use find() instead of findOne()
-  return data ? data.map((service) => service.toObject()) : [];
+  try {
+    await ConnectDB();
+    const data = await BlogsModel.find()
+      .sort({ createdAt: -1 })
+      .select("-category")
+      .lean();
+    return toPlain(data || []);
+  } catch (error) {
+    return toPlain([]);
+  }
+}
+
+export async function getActiveServicesCount() {
+  try {
+    await ConnectDB();
+    const count = await AdminServiceModel.countDocuments({ status: true });
+    return count || 0;
+  } catch (error) {
+    return 0;
+  }
+}
+
+export async function getBlogsCount() {
+  try {
+    await ConnectDB();
+    const count = await BlogsModel.countDocuments();
+    return count || 0;
+  } catch (error) {
+    return 0;
+  }
+}
+
+export async function getTestimonialsCount() {
+  try {
+    await ConnectDB();
+    const count = await TestimonialModel.countDocuments();
+    return count || 0;
+  } catch (error) {
+    return 0;
+  }
+}
+
+export async function getFaqsCount() {
+  try {
+    await ConnectDB();
+    const count = await FaqModel.countDocuments();
+    return count || 0;
+  } catch (error) {
+    return 0;
+  }
+}
+
+export async function getAwardsCount() {
+  try {
+    await ConnectDB();
+    const count = await AwardModel.countDocuments();
+    return count || 0;
+  } catch (error) {
+    return 0;
+  }
+}
+
+export async function getStatsData() {
+  try {
+    await ConnectDB();
+    const stats = await StatsModel.find({}).sort({ createdAt: -1 });
+    return stats;
+  } catch (error) {
+    return [];
+  }
+}
+
+export async function getAllLeadsCount() {
+  try {
+    await ConnectDB();
+    const [bot, risk, leads, health] = await Promise.all([
+      BotLeadsModel.countDocuments(),
+      RiskUsersModel.countDocuments(),
+      LeadsModel.countDocuments(),
+      FinancialHealthUsersModel.countDocuments(),
+    ]);
+    return bot + risk + leads + health;
+  } catch (error) {
+    return 0;
+  }
 }
 
 export async function getVidios() {
-  await ConnectDB();
-  const data = await VideoModel?.find({}).select("-_id"); // Use find() instead of findOne()
-  return data ? data.map((service) => service.toObject()) : [];
+  try {
+    await ConnectDB();
+    const data = await VideoModel.find().sort({ createdAt: -1 }).lean();
+    return toPlain(data || []);
+  } catch (error) {
+    return toPlain([]);
+  }
+}
+
+export async function getActiveLogindesk() {
+  try {
+    await ConnectDB();
+    const groups = await LoginGroupModel.find({ "loginitems.isstatus": true }).select('-_id').lean();
+    const filteredGroups = groups
+      .map((group) => ({
+        _id: group._id,
+        name: group.name,
+        createdAt: group.createdAt,
+        updatedAt: group.updatedAt,
+        loginitems: group.loginitems.filter((item) => item.isstatus === true),
+      }))
+      .filter((group) => group.loginitems.length > 0);
+    return filteredGroups;
+  } catch (error) {
+    return [];
+  }
+}
+
+export async function getRoboUser() {
+  try {
+    await ConnectDB();
+    const roboUser = await RoboModel.findOne({
+      roboUser: true,
+      softwareUser: true,
+    })
+      .sort({ createdAt: -1 })
+      .lean();
+    return toPlain(roboUser || null);
+  } catch (error) {
+    return null;
+  }
+}
+
+export async function getAnalytics() {
+  try {
+    await ConnectDB();
+
+    // Fetch the latest Analytics document (you only have one)
+    const analyticsData = await AnalyticsModel.findOne()
+      .sort({ createdAt: -1 })
+      .lean();
+
+    return toPlain(analyticsData || null); // return plain object or null if none
+  } catch (error) {
+    console.error("Error fetching analytics:", error);
+    return null;
+  }
 }
 
 export async function getBlogBySlug(slug) {
-  await ConnectDB();
-  const blog = await BlogsModel.findOne({ slug });
-  return blog ? blog.toObject() : null;
+  try {
+    await ConnectDB();
+    const blog = await BlogsModel.findOne({ slug }).select("-category").lean();
+    return toPlain(blog || {});
+  } catch (error) {
+    return toPlain({});
+  }
 }
 
 export function slugify(text) {
-  return text
-    .toString()
-    .toLowerCase()
-    .trim()
-    .replace(/[^a-z0-9]+/g, "-") // Replace non-alphanumeric with hyphens
-    .replace(/^-+|-+$/g, ""); // Trim leading/trailing hyphens
+  try {
+    return text
+      .toLowerCase()
+      .trim()
+      .replace(/[^a-z0-9]+/g, "-")
+      .replace(/^-+|-+$/g, "");
+  } catch (error) {
+    console.error("slugify error:", error.message);
+    return "";
+  }
 }
 
 export async function saveImageToLocal(section, file) {
-  const uploadDir = path.join(process.cwd(), process.env.UPLOAD_URL, section);
-  if (!fs.existsSync(uploadDir)) fs.mkdirSync(uploadDir, { recursive: true });
-
-  const filename = `${Date.now()}-${file.name}`;
-  const filepath = path.join(uploadDir, filename);
-
-  const buffer = Buffer.from(await file.arrayBuffer());
-  fs.writeFileSync(filepath, buffer);
-
-  return {
-    filename,
-    url: `/api/uploads?section=${section}&filename=${filename}`,
-  };
+  try {
+    const uploadDir = path.join(process.cwd(), process.env.UPLOAD_URL, section);
+    if (!fs.existsSync(uploadDir)) fs.mkdirSync(uploadDir, { recursive: true });
+    const filename = `${Date.now()}-${file.name}`;
+    const filepath = path.join(uploadDir, filename);
+    const buffer = Buffer.from(await file.arrayBuffer());
+    fs.writeFileSync(filepath, buffer);
+    return { filename, url: `/api/uploads?section=${section}&filename=${filename}` };
+  } catch (error) {
+    console.error("saveImageToLocal error:", error.message);
+    return null;
+  }
 }
 
 export function deleteFileIfExists(section, filename) {
-  const filePath = path.join(
-    process.cwd(),
-    process.env.UPLOAD_URL,
-    section,
-    filename
-  );
-  if (fs.existsSync(filePath)) {
-    fs.unlinkSync(filePath);
-    return true;
+  try {
+    const filePath = path.join(process.cwd(), process.env.UPLOAD_URL, section, filename);
+    if (fs.existsSync(filePath)) {
+      fs.unlinkSync(filePath);
+      return true;
+    }
+    return false;
+  } catch (error) {
+    console.error("deleteFileIfExists error:", error.message);
+    return false;
   }
-  return false;
 }
 
 export async function getFaqs() {
-  await ConnectDB();
-  const data = await FaqModel?.find({}).select('-_id');
-  return data ? data.map(faq => faq.toObject()) : [];
+  try {
+    await ConnectDB();
+    const data = await FaqModel.find().lean();
+    return toPlain(data || []);
+  } catch (error) {
+    return toPlain([]);
+  }
 }
 
 export async function loginUser({ username, password }) {
-  console.log("Logging in user:", username, password);
-  if (!username || !password) return null;
-  await ConnectDB();
-  const user = await AdminModel.findOne({ username }).lean();
-  console.log("Found user:", user);
-  if (!user) return null;
-  const isPasswordValid = await bcrypt.compare(password, user.password);
-  console.log("Password valid:", isPasswordValid);
-  if (!isPasswordValid) return null;
-
-  return {
-    id: String(user._id),
-    name: user.username,
-    role: user.role || "normaladmin",
-  };
+  try {
+    if (!username || !password) return null;
+    const user = await AdminModel.findOne({ username }).lean();
+    if (!user) return null;
+    const isPasswordValid = await bcrypt.compare(password, user.password);
+    if (!isPasswordValid) return null;
+    return { id: String(user._id), name: user.username, role: user.role || "normaladmin" };
+  } catch (error) {
+    console.error("loginUser error:", error.message);
+    return null;
+  }
 }
 
 export async function DevLogin({ username, password }) {
-  console.log("Logging in user:", username, password);
   try {
     const res = await fetch(`${process.env.NEXT_PUBLIC_DATA_API}/api/admin`, {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({ username, password }),
     });
-
-    console.log("end");
-
     if (!res.ok) return null;
-    console.log("Response OK:", res.ok);
-
     const data = await res.json();
-    console.log("Response Data:", data);
     return {
       id: data.id || data._id,
       name: data.username || data.name,
       role: data.role || "devadmin",
     };
-  } catch (err) {
-    console.error("Dev login failed:", err);
+  } catch (error) {
+    console.error("DevLogin error:", error.message);
     return null;
   }
 }
-

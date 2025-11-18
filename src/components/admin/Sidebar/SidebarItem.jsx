@@ -17,7 +17,7 @@ const SidebarItem = ({ item, isOpen, onToggle }) => {
         <button
           onClick={() => signOut({ callbackUrl: "/signin" })}
           className={`flex items-center justify-between gap-3 px-3 py-2 rounded-md font-medium transition-all duration-300 
-            hover:bg-[var(--rv-admin-bg-color)] hover:text-white text-left w-full
+            hover:bg-[#2367f8] hover:text-white text-left w-full
           `}
         >
           <div className="flex items-center gap-2">
@@ -41,7 +41,7 @@ const SidebarItem = ({ item, isOpen, onToggle }) => {
           }
         }}
         className={`flex items-center justify-between gap-3 px-3 py-2 rounded-md font-medium transition-all duration-300
-          ${isActive ? "bg-[var(--rv-admin-bg-color)] text-white" : "hover:bg-[var(--rv-admin-bg-color)] hover:text-white"}
+          ${isActive ? "bg-[#2367f8] text-white" : "hover:bg-[#2367f8] hover:text-white"}
         `}
       >
         <div className="flex items-center gap-2">

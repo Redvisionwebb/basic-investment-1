@@ -10,11 +10,6 @@ import {
     useReactTable,
 } from "@tanstack/react-table";
 import { Button } from "@/components/ui/button";
-import {
-    DropdownMenu,
-    DropdownMenuContent,
-    DropdownMenuItem,
-} from "@/components/ui/dropdown-menu";
 import { Input } from "@/components/ui/input";
 import {
     Table,
@@ -27,6 +22,7 @@ import {
 import axios from "axios";
 import formatDate from "@/lib/formatDate";
 import DefaultLayout from "@/components/admin/Layouts/DefaultLaout";
+
 const DataTableDemo = () => {
     const [data, setData] = React.useState([]);
     const [loading, setLoading] = React.useState(false);
@@ -39,81 +35,63 @@ const DataTableDemo = () => {
     const fetchData = async (type) => {
         setLoading(true);
         try {
+            let url = "";
             switch (type) {
-                case 'contactus': {
-                    const res = await axios.get(`${process.env.NEXT_PUBLIC_NEXTAUTH_URL}/api/leads`);
-                    if (res.status === 200) {
-                        setData(res?.data?.leads || {});
-                    } else {
-                        setData({});
-                    }
+                case "contactus":
+                    url = `${process.env.NEXT_PUBLIC_NEXTAUTH_URL}/api/leads`;
                     break;
-                }
-                case 'riskprofile': {
-                    const res = await axios.get(`${process.env.NEXT_PUBLIC_NEXTAUTH_URL}/api/riskprofileuser`);
+                case "botleads":
+                    url = `${process.env.NEXT_PUBLIC_NEXTAUTH_URL}/api/bot/leads`;
+                    break;
+                case "riskprofile":
+                    url = `${process.env.NEXT_PUBLIC_NEXTAUTH_URL}/api/riskprofileuser`;
+                    break;
+                case "healthprofile":
+                    url = `${process.env.NEXT_PUBLIC_NEXTAUTH_URL}/api/financialhealthuser`;
+                    break;
+                default:
+                    url = `${process.env.NEXT_PUBLIC_NEXTAUTH_URL}/api/leads`;
+            }
 
-                    if (res.status === 200) {
-                        setData(res?.data || {});
-                    } else {
-                        setData({});
-                    }
-                    break;
-                }
-                case 'healthprofile': {
-                    const res = await axios.get(`${process.env.NEXT_PUBLIC_NEXTAUTH_URL}/api/financialhealthuser`);
-                    if (res.status === 200) {
-                        setData(res?.data || {});
-                    } else {
-                        setData({});
-                    }
-                    break;
-                }
-                default: {
-                    const res = await axios.get(`${process.env.NEXT_PUBLIC_NEXTAUTH_URL}/api/leads`);
-                    if (res.status === 200) {
-                        setData(res?.data?.leads || {});
-                    } else {
-                        setData({});
-                    }
-                    break;
-                }
+            const res = await axios.get(url);
+            if (res.status === 200) {
+                const leads = res?.data?.leads || res?.data || [];
+                setData(Array.isArray(leads) ? leads : []);
+            } else {
+                setData([]);
             }
         } catch (error) {
-            console.error('Error fetching data:', error);
-            setData({});
+            console.error("Error fetching data:", error);
+            setData([]);
         } finally {
             setLoading(false);
         }
     };
 
-
-
     React.useEffect(() => {
         fetchData(activeTab);
     }, [activeTab]);
 
-    const columns = [
-        {
-            id: "srno",
-            header: "S. No.",
-            cell: ({ row }) => row.index + 1,
-        },
-        {
-            accessorKey: "email",
-            header: "Email",
-            cell: ({ row }) => <div>{row.getValue("email")}</div>,
-        },
-        {
-            accessorKey: "mobile",
-            header: "Mobile",
-            cell: ({ row }) => <div>{row.getValue("mobile")}</div>,
-        },
-        {
-            accessorKey: "message",
-            header: "Message",
-            cell: ({ row }) => <div>{row.getValue("message")}</div>,
-        },
-        {
+    const getColumns = () => {
+        const baseColumns = [
+            {
+                id: "srno",
+                header: "S. No.",
+                cell: ({ row }) => row.index + 1,
+            },
+            {
+                accessorKey: "email",
+                header: "Email",
+                cell: ({ row }) => <div>{row.getValue("email")}</div>,
+            },
+            {
+                accessorKey: "mobile",
+                header: "Mobile",
+                cell: ({ row }) => <div>{row.getValue("mobile")}</div>,
+            },
+        ];
+
+        const dateColumn = {
             accessorKey: "createdAt",
             header: "Post Date",
             cell: ({ row }) => (
@@ -121,8 +99,80 @@ const DataTableDemo = () => {
                     {formatDate(row.getValue("createdAt"))}
                 </div>
             ),
-        },
-    ];
+        };
+
+        switch (activeTab) {
+            case "contactus":
+                return [
+                    ...baseColumns,
+                    {
+                        accessorKey: "message",
+                        header: "Message",
+                        cell: ({ row }) => <div>{row.getValue("message")}</div>,
+                    },
+                    dateColumn,
+                ];
+            case "botleads":
+                return [
+                    ...baseColumns,
+                    {
+                        accessorKey: "services",
+                        header: "Services",
+                        cell: ({ row }) => <div>{row.getValue("services")}</div>,
+                    },
+                    {
+                        accessorKey: "address",
+                        header: "Address",
+                        cell: ({ row }) => <div>{row.getValue("address")}</div>,
+                    },
+                    dateColumn,
+                ];
+            case "riskprofile":
+                return [
+                    ...baseColumns,
+                    {
+                        accessorKey: "message",
+                        header: "Message",
+                        cell: ({ row }) => <div>{row.getValue("message")}</div>,
+                    },
+                    {
+                        accessorKey: "score",
+                        header: "Score",
+                        cell: ({ row }) => <div>{row.getValue("score")}</div>,
+                    },
+                    {
+                        accessorKey: "riskprofile",
+                        header: "Risk Profile",
+                        cell: ({ row }) => <div>{row.getValue("riskprofile")}</div>,
+                    },
+                    dateColumn,
+                ];
+            case "healthprofile":
+                return [
+                    ...baseColumns,
+                    {
+                        accessorKey: "message",
+                        header: "Message",
+                        cell: ({ row }) => <div>{row.getValue("message")}</div>,
+                    },
+                    {
+                        accessorKey: "score",
+                        header: "Score",
+                        cell: ({ row }) => <div>{row.getValue("score")}</div>,
+                    },
+                    {
+                        accessorKey: "healthprofile",
+                        header: "Health Profile",
+                        cell: ({ row }) => <div>{row.getValue("healthprofile")}</div>,
+                    },
+                    dateColumn,
+                ];
+            default:
+                return [...baseColumns, dateColumn];
+        }
+    };
+
+    const columns = getColumns();
 
     const table = useReactTable({
         data,
@@ -146,50 +196,35 @@ const DataTableDemo = () => {
     return (
         <DefaultLayout>
             <div className="flex flex-col gap-5">
-                <div className="">
-                    <h1 className="text-2xl font-bold ">Leads</h1>
+                <div>
+                    <h1 className="text-2xl font-bold">Leads</h1>
                 </div>
+
                 <div className="rounded-md bg-white p-3">
                     <div className="text-sm text-muted-foreground">
                         Total Leads: {data.length}
                     </div>
 
                     <div className="mt-4 flex flex-col sm:flex-row gap-2">
-                        <Button
-                            className={ 
-                                activeTab === "contactus"
-                                    ? "bg-[var(--rv-admin-bg-color)] hover:bg-[var(--rv-admin-bg-color)] text-white"
-                                    : "border border-gray-400"
-                            }
-                            variant={activeTab === "contactus" ? "default" : "outline"}
-                            onClick={() => setActiveTab("contactus")}
-                        >
-                            Contact Us Leads
-                        </Button>
-
-                        <Button
-                            className={
-                                activeTab === "riskprofile"
-                                    ? "bg-[var(--rv-admin-bg-color)] hover:bg-[var(--rv-admin-bg-color)] text-white"
-                                    : "border border-gray-400"
-                            }
-                            variant={activeTab === "riskprofile" ? "default" : "outline"}
-                            onClick={() => setActiveTab("riskprofile")}
-                        >
-                            Risk Profile Leads
-                        </Button>
-
-                        <Button
-                            className={
-                                activeTab === "healthprofile"
-                                    ? "bg-[var(--rv-admin-bg-color)] hover:bg-[var(--rv-admin-bg-color)] text-white"
-                                    : "border border-gray-400"
-                            }
-                            variant={activeTab === "healthprofile" ? "default" : "outline"}
-                            onClick={() => setActiveTab("healthprofile")}
-                        >
-                            Health Profile Leads
-                        </Button>
+                        {[
+                            { key: "contactus", label: "Contact Us Leads" },
+                            { key: "botleads", label: "Bot Leads" },
+                            { key: "riskprofile", label: "Risk Profile Leads" },
+                            { key: "healthprofile", label: "Health Profile Leads" },
+                        ].map((tab) => (
+                            <Button
+                                key={tab.key}
+                                className={
+                                    activeTab === tab.key
+                                        ? "bg-[#2367f8] hover:bg-[#2367f8] text-white"
+                                        : "border border-gray-400"
+                                }
+                                variant={activeTab === tab.key ? "default" : "outline"}
+                                onClick={() => setActiveTab(tab.key)}
+                            >
+                                {tab.label}
+                            </Button>
+                        ))}
                     </div>
                 </div>
 
@@ -215,9 +250,9 @@ const DataTableDemo = () => {
                                                 {header.isPlaceholder
                                                     ? null
                                                     : flexRender(
-                                                        header.column.columnDef.header,
-                                                        header.getContext()
-                                                    )}
+                                                          header.column.columnDef.header,
+                                                          header.getContext()
+                                                      )}
                                             </TableHead>
                                         ))}
                                     </TableRow>
@@ -242,7 +277,10 @@ const DataTableDemo = () => {
                                     ))
                                 ) : (
                                     <TableRow>
-                                        <TableCell colSpan={columns.length} className="text-center h-24">
+                                        <TableCell
+                                            colSpan={columns.length}
+                                            className="text-center h-24"
+                                        >
                                             No results.
                                         </TableCell>
                                     </TableRow>

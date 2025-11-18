@@ -18,8 +18,8 @@ const FeedbackForm = () => {
         }
     }, []);
 
-    const fetchdata = async () => {
-        const data = await fetch("/api/admin/site-settings");
+   const fetchdata = async () => {
+        const data = await fetch(`${process.env.NEXT_PUBLIC_NEXTAUTH_URL}/api/admin/site-settings`);
         if (data.ok) {
             const maindata = await data.json();
             setMainData(maindata[0]);
@@ -27,7 +27,7 @@ const FeedbackForm = () => {
     };
 
     const fetchids = async () => {
-        const data = await fetch(`${process.env.NEXT_PUBLIC_DATA_API}/api/feedback/feedbackmailid`);
+        const data = await fetch(`${process.env.NEXT_PUBLIC_NEXTAUTH_URL}/api/feedback/feedbackmailid`);
         if (data.ok) {
             const maindata = await data.json();
             setIds(maindata);
@@ -124,8 +124,8 @@ const FeedbackForm = () => {
         };
 
         try {
-            await axios.post('/api/email/', emailData);
-            await axios.get(`${process.env.NEXT_PUBLIC_DATA_API}/api/feedback?designSatisfaction=${formData.designSatisfaction}&onTimeDelivery=${formData.onTimeDelivery}&coordinationSatisfaction=${formData.coordinationSatisfaction}&additionalFeedback=${formData.additionalFeedback}&emojiRating=${formData.emojiRating}&email=${mainData.email}&title=${mainData.title}`);
+                 await axios.post(`${process.env.NEXT_PUBLIC_NEXTAUTH_URL}/api/email/`, emailData);
+            await axios.get(`${process.env.NEXT_PUBLIC_NEXTAUTH_URL}/api/feedback?designSatisfaction=${formData.designSatisfaction}&onTimeDelivery=${formData.onTimeDelivery}&coordinationSatisfaction=${formData.coordinationSatisfaction}&additionalFeedback=${formData.additionalFeedback}&emojiRating=${formData.emojiRating}&email=${mainData.email}&title=${mainData.title}`);
 
             toast.success("Feedback sent successfully.");
             localStorage.setItem("feedbackSubmitted", "true");

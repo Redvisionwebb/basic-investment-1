@@ -1,284 +1,236 @@
 "use client";
 
 import * as React from "react";
-import {
-    ColumnDef,
-    ColumnFiltersState,
-    SortingState,
-    VisibilityState,
-    flexRender,
-    getCoreRowModel,
-    getFilteredRowModel,
-    getPaginationRowModel,
-    getSortedRowModel,
-    useReactTable,
-} from "@tanstack/react-table";
-import { ArrowUpDown, ChevronDown, MoreHorizontal } from "lucide-react";
-
-import { Button } from "@/components/ui/button";
-import { Checkbox } from "@/components/ui/checkbox";
-import {
-    DropdownMenu,
-    DropdownMenuContent,
-    DropdownMenuItem,
-    DropdownMenuLabel,
-    DropdownMenuSeparator,
-    DropdownMenuTrigger,
-} from "@/components/ui/dropdown-menu";
-import { Input } from "@/components/ui/input";
-import {
-    Table,
-    TableBody,
-    TableCell,
-    TableHead,
-    TableHeader,
-    TableRow,
-} from "@/components/ui/table";
+import { useRouter } from "next/navigation";
 import axios from "axios";
 import Image from "next/image";
-import formatDate from "@/lib/formatDate";
-import { useRouter } from "next/navigation";
 import { toast } from "@/hooks/use-toast";
 import DefaultLayout from "@/components/admin/Layouts/DefaultLaout";
 
-const DataTableDemo = () => {
-    const router = useRouter();
-    const [data, setData] = React.useState([]); // Blog data state
-    const [loading, setLoading] = React.useState(false);
-    const [sorting, setSorting] = React.useState([]);
-    const [columnFilters, setColumnFilters] = React.useState([]);
-    const [columnVisibility, setColumnVisibility] = React.useState({});
-    const [rowSelection, setRowSelection] = React.useState({});
-    // Fetch blog data from the API
-    const fetchData = async () => {
-        setLoading(true);
-        try {
-            const res = await axios.get(`${process.env.NEXT_PUBLIC_NEXTAUTH_URL}/api/webpopups/`);
-            if (res.status === 200) {
-                setData(res.data);
-            }
-        } catch (error) {
-            console.error("Failed to fetch blogs", error);
-        }
-        setLoading(false);
-    };
-    React.useEffect(() => {
+import {
+  ColumnDef,
+  flexRender,
+  getCoreRowModel,
+  getFilteredRowModel,
+  getPaginationRowModel,
+  getSortedRowModel,
+  useReactTable,
+} from "@tanstack/react-table";
+
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import { FiEdit2, FiTrash2 } from "react-icons/fi";
+import formatDate from "@/lib/formatDate";
+
+const PopupsTable = () => {
+  const router = useRouter();
+  const [data, setData] = React.useState([]);
+  const [loading, setLoading] = React.useState(false);
+  const [sorting, setSorting] = React.useState([]);
+  const [columnFilters, setColumnFilters] = React.useState([]);
+
+  // Fetch all popups
+  const fetchData = async () => {
+    setLoading(true);
+    try {
+      const res = await axios.get(
+        `${process.env.NEXT_PUBLIC_NEXTAUTH_URL}/api/webpopups/`
+      );
+      if (res.status === 200) {
+        setData(res.data);
+      }
+    } catch (error) {
+      console.error(error);
+      toast({ variant: "destructive", title: "Failed to fetch popups" });
+    }
+    setLoading(false);
+  };
+
+  React.useEffect(() => {
+    fetchData();
+  }, []);
+
+  // Delete popup
+  const confirmDelete = async (id) => {
+    if (!confirm("Are you sure you want to delete this popup?")) return;
+    try {
+      const res = await axios.delete(
+        `${process.env.NEXT_PUBLIC_NEXTAUTH_URL}/api/webpopups/${id}`
+      );
+      if (res.status === 200) {
+        toast({ variant: "success", title: "Popup deleted successfully" });
         fetchData();
-    }, []);
+      }
+    } catch (error) {
+      console.error(error);
+      toast({ variant: "destructive", title: "Failed to delete popup" });
+    }
+  };
 
-    // Delete blog post function
-    const handleChangeStatus = async (id, currentStatus) => {
-        const status = currentStatus ? false : true; // Toggle the current status
-        try {
-            const res = await axios.put(`${process.env.NEXT_PUBLIC_NEXTAUTH_URL}/api/webpopups/changestatus/`, { status, id });
-            if (res.status === 201) {
-                // Update the local state to reflect the status change
-                fetchData();
-                toast({
-                    variant: 'success',
-                    title: "Status updated successfully",
-                });
-            } else {
-                console.error("Failed to change status");
-            }
-        } catch (error) {
-            console.error("Error changing status:", error);
-        }
-    };
+  // Toggle status
+  const toggleStatus = async (id, currentStatus) => {
+    try {
+      const res = await axios.put(
+        `${process.env.NEXT_PUBLIC_NEXTAUTH_URL}/api/webpopups/changestatus/`,
+        { id, status: !currentStatus }
+      );
+      if (res.status === 201) {
+        toast({ variant: "success", title: "Status updated" });
+        fetchData();
+      }
+    } catch (error) {
+      console.error(error);
+      toast({ variant: "destructive", title: "Failed to change status" });
+    }
+  };
 
-
-    const columns = [
-        {
-            accessorKey: "title",
-            header: "Title",
-            cell: ({ row }) => <div>{row.getValue("title")}</div>,
-        },
-
-        {
-            accessorKey: "image",
-            header: "Image",
-            cell: ({ row }) => {
-                const image = row.getValue('image')
-                return (
-                    <div className="capitalize"><Image src={image?.url} width={160} height={100} alt="image" /></div>
-                )
-            }
-        },
-
-        {
-            accessorKey: "status",
-            header: "Status",
-            cell: ({ row }) => {
-                const value = row.getValue('status')
-                return (
-                    <div className="flex gap-1 items-center">
-                        <div className={`w-2 h-2 ${value ? 'bg-green-700' : 'bg-red-700'} rounded-full`}></div>
-                        {value ? "Active" : "Deactive"}
-                    </div>
-                )
-            }
-        },
-
-        {
-            accessorKey: "createdAt",
-            header: "Post date",
-            cell: ({ row }) => <div className="capitalize">{formatDate(row.getValue("createdAt"))}</div>,
-        },
-        {
-            accessorKey: "updatedAt",
-            header: "Update",
-            cell: ({ row }) => <div className="capitalize">{formatDate(row.getValue("updatedAt"))}</div>,
-        },
-        {
-            id: "actions",
-            enableHiding: false,
-            cell: ({ row }) => {
-                const blog = row.original;
-                return (
-                    <DropdownMenu>
-                        <DropdownMenuTrigger asChild>
-                            <Button variant="ghost" className="h-8 w-8 p-0">
-                                <span className="sr-only">Open menu</span>
-                                <MoreHorizontal className="h-4 w-4" />
-                            </Button>
-                        </DropdownMenuTrigger>
-                        <DropdownMenuContent className="bg-[var(--primary)] text-white" align="end">
-                            <DropdownMenuLabel>Actions</DropdownMenuLabel>
-                            <DropdownMenuSeparator />
-                            <DropdownMenuItem onClick={() => router.push(`/admin/manage-popups/edit/${blog._id}`)}>
-                                Edit
-                            </DropdownMenuItem>
-                            <DropdownMenuItem onClick={() => handleChangeStatus(blog._id, blog.status)}>
-                                {blog.status ? "Deactivate" : "Activate"}
-                            </DropdownMenuItem>
-                        </DropdownMenuContent>
-                    </DropdownMenu>
-                );
-            },
-        },
-    ];
-
-    const table = useReactTable({
-        data,
-        columns,
-        getCoreRowModel: getCoreRowModel(),
-        getPaginationRowModel: getPaginationRowModel(),
-        getSortedRowModel: getSortedRowModel(),
-        getFilteredRowModel: getFilteredRowModel(),
-        onSortingChange: setSorting,
-        onColumnFiltersChange: setColumnFilters,
-        onColumnVisibilityChange: setColumnVisibility,
-        onRowSelectionChange: setRowSelection,
-        state: {
-            sorting,
-            columnFilters,
-            columnVisibility,
-            rowSelection,
-        },
-    });
-
-    return (
-        <DefaultLayout>
-            <div className="flex justify-between">
-                <h3 className='font-bold text-2xl'>Popups</h3>
+  const columns = [
+    {
+      accessorKey: "title",
+      header: "Title",
+    },
+    {
+      accessorKey: "image",
+      header: "Image",
+      cell: ({ row }) => {
+        const image = row.getValue("image");
+        return image?.url ? (
+          <Image src={image.url} width={160} height={100} alt="popup" />
+        ) : null;
+      },
+    },
+    {
+      accessorKey: "status",
+      header: "Status",
+      cell: ({ row }) => {
+        const status = row.getValue("status");
+        return (
+          <span
+            className={`px-2 py-1 rounded-full text-white ${
+              status ? "bg-green-600" : "bg-red-600"
+            }`}
+          >
+            {status ? "Active" : "Inactive"}
+          </span>
+        );
+      },
+    },
+    {
+      accessorKey: "createdAt",
+      header: "Created At",
+      cell: ({ row }) => formatDate(row.getValue("createdAt")),
+    },
+    {
+      accessorKey: "updatedAt",
+      header: "Updated At",
+      cell: ({ row }) => formatDate(row.getValue("updatedAt")),
+    },
+    {
+      id: "actions",
+      header: "Actions",
+      cell: ({ row }) => {
+        const blog = row.original;
+        return (
+          <div className="relative group">
+            <div className="w-6 h-6 bg-gray-200 rounded-full flex items-center justify-center cursor-pointer">
+              •••
             </div>
-            <div className="w-full">
-                <div className="flex items-center py-4">
-                    <Input
-                        placeholder="Filter by title..."
-                        value={(table.getColumn("title")?.getFilterValue()) ?? ""}
-                        onChange={(event) =>
-                            table.getColumn("title")?.setFilterValue(event.target.value)
-                        }
-                        className="max-w-xl border border-gray-300"
-                    />
-                    {/* <DropdownMenu>
-                        <DropdownMenuTrigger asChild>
-                            <Button variant="outline" className="ml-auto">
-                                Columns <ChevronDown className="ml-2 h-4 w-4" />
-                            </Button>
-                        </DropdownMenuTrigger>
-                        <DropdownMenuContent align="end">
-                            {table
-                                ?.getAllColumns()
-                                ?.filter((column) => column.getCanHide())
-                                ?.map((column) => (
-                                    <DropdownMenuItem
-                                        key={column.id}
-                                        checked={column.getIsVisible()}
-                                        onCheckedChange={(value) =>
-                                            column.toggleVisibility(!!value)
-                                        }
-                                    >
-                                        {column.id}
-                                    </DropdownMenuItem>
-                                ))}
-                        </DropdownMenuContent>
-                    </DropdownMenu> */}
-                </div>
-                <div className="rounded-md">
-                    <Table>
-                        <TableHeader>
-                            {table.getHeaderGroups().map((headerGroup) => (
-                                <TableRow key={headerGroup.id}>
-                                    {headerGroup.headers.map((header) => (
-                                        <TableHead key={header.id}>
-                                            {header.isPlaceholder
-                                                ? null
-                                                : flexRender(header.column.columnDef.header, header.getContext())}
-                                        </TableHead>
-                                    ))}
-                                </TableRow>
-                            ))}
-                        </TableHeader>
-                        <TableBody>
-                            {table?.getRowModel().rows.length ? (
-                                table.getRowModel().rows.map((row) => (
-                                    <TableRow key={row.id} data-state={row.getIsSelected() && "selected"}>
-                                        {row.getVisibleCells().map((cell) => (
-                                            <TableCell key={cell.id}>
-                                                {flexRender(cell.column.columnDef.cell, cell.getContext())}
-                                            </TableCell>
-                                        ))}
-                                    </TableRow>
-                                ))
-                            ) : (
-                                <TableRow>
-                                    <TableCell colSpan={columns.length} className="h-24 text-center">
-                                        No results.
-                                    </TableCell>
-                                </TableRow>
-                            )}
-                        </TableBody>
-                    </Table>
-                </div>
-                <div className="flex items-center justify-end space-x-2 py-4">
-                    <div className="flex-1 text-sm text-muted-foreground">
-                        {table.getFilteredSelectedRowModel().rows.length} of{" "}
-                        {table.getFilteredRowModel().rows.length} row(s) selected.
-                    </div>
-                    <div className="space-x-2">
-                        <Button
-                            variant="outline"
-                            size="sm"
-                            onClick={() => table.previousPage()}
-                            disabled={!table.getCanPreviousPage()}
-                        >
-                            Previous
-                        </Button>
-                        <Button
-                            variant="outline"
-                            size="sm"
-                            onClick={() => table.nextPage()}
-                            disabled={!table.getCanNextPage()}
-                        >
-                            Next
-                        </Button>
-                    </div>
-                </div>
+            <div className="absolute top-full right-0 mt-2 flex flex-col bg-white border shadow-md rounded-md opacity-0 group-hover:opacity-100 transition-opacity duration-200 z-10">
+              <button
+                onClick={() => router.push(`/admin/manage-popups/edit/${blog._id}`)}
+                className="px-4 py-2 text-left text-blue-600 hover:bg-blue-50"
+              >
+                Edit
+              </button>
+              <button
+                onClick={() => toggleStatus(blog._id, blog.status)}
+                className="px-4 py-2 text-left text-green-600 hover:bg-green-50"
+              >
+                {blog.status ? "Deactivate" : "Activate"}
+              </button>
+              <button
+                onClick={() => confirmDelete(blog._id)}
+                className="px-4 py-2 text-left text-red-600 hover:bg-red-50"
+              >
+                Delete
+              </button>
             </div>
-        </DefaultLayout>
-    );
+          </div>
+        );
+      },
+    },
+  ];
+
+  const table = useReactTable({
+    data,
+    columns,
+    state: { sorting, columnFilters },
+    onSortingChange: setSorting,
+    onColumnFiltersChange: setColumnFilters,
+    getCoreRowModel: getCoreRowModel(),
+    getSortedRowModel: getSortedRowModel(),
+    getFilteredRowModel: getFilteredRowModel(),
+    getPaginationRowModel: getPaginationRowModel(),
+  });
+
+  return (
+    <DefaultLayout>
+      <div className="flex justify-between items-center">
+        <h1 className="font-bold text-2xl">Popups</h1>
+        {data.length === 0 && (
+          <Button onClick={() => router.push("/admin/manage-popups/add")}>
+            Add New Popup
+          </Button>
+        )}
+      </div>
+
+      <div className="py-4">
+        <Input
+          placeholder="Search by title..."
+          value={table.getColumn("title")?.getFilterValue() ?? ""}
+          onChange={(e) =>
+            table.getColumn("title")?.setFilterValue(e.target.value)
+          }
+          className="max-w-xl border border-gray-300"
+        />
+      </div>
+
+      <div className="rounded-md border">
+        <table className="w-full">
+          <thead>
+            {table.getHeaderGroups().map((headerGroup) => (
+              <tr key={headerGroup.id}>
+                {headerGroup.headers.map((header) => (
+                  <th key={header.id} className="p-2 text-left border-b">
+                    {flexRender(header.column.columnDef.header, header.getContext())}
+                  </th>
+                ))}
+              </tr>
+            ))}
+          </thead>
+          <tbody>
+            {table.getRowModel().rows.length > 0 ? (
+              table.getRowModel().rows.map((row) => (
+                <tr key={row.id} className="hover:bg-gray-50">
+                  {row.getVisibleCells().map((cell) => (
+                    <td key={cell.id} className="p-2 border-b">
+                      {flexRender(cell.column.columnDef.cell, cell.getContext())}
+                    </td>
+                  ))}
+                </tr>
+              ))
+            ) : (
+              <tr>
+                <td colSpan={columns.length} className="p-4 text-center">
+                  No results
+                </td>
+              </tr>
+            )}
+          </tbody>
+        </table>
+      </div>
+    </DefaultLayout>
+  );
 };
 
-export default DataTableDemo;
+export default PopupsTable;

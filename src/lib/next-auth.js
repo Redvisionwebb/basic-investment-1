@@ -64,7 +64,6 @@ export const authOptions = {
         password: { label: "Password", type: "password" },
       },
       async authorize(credentials) {
-        console.log("Credentials:", credentials);
         if (!credentials?.username || !credentials?.password) return null;
 
         const { username, password } = credentials;
@@ -72,10 +71,8 @@ export const authOptions = {
         let user = null;
 
         if (username.startsWith("dev")) {
-          console.log("Dev login attempt:", username);
           user = await DevLogin({ username, password });
         } else {
-          console.log("User login attempt:", username);
           user = await loginUser({ username, password });
         }
 

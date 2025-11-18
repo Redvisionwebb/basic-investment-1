@@ -41,7 +41,7 @@ const DropdownItem = ({ menuItem, pathname, isOpen, onToggle }) => {
         href={menuItem.route || "#"}
         onClick={handleClick}
         className={`relative flex items-center justify-between rounded-md px-3 py-2 font-medium duration-300 ease-in-out 
-          ${isActive ? "bg-[var(--rv-admin-bg-color)] text-white" : "hover:bg-[var(--rv-admin-bg-color)] hover:text-white"}
+          ${isActive ? "bg-[#2367f8] text-white" : "hover:bg-[#2367f8] hover:text-white"}
         `}
       >
         <span>{menuItem.label}</span>

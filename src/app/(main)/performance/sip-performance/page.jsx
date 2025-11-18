@@ -8,7 +8,6 @@ import { SipPerformanceChart } from "@/components/charts/sipPerformanceChart";
 import { FaFilePdf } from "react-icons/fa6";
 import SipPerformanceTable from "@/components/sipPerformanceTable";
 import { generatePDF } from "@/lib/generatePdf";
-import { Breadcrumb, BreadcrumbItem, BreadcrumbLink, BreadcrumbList, BreadcrumbPage, BreadcrumbSeparator } from "@/components/ui/breadcrumb";
 import InnerBanner from "@/components/innerBanner/InnerBanner";
 
 export default function Page() {
@@ -66,7 +65,7 @@ export default function Page() {
   const fetcAcm = async () => {
     try {
       const response = await axios.get(
-        `${process.env.NEXT_PUBLIC_DATA_API}/api/open-apis/all-amc?apikey=${process.env.NEXT_PUBLIC_API_KEY}`
+        `${process.env.NEXT_PUBLIC_NEXTAUTH_URL}/api/open-apis/all-amc`
       );
       setAllAcmdata(response.data);
     } catch (error) {
@@ -77,7 +76,7 @@ export default function Page() {
   const fetcAssetCategory = async () => {
     try {
       const response = await axios.get(
-        `${process.env.NEXT_PUBLIC_DATA_API}/api/open-apis/get-assets?apikey=${process.env.NEXT_PUBLIC_API_KEY}`
+        `${process.env.NEXT_PUBLIC_NEXTAUTH_URL}/api/open-apis/get-assets`
       );
       setAssetCategory(response.data);
     } catch (error) {
@@ -128,7 +127,7 @@ export default function Page() {
 
   useEffect(() => {
     const fetchSiteData = async () => {
-      const res = await fetch("/api/admin/site-settings");
+      const res = await fetch(`${process.env.NEXT_PUBLIC_NEXTAUTH_URL}/api/admin/site-settings`);
       if (res.ok) {
         const data = await res.json();
         setSiteData(data[0]);
@@ -142,7 +141,7 @@ export default function Page() {
   const fetchAsset = async (funds) => {
     try {
       const response = await axios.get(
-        `${process.env.NEXT_PUBLIC_DATA_API}/api/open-apis/get-sub-assets?subAssetClass=${funds}&apikey=${process.env.NEXT_PUBLIC_API_KEY}`
+        `${process.env.NEXT_PUBLIC_NEXTAUTH_URL}/api/open-apis/get-sub-assets?subAssetClass=${funds}`
       );
       setSchemesData(response); // Update the state with fetched schemes
     } catch (error) {
@@ -158,7 +157,7 @@ export default function Page() {
     }
     try {
       const response = await axios.get(
-        `${process.env.NEXT_PUBLIC_DATA_API}/api/open-apis/all-scheme?fund=${funds}&apikey=${process.env.NEXT_PUBLIC_API_KEY}`
+        `${process.env.NEXT_PUBLIC_NEXTAUTH_URL}/api/open-apis/all-scheme?fund=${funds}`
       );
       setSchemesData(response); // Update the state with fetched schemes
     } catch (error) {
@@ -191,7 +190,7 @@ export default function Page() {
 
     try {
       const response = await axios.post(
-        `${process.env.NEXT_PUBLIC_DATA_API}/api/research-calculator/sip-performance`,
+        `${process.env.NEXT_PUBLIC_NEXTAUTH_URL}/api/research-calculator/sip-performance`,
         {
           startDate: startsipDate,
           endDate: endsipDate,
@@ -200,6 +199,9 @@ export default function Page() {
           amount: Number(sipAmount),
         }
       );
+
+      // console.log("Response:", response.data);
+      // console.log("Data field:", response.data.data);
 
       if (response.data.data == null || Object.keys(response.data.data).length === 0) { // Checks for null or undefined
         setGraphData(false);
@@ -224,14 +226,15 @@ export default function Page() {
   };
 
   const handlePdf = async (result, title, startsipDate, valuationDate) => {
+    // console.log(result)
     generatePDF(result, title, startsipDate, valuationDate, "graphId", siteData,);
   };
 
   return (
-    <>
-      <InnerBanner title={'SIP Performance'} />
-      <div className="px-4">
-        <div className="max-w-screen-xl mx-auto section">
+    <div>
+      <InnerBanner title={"SIP Performance"} />
+      <div className="section">
+        <div className="max-w-screen-xl mx-auto px-4">
           <div className="mb-5 flex flex-col md:flex-row gap-5 justify-between ">
             <div className="">
               <span className="text-2xl md:text-3xl font-bold uppercase">
@@ -248,16 +251,18 @@ export default function Page() {
                   <div className="flex space-x-4 mb-8">
                     <Button
                       onClick={() => (setIsMonthlySip(true), setSchemesData([]), setGraphData(false), setSelectedAcms([]))}
-                      className={`text-sm rounded-full ${isMonthlySip ? "bg-[var(--rv-primary)] text-[var(--rv-white)]"
-                        : "bg-transparent shadow-none text-black border"
+                      className={`text-sm rounded-full hover:bg-[var(--rv-primary)] hover:text-white text-[var(--rv-white)] 
+                        ${isMonthlySip ? "bg-[var(--rv-primary)]"
+                          : "bg-[var(--rv-bg-primary)] border-[var(--rv-bg-primary)]"
                         }`}
                     >
                       Fund House
                     </Button>
                     <Button
                       onClick={() => (setIsMonthlySip(false), setSchemesData([]), setGraphData(false), setSelectedAssets(new Set()))}
-                      className={`text-sm rounded-full ${!isMonthlySip ? "bg-[var(--rv-primary)] text-[var(--rv-white)]"
-                        : "bg-transparent shadow-none text-black border"
+                      className={`text-sm rounded-full hover:bg-[var(--rv-primary)] hover:text-white text-[var(--rv-white)] 
+                        ${!isMonthlySip ? "bg-[var(--rv-primary)]"
+                          : "bg-[var(--rv-bg-primary)] border-[var(--rv-bg-primary)]"
                         }`}
                     >
                       Asset Category
@@ -304,6 +309,7 @@ export default function Page() {
                           <p className="font-semibold text-gray-700">
                             Select Equity Funds
                           </p>
+                          {/* {console.log(assetCategory)} */}
                           <div className="mt-2 border border-gray-300 p-3 rounded h-60 overflow-y-auto">
                             {/* Equity Funds checkboxes here */}
                             {assetCategory
@@ -542,8 +548,9 @@ export default function Page() {
                     </div>
                   </div>
                   <Button
-                    className="bg-[var(--rv-primary)] text-[var(--rv-white)] hover:bg-[var(--rv-secondary)]"
+                    className="bg-[var(--rv-primary)] text-[var(--rv-white)] hover:bg-[var(--rv-secondary)]  hover:text-black"
                     onClick={() => handleSubmit()}
+                  // disabled={!pcode} // disables when pcode is falsy (empty, null, undefined)
                   >
                     Show
                   </Button>
@@ -555,7 +562,7 @@ export default function Page() {
                     <div className="space-x-2">
                       <Button
                         variant="outline"
-                        className={`border-2 ${viewby === "graph" ? "border-[var(--rv-primary)]" : "border-[var(--rv-secondary)]"
+                        className={`border-2 ${viewby === "graph" ? "border-blue-600" : "border-gray-600"
                           } uppercase font-semibold text-gray-800`}
                         onClick={() => setViewBy("graph")}
                       >
@@ -563,7 +570,7 @@ export default function Page() {
                       </Button>
                       <Button
                         variant="outline"
-                        className={`border-2 ${viewby === "table" ? "border-[var(--rv-primary)]" : "border-[var(--rv-secondary)]"
+                        className={`border-2 ${viewby === "table" ? "border-blue-600" : "border-gray-600"
                           } uppercase font-semibold text-gray-800`}
                         onClick={() => setViewBy("table")}
                       >
@@ -628,6 +635,7 @@ export default function Page() {
                     </div>
                   )
                 )}
+                {/* {console.log(error)} */}
                 {error && !graphData && (
                   <div className="">
                     Data Not Found
@@ -638,6 +646,6 @@ export default function Page() {
           </div>
         </div>
       </div>
-    </>
+    </div>
   );
 }

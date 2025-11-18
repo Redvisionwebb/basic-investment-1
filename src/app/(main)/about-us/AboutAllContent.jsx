@@ -1,6 +1,6 @@
 "use client"
 
-import React from 'react'
+import React, { useEffect, useState } from 'react'
 import { motion } from "framer-motion";
 import Image from 'next/image';
 import SectionHeading from '@/components/sectionHeading/sectionHeading';
@@ -45,7 +45,7 @@ const WhyChooseUsSection = ({ missionvision }) => {
                         </div>
                     </div>
                     <div className="grid md:grid-cols-2 lg:grid-cols-3 items-end justify-end grid-cols-1 gap-5" >
-                        {cards.map((card, index) => (
+                        {cards?.map((card, index) => (
                             <motion.div
                                 key={index}
                                 className="border  border-white/20  relative"
@@ -56,10 +56,10 @@ const WhyChooseUsSection = ({ missionvision }) => {
                             >
                                 <div className={`flex rounded-xl p-5 flex-col gap-3 bg-[var(--rv-bg-primary-light)]`}>
                                     <div className='p-2 w-24 h-24 flex items-center justify-center rounded-full'>
-                                        <Image src={card.icon} alt='image' width={70} height={70} />
+                                        <Image src={card?.icon} alt='image' width={70} height={70} />
                                     </div>
-                                    <h3 className="text-2xl uppercase font-bold">{card.title}</h3>
-                                    <p className=" text-lg" dangerouslySetInnerHTML={{ __html: card.para }}></p>
+                                    <h3 className="text-2xl uppercase font-bold">{card?.title}</h3>
+                                    <p className=" text-lg" dangerouslySetInnerHTML={{ __html: card?.para||"" }}></p>
                                 </div>
                             </motion.div>
                         ))}
@@ -82,7 +82,7 @@ const TeamSection = ({ team }) => {
             </div>
             <div className="section">
                 <div className="max-w-screen-xl mx-auto flex flex-col gap-12">
-                    {team.map((member, i) => {
+                    {team?.map((member, i) => {
                         const isEven = i % 2 === 0;
 
                         return (
@@ -98,14 +98,13 @@ const TeamSection = ({ team }) => {
                                     className={`md:p-10 p-5 md:col-span-2 ${isEven ? "md:order-1" : "md:order-2"
                                         }`}
                                 >
-                                    <p className="leading-relaxed text-xl mb-4">
-                                        {member.description}
-                                    </p>
+
+                                    <p  className="leading-relaxed text-xl mb-4" dangerouslySetInnerHTML={{ __html: member?.description||"" }}></p>
                                     <h4 className="text-3xl font-bold text-[var(--rv-secondary)]">
-                                        {member.name}
+                                        {member?.name}
                                     </h4>
                                     <p className="text-[var(--rv-secondary)]">
-                                        {member.designation}
+                                        {member?.designation}
                                     </p>
                                 </div>
 
@@ -116,7 +115,7 @@ const TeamSection = ({ team }) => {
                                     <div className='w-full h-full p-2'>
                                         <Image
                                             src={member?.image?.url}
-                                            alt={member.name}
+                                            alt={member?.name}
                                             width={500}
                                             height={400}
                                             className="w-full h-full rounded-xl object-cover"
@@ -132,81 +131,135 @@ const TeamSection = ({ team }) => {
     );
 };
 
-const TopFeaturesSection = () => {
-    const features = [
-        {
-            id: 1,
-            number: "250+",
-            title: "Crore Asset Under Management",
-            icon: "https://img.icons8.com/bubbles/100/facebook-like.png", // replace with your actual icons
-        },
-        {
-            id: 2,
-            number: "1500+",
-            title: "Clients Served",
-            icon: "https://img.icons8.com/stickers/100/administrator-male.png",
-        },
-        {
-            id: 3,
-            number: "20+",
-            title: "Qualified Team Members",
-            icon: "https://img.icons8.com/plasticine/100/commercial-development-management.png",
-        },
-        {
-            id: 4,
-            number: "30+",
-            title: "Years Combined Experience",
-            icon: "https://img.icons8.com/dusk/50/customer-insight.png",
-        },
-        {
-            id: 5,
-            number: "35+",
-            title: "Research Tools",
-            icon: "https://img.icons8.com/bubbles/100/administrative-tools.png",
-        },
-        {
-            id: 6,
-            number: "",
-            title: "Cutting Edge Technology",
-            icon: "https://img.icons8.com/plasticine/100/workstation.png",
-        },
-    ];
+// const TopFeaturesSection = () => {
+//     const features = [
+//         {
+//             id: 1,
+//             number: "250+",
+//             title: "Crore Asset Under Management",
+//             icon: "https://img.icons8.com/bubbles/100/facebook-like.png", // replace with your actual icons
+//         },
+//         {
+//             id: 2,
+//             number: "1500+",
+//             title: "Clients Served",
+//             icon: "https://img.icons8.com/stickers/100/administrator-male.png",
+//         },
+//         {
+//             id: 3,
+//             number: "20+",
+//             title: "Qualified Team Members",
+//             icon: "https://img.icons8.com/plasticine/100/commercial-development-management.png",
+//         },
+//         {
+//             id: 4,
+//             number: "30+",
+//             title: "Years Combined Experience",
+//             icon: "https://img.icons8.com/dusk/50/customer-insight.png",
+//         },
+//         {
+//             id: 5,
+//             number: "35+",
+//             title: "Research Tools",
+//             icon: "https://img.icons8.com/bubbles/100/administrative-tools.png",
+//         },
+//         {
+//             id: 6,
+//             number: "",
+//             title: "Cutting Edge Technology",
+//             icon: "https://img.icons8.com/plasticine/100/workstation.png",
+//         },
+//     ];
 
-    return (
-        <div className="">
-            <div className="max-w-screen-xl mx-auto px-4 flex flex-col gap-10 text-center">
-                <SectionHeading align="center" title1="Our Top Features" />
+//     return (
+//         <div className="">
+//             <div className="max-w-screen-xl mx-auto px-4 flex flex-col gap-10 text-center">
+//                 <SectionHeading align="center" title1="Our Top Features" />
 
-                <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-6">
-                    {features.map((feature, i) => (
-                        <motion.div
-                            key={feature.id}
-                            initial={{ opacity: 0, scale: 0.8 }}
-                            whileInView={{ opacity: 1, scale: 1 }}
-                            transition={{ duration: 0.5, delay: i * 0.1 }}
-                            viewport={{ once: true }}
-                            className={`flex flex-col items-center justify-center rounded-2xl p-6 shadow-md bg-[var(--rv-bg-primary-light)]`}
-                        >
-                            <Image
-                                width={200}
-                                height={200}
-                                src={feature.icon}
-                                alt={feature.title}
-                                className="mx-auto mb-4 h-16 w-16"
-                            />
-                            <h3 className="font-bold text-4xl text-[var(--rv-primary)]">
-                                {feature.number}
-                            </h3>
-                            <p className="mt-2 text-gray-700 font-medium">{feature.title}</p>
-                        </motion.div>
-                    ))}
-                </div>
-            </div>
-        </div>
-    );
-};
+//                 <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-6">
+//                     {features.map((feature, i) => (
+//                         <motion.div
+//                             key={feature.id}
+//                             initial={{ opacity: 0, scale: 0.8 }}
+//                             whileInView={{ opacity: 1, scale: 1 }}
+//                             transition={{ duration: 0.5, delay: i * 0.1 }}
+//                             viewport={{ once: true }}
+//                             className={`flex flex-col items-center justify-center rounded-2xl p-6 shadow-md bg-[var(--rv-bg-primary-light)]`}
+//                         >
+//                             <Image
+//                                 width={200}
+//                                 height={200}
+//                                 src={feature.icon}
+//                                 alt={feature.title}
+//                                 className="mx-auto mb-4 h-16 w-16"
+//                             />
+//                             <h3 className="font-bold text-4xl text-[var(--rv-primary)]">
+//                                 {feature.number}
+//                             </h3>
+//                             <p className="mt-2 text-gray-700 font-medium">{feature.title}</p>
+//                         </motion.div>
+//                     ))}
+//                 </div>
+//             </div>
+//         </div>
+//     );
+// };
 
 const PartnersSection = ({ partners }) => {
+    const [amcLogos, setAmcLogos] = useState([]);
+  const [mutualFundCategoryId, setMutualFundCategoryId] = useState("");
+  const [loading, setLoading] = useState(false); // 👈 added
+
+  // Fetch categories and get Mutual Funds category only
+  const fetchCategories = async () => {
+    try {
+      const res = await fetch(`${process.env.NEXT_PUBLIC_NEXTAUTH_URL}/api/amc-category`);
+      const data = await res.json();
+
+      const mutualFundCategory = data.find(
+        (cat) => cat.title === "Mutual Funds"
+      );
+
+      if (mutualFundCategory) {
+        setMutualFundCategoryId(mutualFundCategory._id);
+      }
+    } catch (error) {
+      console.error("Error fetching categories:", error);
+    }
+  };
+
+  // Fetch AMC logos by Mutual Funds category ID, filter `addisstatus: true`
+  const fetchAmcLogos = async (categoryID) => {
+    try {
+      setLoading(true); // 👈 start skeleton
+      const res = await fetch(`${process.env.NEXT_PUBLIC_NEXTAUTH_URL}/api/amc-logos`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({ categoryID }),
+      });
+
+      const data = await res.json();
+      const filteredLogos = data?.data?.filter((logo) => logo.addisstatus);
+      setAmcLogos(filteredLogos || []);
+    } catch (error) {
+      console.error("Error fetching AMC logos:", error);
+    } finally {
+      setLoading(false); // 👈 stop skeleton
+    }
+  };
+
+  useEffect(() => {
+    fetchCategories();
+  }, []);
+
+  useEffect(() => {
+    if (mutualFundCategoryId) {
+      fetchAmcLogos(mutualFundCategoryId);
+    }
+  }, [mutualFundCategoryId]);
+
     return (
         <div className="px-4">
             <div className="max-w-screen-xl mx-auto main-section flex flex-col gap-10 text-center">
@@ -232,7 +285,7 @@ const PartnersSection = ({ partners }) => {
                     }}
                     className="my-3 h-full w-full"
                 >
-                    {partners?.map((logo, i) => (
+                    {amcLogos?.map((logo, i) => (
                         <SwiperSlide key={logo._id || i}>
                             <motion.div
                                 initial={{ opacity: 0, scale: 0.8 }}
@@ -242,7 +295,7 @@ const PartnersSection = ({ partners }) => {
                             >
                                 <div className="border border-gray-300 h-40 p-2 flex flex-col items-center justify-center">
                                     <Link
-                                        href={logo.logourl}
+                                        href={logo?.adminlogourl || logo?.logourl || ""}
                                         target="_blank"
                                         rel="noopener noreferrer"
                                     >

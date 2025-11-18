@@ -8,6 +8,7 @@ import dynamic from "next/dynamic";
 import { useParams, useRouter } from "next/navigation";
 import Loader from "@/components/admin/common/Loader";
 import { FaSpinner } from "react-icons/fa";
+import Image from "next/image";
 
 const JoditEditor = dynamic(() => import("jodit-react"), { ssr: false });
 
@@ -15,12 +16,12 @@ const AdminServices = () => {
     const { id, slug } = useParams();
     const [loading, setLoading] = useState(true);
     const [savedServices, setSavedServices] = useState([]);
-const [saving, setSaving] = useState({});
+    const [saving, setSaving] = useState({});
 
     // Fetch services
     const fetchSaved = async () => {
         try {
-            const res = await axios.get(`/api/admin/services/${id}?version=${slug}`);
+            const res = await axios.get(`${process.env.NEXT_PUBLIC_NEXTAUTH_URL}/api/admin/services/${id}?version=${slug}`);
             setSavedServices(res.data.data || []);
         } catch (err) {
             console.log(err);
@@ -72,72 +73,117 @@ const [saving, setSaving] = useState({});
     };
 
     // Save service
-  const saveService = async (serviceId, serviceData) => {
-    try {
-        setSaving((prev) => ({ ...prev, [serviceId]: true })); 
+    const saveService = async (serviceId, serviceData) => {
+        try {
+            setSaving((prev) => ({ ...prev, [serviceId]: true }));
 
-        const formData = new FormData();
-        formData.append("serviceId", serviceId);
-        formData.append("name", serviceData.name || "");
-        formData.append("description", serviceData.description || "");
-        formData.append("metaTitle", serviceData.metaTitle || "");
-        formData.append("metaDescription", serviceData.metaDescription || "");
-        formData.append("metaKeywords", serviceData.metaKeywords || "");
+            const formData = new FormData();
+            formData.append("serviceId", serviceId);
+            formData.append("name", serviceData.name || "");
+            formData.append("description", serviceData.description || "");
+            formData.append("metaTitle", serviceData.metaTitle || "");
+            formData.append("metaDescription", serviceData.metaDescription || "");
+            formData.append("metaKeywords", serviceData.metaKeywords || "");
 
-        appendIcon(formData, "icon", serviceData.icon);
-        appendIcon(formData, "image", serviceData.image);
+            appendIcon(formData, "icon", serviceData.icon);
+            appendIcon(formData, "image", serviceData.image);
 
-        serviceData.features?.forEach((feat, fIdx) => {
-            formData.append(`features[${fIdx}][title]`, feat.title || "");
-            formData.append(`features[${fIdx}][description]`, feat.description || "");
-            appendIcon(formData, `features[${fIdx}][icon]`, feat.icon);
-        });
+            serviceData.features?.forEach((feat, fIdx) => {
+                formData.append(`features[${fIdx}][title]`, feat.title || "");
+                formData.append(`features[${fIdx}][description]`, feat.description || "");
+                appendIcon(formData, `features[${fIdx}][icon]`, feat.icon);
+            });
 
-        serviceData.benefits?.forEach((ben, bIdx) => {
-            formData.append(`benefits[${bIdx}][title]`, ben.title || "");
-            formData.append(`benefits[${bIdx}][description]`, ben.description || "");
-            appendIcon(formData, `benefits[${bIdx}][icon]`, ben.icon);
-        });
+            serviceData.benefits?.forEach((ben, bIdx) => {
+                formData.append(`benefits[${bIdx}][title]`, ben.title || "");
+                formData.append(`benefits[${bIdx}][description]`, ben.description || "");
+                appendIcon(formData, `benefits[${bIdx}][icon]`, ben.icon);
+            });
 
-        const res = await axios.put(`/api/admin/services/${serviceId}`, formData, {
-            headers: { "Content-Type": "multipart/form-data" },
-        });
+            const res = await axios.put(`${process.env.NEXT_PUBLIC_NEXTAUTH_URL}/api/admin/services/${serviceId}`, formData, {
+                headers: { "Content-Type": "multipart/form-data" },
+            });
 
-        if (res.data.success) {
-            toast.success("Service updated successfully ✅");
-            fetchSaved();
-        } else {
-            toast.error("Failed to update service ❌");
+            if (res.data.success) {
+                toast.success("Service updated successfully ✅");
+                fetchSaved();
+            } else {
+                toast.error("Failed to update service ❌");
+            }
+        } catch (err) {
+            console.error(err);
+            toast.error("Something went wrong while vice ❌");
+        } finally {
+            setSaving((prev) => ({ ...prev, [serviceId]: false }));
         }
-    } catch (err) {
-        console.error(err);
-        toast.error("Something went wrong while saving service ❌");
-    } finally {
-        setSaving((prev) => ({ ...prev, [serviceId]: false })); 
-    }
-};
+    };
 
 
     // Handle image upload
-    const handleImageUpload = (e, idx) => {
-        const file = e.target.files[0];
-        if (!file) return;
-        setSavedServices((prev) => {
-            const updated = [...prev];
-            updated[idx] = { ...updated[idx], image: file };
-            return updated;
-        });
-    };
+const handleImageUpload = (e, idx) => {
+    const file = e.target.files[0];
+    if (!file) return;
 
-    const handleIconUpload = (e, idx) => {
-        const file = e.target.files[0];
-        if (!file) return;
-        setSavedServices((prev) => {
-            const updated = [...prev];
-            updated[idx] = { ...updated[idx], icon: file };
-            return updated;
+    // Validation: check type
+    const validTypes = ["image/jpeg", "image/png", "image/webp"];
+    if (!validTypes.includes(file.type)) {
+        toast({
+            variant: "destructive",
+            title: "Invalid file type",
+            description: "Please upload a JPEG, PNG, or WEBP image.",
         });
-    };
+        return;
+    }
+
+    // Validation: check size (max 1MB)
+    if (file.size > 1024 * 1024) {
+        toast({
+            variant: "destructive",
+            title: "Image too large",
+            description: "Please select an image smaller than 1MB.",
+        });
+        return;
+    }
+
+    setSavedServices((prev) => {
+        const updated = [...prev];
+        updated[idx] = { ...updated[idx], image: file };
+        return updated;
+    });
+};
+
+const handleIconUpload = (e, idx) => {
+    const file = e.target.files[0];
+    if (!file) return;
+
+    // Validation: check type
+    const validTypes = ["image/jpeg", "image/png", "image/webp"];
+    if (!validTypes.includes(file.type)) {
+        toast({
+            variant: "destructive",
+            title: "Invalid file type",
+            description: "Please upload a JPEG, PNG, or WEBP icon.",
+        });
+        return;
+    }
+
+    // Validation: check size (max 500KB for icons)
+    if (file.size > 500 * 1024) {
+        toast({
+            variant: "destructive",
+            title: "Icon too large",
+            description: "Please select an icon smaller than 500KB.",
+        });
+        return;
+    }
+
+    setSavedServices((prev) => {
+        const updated = [...prev];
+        updated[idx] = { ...updated[idx], icon: file };
+        return updated;
+    });
+};
+
 
     if (loading) return <Loader />;
 
@@ -214,19 +260,32 @@ const [saving, setSaving] = useState({});
                                             onChange={(e) => handleImageUpload(e, idx)}
                                             className="w-full border border-gray-300 px-3 py-2 mb-2 rounded"
                                         />
-                                        {srv.image && (
-                                            <img
-                                                src={
-                                                    !srv.image instanceof File
-                                                        ? URL.createObjectURL(srv.image)
-                                                        : !srv.image.status
-                                                            ? `${process.env.NEXT_PUBLIC_DATA_API}${srv.image.url}`
-                                                            : srv.image.url
-                                                }
-                                                alt="image"
-                                                className="w-16 h-16 object-cover rounded mb-2 border border-gray-300"
-                                            />
-                                        )}
+                                        {srv.image ? (
+                                            typeof srv.image === "string" ? (
+                                                <Image src={srv.image} alt="Preview" width={50} height={50} />
+                                            ) : srv.image instanceof File ? (
+                                                <Image
+                                                    src={URL.createObjectURL(srv.image)}
+                                                    alt="Preview"
+                                                    width={100}
+                                                    height={100}
+                                                />
+                                            ) : (
+                                                <img
+                                                    src={
+                                                        !srv.image instanceof File
+                                                            ? URL.createObjectURL(srv.image)
+                                                            : !srv.icon.status
+                                                                ? `${process.env.NEXT_PUBLIC_NEXTAUTH_URL}/${srv.image.url}`
+                                                                : srv?.image?.url
+                                                    } // TS knows UploadFile has url
+                                                    alt="Preview"
+                                                    width={100}
+                                                    height={100}
+                                                    className="w-16 h-16 object-cover rounded mb-2 border border-gray-300"
+                                                />
+                                            )
+                                        ) : null}
                                     </div>
 
 
@@ -239,19 +298,32 @@ const [saving, setSaving] = useState({});
                                             className="w-full border border-gray-300 px-3 py-2 mb-2 rounded"
 
                                         />
-                                        {srv.icon && (
-                                            <img
-                                                src={
-                                                    !srv.icon instanceof File
-                                                        ? URL.createObjectURL(srv.icon) // 👈 Preview for File
-                                                        : !srv.icon.status
-                                                            ? `${process.env.NEXT_PUBLIC_DATA_API}${srv.icon.url}`
-                                                            : srv.icon.url
-                                                }
-                                                alt="icon"
-                                                className="w-16 h-16 object-cover rounded mb-2 border border-gray-300"
-                                            />
-                                        )}
+                                        {srv.icon ? (
+                                            typeof srv.icon === "string" ? (
+                                                <Image src={srv.icon} alt="Preview" width={50} height={50} />
+                                            ) : srv.icon instanceof File ? (
+                                                <Image
+                                                    src={URL.createObjectURL(srv.icon)}
+                                                    alt="Preview"
+                                                    width={100}
+                                                    height={100}
+                                                />
+                                            ) : (
+                                                <img
+                                                    src={
+                                                        !srv.icon instanceof File
+                                                            ? URL.createObjectURL(srv.icon)
+                                                            : !srv.icon.status
+                                                                ? `${process.env.NEXT_PUBLIC_NEXTAUTH_URL}/${srv.icon.url}`
+                                                                : srv?.icon?.url
+                                                    } // TS knows UploadFile has url
+                                                    alt="Preview"
+                                                    width={100}
+                                                    height={100}
+                                                    className="w-16 h-16 object-cover rounded mb-2 border border-gray-300"
+                                                />
+                                            )
+                                        ) : null}
                                     </div>
                                 </div>
                             </div>
@@ -262,7 +334,7 @@ const [saving, setSaving] = useState({});
                                 {srv.features?.map((feat, fIdx) => (
                                     <div
                                         key={feat._id || fIdx}
-                                        className=""
+                                        className="p-2 border border-gray-400 mb-4 rounded"
                                     >
                                         <label className="block font-medium text-gray-700 mb-1">
                                             Feature Title
@@ -302,27 +374,75 @@ const [saving, setSaving] = useState({});
                                             }}
                                             className="w-full border border-gray-300 px-3 py-2 mb-2 rounded"
                                         />
-                                        {feat.icon && (
-                                            <img
-                                                src={
-                                                    !feat.icon.status
-                                                        ? `http://localhost:3001/${feat.icon.url}`
-                                                        : `${feat.icon.url}`
-                                                }
-                                                alt="Feature Icon"
-                                                className="w-16 h-16 object-cover rounded mb-2 border border-gray-300"
-                                            />
-                                        )}
+                                        {feat.icon ? (
+                                            typeof feat.icon === "string" ? (
+                                                <Image src={feat.icon} alt="Preview" width={50} height={50} />
+                                            ) : feat.icon instanceof File ? (
+                                                <Image
+                                                    src={URL.createObjectURL(feat.icon)}
+                                                    alt="Preview"
+                                                    width={100}
+                                                    height={100}
+                                                />
+                                            ) : (
+                                                <img
+                                                    src={
+                                                        !feat.icon instanceof File
+                                                            ? URL.createObjectURL(feat.icon)
+                                                            : !feat.icon.status
+                                                                ? `${process.env.NEXT_PUBLIC_NEXTAUTH_URL}/${feat.icon.url}`
+                                                                : feat?.icon?.url
+                                                    } // TS knows UploadFile has url
+                                                    alt="Preview"
+                                                    width={100}
+                                                    height={100}
+                                                    className="w-16 h-16 object-cover rounded mb-2 border border-gray-300"
+                                                />
+                                            )
+                                        ) : null}
+                                        <button
+                                            type="button"
+                                            className="ring mb-1 p-2 rounded text-red-500 text-sm"
+                                            onClick={() => {
+                                                setSavedServices(prev => {
+                                                    const updated = [...prev];
+                                                    const service = updated[idx];
+                                                    service.features = service.features || [];
+                                                    service.features.splice(fIdx, 1);
+                                                    updated[idx] = { ...service };
+                                                    return updated;
+                                                });
+                                            }}
+                                        >
+                                            ❌ Delete
+                                        </button>
                                     </div>
                                 ))}
+                                <button
+                                    className="text-sm text-green-600 mt-1 p-2 rounded ring"
+                                    onClick={() => {
+                                        setSavedServices(prev => {
+                                            const updated = [...prev];
+                                            const service = updated[idx];
+                                            service.features = service.features || [];
+                                            const last = service.features[service.features.length - 1];
+                                            if (last && !last.title && !last.description && !last.icon) return updated;
+                                            service.features.push({ title: "", description: "", icon: "" });
+                                            updated[idx] = { ...service };
+                                            return updated;
+                                        });
+                                    }}
+                                >
+                                    ➕ Add Feature
+                                </button>
                             </div>
 
                             <div className="bg-white p-4 rounded-md w-full">
-                                <h4 className="mb-4 font-semibold text-xl">Benefits</h4>
+                                <h4 className="mb-4 font-semibold text-xl">Benefits/Types</h4>
                                 {srv.benefits?.map((ben, bIdx) => (
                                     <div
                                         key={ben._id || bIdx}
-
+                                        className="p-2 border border-gray-400 mb-4 rounded"
                                     >
                                         <label className="block font-medium text-gray-700 mb-1">
                                             Benefit Title
@@ -363,24 +483,72 @@ const [saving, setSaving] = useState({});
                                             }}
                                             className="w-full border border-gray-300 px-3 py-2 mb-2 rounded"
                                         />
-                                        {ben.icon && (
-                                            <img
-                                                src={
-                                                    !ben.icon.status
-                                                        ? `${process.env.NEXT_PUBLIC_DATA_API}${ben.icon.url}`
-                                                        : `${ben.icon.url}`
-                                                }
-                                                alt="Benefit Icon"
-                                                className="w-16 h-16 object-cover rounded mb-2 border border-gray-300"
-                                            />
-                                        )}
+                                        {ben.icon ? (
+                                            typeof ben.icon === "string" ? (
+                                                <Image src={ben.icon} alt="Preview" width={50} height={50} />
+                                            ) : ben.icon instanceof File ? (
+                                                <Image
+                                                    src={URL.createObjectURL(ben.icon)}
+                                                    alt="Preview"
+                                                    width={100}
+                                                    height={100}
+                                                />
+                                            ) : (
+                                                <img
+                                                    src={
+                                                        !ben.icon instanceof File
+                                                            ? URL.createObjectURL(ben.icon)
+                                                            : !ben.icon.status
+                                                                ? `${process.env.NEXT_PUBLIC_NEXTAUTH_URL}/${ben.icon.url}`
+                                                                : ben?.icon?.url
+                                                    }
+                                                    alt="Preview"
+                                                    width={100}
+                                                    height={100}
+                                                    className="w-16 h-16 object-cover rounded mb-2 border border-gray-300"
+                                                />
+                                            )
+                                        ) : null}
+                                        <button
+                                            type="button"
+                                            className="ring mb-1 p-2 rounded text-red-500 text-sm"
+                                            onClick={() => {
+                                                setSavedServices(prev => {
+                                                    const updated = [...prev];
+                                                    const service = updated[idx];
+                                                    service.benefits = service.benefits || [];
+                                                    service.benefits.splice(bIdx, 1);
+                                                    updated[idx] = { ...service };
+                                                    return updated;
+                                                });
+                                            }}
+                                        >
+                                            ❌ Delete
+                                        </button>
                                     </div>
                                 ))}
+                                <button
+                                    className="text-sm text-green-600 mt-1 p-2 rounded ring"
+                                    onClick={() =>
+                                        setSavedServices(prev => {
+                                            const updated = [...prev];
+                                            const service = updated[idx];
+                                            service.benefits = service.benefits || [];
+                                            const last = service.benefits[service.benefits.length - 1];
+                                            if (last && !last.title && !last.description && !last.icon) return updated;
+                                            service.benefits.push({ title: "", description: "", icon: "" });
+                                            updated[idx] = { ...service };
+                                            return updated;
+                                        })
+                                    }
+                                >
+                                    ➕ Add Benefit
+                                </button>
                             </div>
                             <button
                                 onClick={() => saveService(srv._id, srv)}
                                 disabled={saving[srv._id]}
-                                className="px-4 py-2 bg-[var(--rv-admin-bg-color)] text-white rounded flex items-center gap-2 disabled:opacity-50"
+                                className="px-4 py-2 bg-[#2367f8] text-white rounded flex items-center gap-2 disabled:opacity-50"
                             >
                                 {saving[srv._id] ? (
                                     <>

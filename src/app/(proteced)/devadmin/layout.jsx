@@ -20,11 +20,11 @@ export default function RootLayout({ children }) {
     };
     fetchSession();
   }, [router]);
- 
+
   useEffect(() => {
     setTimeout(() => setLoading(false), 1000);
   }, []);
- 
+
   return (
     <div>
       {loading ? <Loader /> : children}

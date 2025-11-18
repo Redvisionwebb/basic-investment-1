@@ -1,20 +1,32 @@
 "use client";
 import styles from "./Hero.module.css";
 import Image from "next/image";
-import { useEffect, useState } from "react";
+import { useEffect, useState, useMemo } from "react";
 import { motion } from "framer-motion";
 import Link from "next/link";
 
-export default function HeroSection() {
-  const stats = [
-    { label: "Happy Clients", value: 10000, prefix: "" },
-    { label: "Financial Plans", value: 500, prefix: "cr" },
-    { label: "Years of Experience", value: 5000, prefix: "" },
-  ];
+export default function HeroSection({ statsdata }) {
 
-  const [counts, setCounts] = useState(stats.map(() => 0));
+  // Convert incoming statsdata into required format
+  const stats = useMemo(() => {
+    if (!Array.isArray(statsdata)) return [];
+
+    // OPTIONAL: sort to render in a fixed order
+    const order = ["Happy Clients", "Investments Assisted", "Years of Experience"];
+
+    return statsdata
+      .sort((a, b) => order.indexOf(a.title) - order.indexOf(b.title))
+      .map((item) => ({
+        label: item.title,
+        value: Number(item.statsNumber) || 0,
+        prefix: item.description || "", // "Cr" or empty
+      }));
+  }, [statsdata]);
+
+  const [counts, setCounts] = useState([]);
   const [currentSlide, setCurrentSlide] = useState(0);
-  const [slideHeight, setSlideHeight] = useState(240); // Responsive height
+  const [slideHeight, setSlideHeight] = useState(240);
+
   const slideImages = [
     "/images/banner/01.png",
     "/images/banner/01.png",
@@ -23,6 +35,10 @@ export default function HeroSection() {
 
   // Counter Animation
   useEffect(() => {
+    if (!stats.length) return;
+
+    setCounts(stats.map(() => 0));
+
     const duration = 2000;
     const interval = 20;
     const steps = duration / interval;
@@ -38,7 +54,7 @@ export default function HeroSection() {
     }, interval);
 
     return () => clearInterval(counterInterval);
-  }, []);
+  }, [stats]);
 
   // Auto Slider
   useEffect(() => {
@@ -46,16 +62,13 @@ export default function HeroSection() {
       setCurrentSlide((prev) => (prev + 1) % slideImages.length);
     }, 3000);
     return () => clearInterval(sliderInterval);
-  }, [slideImages.length]);
+  }, []);
 
   // Responsive Slide Height
   useEffect(() => {
     const updateHeight = () => {
-      if (typeof window !== "undefined") {
-        setSlideHeight(window.innerWidth < 640 ? 180 : 240);
-      }
+      setSlideHeight(window.innerWidth < 640 ? 180 : 240);
     };
-
     updateHeight();
     window.addEventListener("resize", updateHeight);
     return () => window.removeEventListener("resize", updateHeight);
@@ -67,47 +80,48 @@ export default function HeroSection() {
 
   return (
     <section className={`${styles.heroSection} px-4`}>
-      <div className="max-w-screen-xl mx-auto section ">
+      <div className="max-w-screen-xl mx-auto section">
         <div className="grid grid-cols-1 md:grid-cols-2 items-center gap-12">
+
+          {/* LEFT CONTENT */}
           <div className="space-y-6">
             <h1
               className={`text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-bold ${styles.heading}`}
             >
-              Simple Investing.
+              Invest Today.
               <br />
-              Smart Returns
+              Build Tomorrow
             </h1>
 
-            <p className={`${styles.description}`}>
-              Lorem ipsum dolor sit amet, consectetuer adipiscing elit, sed diam
-              nonummy nibh euismod tincidunt ut laoreet dolore magna aliquam
-              erat volutpat.
+            <p className={styles.description}>
+              Contrary to popular belief, investing can be simple when you have the right partner along.
             </p>
 
             <div className={`${styles.CtaSections} w-full`}>
               <div className="flex flex-wrap justify-center gap-4 w-full">
+
+                {/* Dynamic Stats */}
                 {stats.map((stat, i) => (
-                  <div key={i} className={`${styles.statBox}`}>
+                  <div key={i} className={styles.statBox}>
                     <p className="text-4xl font-bold text-[var(--rv-primary)]">
                       {counts[i]}+ {stat.prefix}
                     </p>
                     <p className={styles.statLabel}>{stat.label}</p>
                   </div>
                 ))}
+
               </div>
 
               <div className="flex justify-center">
-                <Link className="btn btn-primary" href="#!">
+                <Link className="btn btn-primary" href="/login">
                   Get Started
                 </Link>
               </div>
             </div>
           </div>
 
-          <div
-            className={` ${styles.banner}`}
-          >
-            {/* Background Image */}
+          {/* RIGHT BANNER */}
+          <div className={styles.banner}>
             <Image
               src="/images/banner/banner.png"
               alt="Hero Image"
@@ -138,9 +152,8 @@ export default function HeroSection() {
               </motion.div>
             </div>
 
-            {/* Heading on Image - Bottom Left */}
             <h2 className={styles.heroHeading}>
-              Mutual Funds <span className={`${styles.vs}`}>vs</span> Traditional Investments
+              Mutual Funds <span className={styles.vs}>vs</span> Traditional Investments
             </h2>
           </div>
         </div>

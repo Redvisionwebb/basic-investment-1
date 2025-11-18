@@ -18,7 +18,7 @@ const DropdownUser = () => {
         href="#"
       >
         <div className="w-10 h-10 rounded-full border-gray-300 border flex items-center justify-center">
-          <FaUserCircle size={32} color="var(--rv-admin-bg-color)"/>
+          <FaUserCircle size={32} color="#2367f8"/>
         </div>
       </Link>
 
@@ -33,7 +33,7 @@ const DropdownUser = () => {
           </div>
           <div className="">
             <button
-              className="flex gap-2 items-center cursor-pointer"
+              className="flex gap-2 items-center"
               onClick={() => signOut({ callbackUrl: '/signin' })}>
               <BiLogOut />
               Logout

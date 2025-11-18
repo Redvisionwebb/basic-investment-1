@@ -3,10 +3,20 @@
 import React, { useEffect, useState } from "react";
 import axios from "axios";
 import DefaultLayout from "@/components/admin/Layouts/DefaultLaout";
+import {
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogDescription,
+  DialogTitle,
+} from "@/components/ui/dialog";
 
 const RiskQuestions = () => {
   const [questions, setQuestions] = useState([]);
   const [isEnabled, setIsEnabled] = useState(false);
+  const [isToggling, setIsToggling] = useState(false);
+  const [showConfirmDialog, setShowConfirmDialog] = useState(false);
+  const [pendingNewStatus, setPendingNewStatus] = useState(null);
   const [editMode, setEditMode] = useState({});
   const [editedQuestion, setEditedQuestion] = useState({});
   const [editedAnswers, setEditedAnswers] = useState({});
@@ -18,39 +28,51 @@ const RiskQuestions = () => {
         `${process.env.NEXT_PUBLIC_NEXTAUTH_URL}/api/risk-questions`
       );
       setQuestions(res.data);
+      console.log(res.data)
+       const anyEnabled = res.data.some((q) => q.status === true);
+      setIsEnabled(anyEnabled);
     } catch (err) {
       console.error("Failed to fetch questions", err);
     }
   };
 
-  // ✅ Fetch Global Status
-  const fetchStatus = async () => {
-    try {
-      const res = await axios.get(
-        `${process.env.NEXT_PUBLIC_NEXTAUTH_URL}/api/risk-questions/status`
-      );
-      setIsEnabled(res.data.status);
-    } catch (err) {
-      console.error("Failed to fetch status", err);
-    }
-  };
 
   useEffect(() => {
     fetchQuestions();
-    fetchStatus();
   }, []);
 
   // ✅ Toggle Handler
-  const handleToggle = async () => {
+  // open confirmation dialog (we perform the API call only after user confirms)
+  const handleToggle = () => {
+    const newStatus = !isEnabled;
+    setPendingNewStatus(newStatus);
+    setShowConfirmDialog(true);
+  };
+
+  const performToggle = async (confirm) => {
+    // user cancelled
+    if (!confirm) {
+      setPendingNewStatus(null);
+      setShowConfirmDialog(false);
+      return;
+    }
+
     try {
-      const newStatus = !isEnabled;
+      setIsToggling(true);
       await axios.put(
         `${process.env.NEXT_PUBLIC_NEXTAUTH_URL}/api/risk-questions/status`,
-        { status: newStatus }
+        { status: pendingNewStatus }
       );
-      setIsEnabled(newStatus);
+      setIsEnabled(pendingNewStatus);
+      // refetch questions so admin sees the updated state
+      await fetchQuestions();
+      setShowConfirmDialog(false);
+      setPendingNewStatus(null);
     } catch (err) {
       console.error("Failed to update status", err);
+      alert("Failed to update status. See console for details.");
+    } finally {
+      setIsToggling(false);
     }
   };
 
@@ -75,6 +97,40 @@ const RiskQuestions = () => {
   return (
     <DefaultLayout>
       <div className="p-4">
+        {/* Confirmation dialog for toggle */}
+        <Dialog open={showConfirmDialog} onOpenChange={setShowConfirmDialog}>
+          <DialogContent className="max-w-md py-6 px-6 bg-white">
+            <DialogTitle className="sr-only">Confirm Risk Questions Toggle</DialogTitle>
+            <DialogHeader>
+              <h3 className="text-lg font-bold">
+                {pendingNewStatus ? "Enable Risk Questions" : "Disable Risk Questions"}
+              </h3>
+            </DialogHeader>
+            <DialogDescription>
+              <p className="mt-2 text-sm text-gray-700">
+                {pendingNewStatus
+                  ? "Are you sure you want to ENABLE risk questions?"
+                  : "Are you sure you want to DISABLE risk questions? Your updated data may be removed and you'll have to update questions again."}
+              </p>
+            </DialogDescription>
+
+            <div className="flex justify-end gap-3 mt-6">
+              <button
+                className="px-4 py-2 rounded bg-gray-200 text-gray-700"
+                onClick={() => performToggle(false)}
+              >
+                No
+              </button>
+              <button
+                className="px-4 py-2 rounded bg-[#2367f8] text-white"
+                onClick={() => performToggle(true)}
+                disabled={isToggling}
+              >
+                Yes
+              </button>
+            </div>
+          </DialogContent>
+        </Dialog>
         
         <div className="flex justify-between items-center mb-4">
           <h1 className="text-2xl font-bold">Risk Questions</h1>
@@ -86,11 +142,14 @@ const RiskQuestions = () => {
                 className="sr-only peer"
                 checked={isEnabled}
                 onChange={handleToggle}
+                disabled={isToggling}
+                aria-disabled={isToggling}
               />
               <div
                 className={`w-14 h-7 rounded-full peer transition-colors duration-300 ${
                   isEnabled ? "bg-green-500" : "bg-red-500"
                 }`}
+                style={{ opacity: isToggling ? 0.6 : 1, pointerEvents: isToggling ? 'none' : 'auto' }}
               ></div>
               <div
                 className={`absolute left-1 top-1 w-5 h-5 bg-white rounded-full transition-transform duration-300 ${
@@ -125,7 +184,7 @@ const RiskQuestions = () => {
                     Question {index + 1}
                   </label>
                   <button
-                    className="bg-[var(--rv-admin-bg-color)] hover:bg-[var(--rv-admin-bg-color)] text-white py-2 px-4 rounded-md text-sm"
+                    className="bg-[#2367f8] hover:bg-[#2367f8] text-white py-2 px-4 rounded-md text-sm"
                     onClick={() => {
                       setEditMode((prev) => ({
                         ...prev,
@@ -189,7 +248,7 @@ const RiskQuestions = () => {
 
                 {isEditing && (
                   <button
-                     className="bg-[var(--rv-admin-bg-color)] hover:bg-[var(--rv-admin-bg-color)] text-white py-2 px-4 rounded-md text-sm mt-4"
+                     className="bg-[#2367f8] hover:bg-[#2367f8] text-white py-2 px-4 rounded-md text-sm mt-4"
                     onClick={() => handleUpdate(question)}
                   >
                     Update

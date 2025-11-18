@@ -37,42 +37,61 @@ export function InputForm() {
             image: ""
         },
     });
-    const onSubmit = async (data) => {
-        setLoading(true)
-        const formData = new FormData();
-        formData.append('image', selectedImage);
-        formData.append('author', data.author);
-        formData.append('designation', data.designation);
-        formData.append('content', content);
+   const onSubmit = async (data) => {
+  setLoading(true);
 
-        try {
-            const response = await axios.post(`${process.env.NEXT_PUBLIC_NEXTAUTH_URL}/api/testimonials/`, formData, {
-                headers: {
-                    'Content-Type': 'multipart/form-data',
-                },
-            });
-            if (response.status === 201) {
-                toast({
-                    variant: '',
-                    title: "Data uploaded successfully",
-                    // description: "There was a problem with your request.",
-                });
-                form.reset();
-                router.push("/admin/manage-testimonials/manage")
-                setSelectedImage(null);
-            } else {
-                toast({
-                    variant: "destructive",
-                    title: "Uh oh! Something went wrong.",
-                    description: "There was a problem with your request.",
-                });
-            }
-        } catch (error) {
-            console.error('Error:', error);
-            alert("An unexpected error occurred.", error);
-        }
-        finally { setLoading(false) }
-    };
+  // Image validation: max 1MB
+  if (selectedImage && selectedImage.size > 1024 * 1024) {
+    toast({
+      variant: "destructive",
+      title: "Image too large",
+      description: "Image size should not exceed 1MB.",
+    });
+    setLoading(false);
+    return; // Stop submission
+  }
+
+  const formData = new FormData();
+  if (selectedImage) formData.append("image", selectedImage);
+  formData.append("author", data.author);
+  formData.append("designation", data.designation);
+  formData.append("content", content);
+
+  try {
+    const response = await axios.post(
+      `${process.env.NEXT_PUBLIC_NEXTAUTH_URL}/api/testimonials/`,
+      formData,
+      {
+        headers: { "Content-Type": "multipart/form-data" },
+      }
+    );
+
+    if (response.status === 201) {
+      toast({
+        title: "✅ Testimonial added successfully",
+      });
+      form.reset();
+      setSelectedImage(null);
+      router.push("/admin/manage-testimonials/manage");
+    } else {
+      toast({
+        variant: "destructive",
+        title: "Submission failed",
+        description: "There was a problem with your request.",
+      });
+    }
+  } catch (error) {
+    console.error("Submission error:", error);
+    toast({
+      variant: "destructive",
+      title: "Unexpected error",
+      description: "Something went wrong while submitting the testimonial.",
+    });
+  } finally {
+    setLoading(false);
+  }
+};
+
 
     return (
         <Form {...form}>
@@ -138,7 +157,7 @@ export function InputForm() {
                     onChange={newContent => { }}
                 />
                 </div>
-                <Button className="text-white bg-[var(--rv-admin-bg-color)] hover:bg-[var(--rv-admin-bg-color)]" type="submit">{!loading ? 'Submit' : 'Loading...'}</Button>
+                <Button className="text-white bg-[#2367f8] hover:bg-[#2367f8]" type="submit">{!loading ? 'Submit' : 'Loading...'}</Button>
             </form>
         </Form>
     );
@@ -150,7 +169,7 @@ const AddPost = () => {
             <div className="flex justify-between">
                 <h1 className='font-bold text-2xl'>Add New Testimonial</h1>
                 <Link href="/admin/manage-testimonials/manage">
-                    <Button className="text-white bg-[var(--rv-admin-bg-color)] hover:bg-[var(--rv-admin-bg-color)]">All Post</Button>
+                    <Button className="text-white bg-[#2367f8] hover:bg-[#2367f8]">All Post</Button>
                 </Link>
             </div>
             <div className=''>

@@ -168,7 +168,7 @@ export function MissionVisionForm() {
         />
 
         <Button
-          className="text-white bg-[var(--rv-admin-bg-color)] hover:bg-[var(--rv-admin-bg-color)]"
+          className="text-white bg-[#2367f8] hover:bg-[#2367f8]"
           type="submit"
           disabled={loading}
         >

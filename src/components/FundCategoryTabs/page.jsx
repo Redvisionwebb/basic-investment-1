@@ -20,8 +20,8 @@ export default function FundCategoryTabs() {
     // console.log("category:", category);
     setLoading(true);
     try {
-      const response = await axios.get(
-        `${process.env.NEXT_PUBLIC_DATA_API}/api/open-apis/fund-performance/fpsub-category?categorySchemes=${category}&apikey=${process.env.NEXT_PUBLIC_API_KEY}`
+     const response = await axios.get(
+        `${process.env.NEXT_PUBLIC_NEXTAUTH_URL}/api/open-apis/fund-performance/fpsub-category?categorySchemes=${category}`
       );
       if (response.status === 200) {
         setSchemes(response.data.data);

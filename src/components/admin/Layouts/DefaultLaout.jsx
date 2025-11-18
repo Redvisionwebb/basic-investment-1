@@ -5,6 +5,7 @@ import Sidebar from "../Sidebar";
 import Header from "../Header";
 import { SidebarProvider, useSidebar } from "@/context/SidebarContext";
 
+
 const LayoutContent = ({ children }) => {
     const { sidebarOpen, isMobile } = useSidebar();
 

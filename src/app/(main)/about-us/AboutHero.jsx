@@ -39,7 +39,7 @@ const AboutHero = ({ about }) => {
           />
 
           <p className="text-xl"
-            dangerouslySetInnerHTML={{ __html: about[0]?.description }}>
+            dangerouslySetInnerHTML={{ __html: about[0]?.description||"" }}>
           </p>
         </motion.div>
       </div>

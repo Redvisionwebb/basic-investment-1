@@ -8,18 +8,15 @@ import nodemailer from "nodemailer";
 export async function POST(req) {
   const { identifier } = await req.json(); // username or email
   await ConnectDB();
-
+ 
   let admin = null;
 
   const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 
   if (emailRegex.test(identifier)) {
-    console.log("Email")
     admin = await AdminModel.findOne({ email: identifier }).lean();
   } else {
-    console.log("username")
     admin = await AdminModel.findOne({ username: identifier }).lean();
-    console.log(admin)
   }
 
 
@@ -42,16 +39,14 @@ export async function POST(req) {
 
   // find email in SiteSettings (one document)
   const site = await SiteSettingsModel.findOne().lean();
-  console.log(site);
   
   const emailToSend = site?.email;
   if (!emailToSend) {
     return NextResponse.json({ ok: false, error: "No email configured" });
   }
 
-  const resetUrl = `${process.env.NEXTAUTH_URL}/reset-password?token=${token}&id=${admin._id}`;
+  const resetUrl = `${process.env.NEXT_PUBLIC_NEXTAUTH_URL}/reset-password?token=${token}&id=${admin._id}`;
 
-  console.log(resetUrl)
   // ✉️ Nodemailer transport
   const transporter = nodemailer.createTransport({
     service: "gmail",
@@ -69,7 +64,7 @@ export async function POST(req) {
   //   html: `
   // <div style="font-family: Arial, sans-serif; max-width: 600px; margin: auto; padding: 20px; background: #f4f4f4; border-radius: 10px;">
   //   <div style="text-align: center; margin-bottom: 30px;">
-  //     <h2 style="color: var(--rv-admin-bg-color);">${site?.websiteName || "Admin"} Password Reset</h2>
+  //     <h2 style="color: #2367f8;">${site?.websiteName || "Admin"} Password Reset</h2>
   //   </div>
 
   //   <p style="font-size: 16px; color: #333;">Hello <strong>${admin.username}</strong>,</p>
@@ -80,7 +75,7 @@ export async function POST(req) {
   //   <div style="text-align: center; margin: 30px 0;">
   //     <!-- Reset Password Button -->
   //     <a href="${resetUrl}" 
-  //        style="display: inline-block; text-decoration: none; background: var(--rv-admin-bg-color); color: white; padding: 12px 25px; border-radius: 8px; font-weight: bold; margin-bottom: 10px;">
+  //        style="display: inline-block; text-decoration: none; background: #2367f8; color: white; padding: 12px 25px; border-radius: 8px; font-weight: bold; margin-bottom: 10px;">
   //        Reset Password
   //     </a>
   //     <br/>
@@ -113,7 +108,7 @@ export async function POST(req) {
     html: `
   <div style="font-family: Arial, sans-serif; max-width: 600px; margin: auto; padding: 20px; background: #f9f9f9; border-radius: 10px; border: 1px solid #eee;">
     <div style="text-align: center; margin-bottom: 30px;">
-      <h2 style="color: var(--rv-admin-bg-color); margin: 0;">${site?.websiteName || "Admin"} Password Reset</h2>
+      <h2 style="color: #2367f8; margin: 0;">${site?.websiteName || "Admin"} Password Reset</h2>
     </div>
 
     <p style="font-size: 16px; color: #333;">Hello <strong>${admin.username}</strong>,</p>
@@ -124,7 +119,7 @@ export async function POST(req) {
     <div style="text-align: center; margin: 30px 0;">
       <!-- Reset Password Button -->
       <a href="${resetUrl}" 
-         style="display: inline-block; text-decoration: none; background: var(--rv-admin-bg-color); color: white; padding: 12px 25px; border-radius: 8px; font-weight: bold; margin-bottom: 15px;">
+         style="display: inline-block; text-decoration: none; background: #2367f8; color: white; padding: 12px 25px; border-radius: 8px; font-weight: bold; margin-bottom: 15px;">
          Reset Password
       </a>
       <br/>

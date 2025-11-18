@@ -35,7 +35,7 @@ export async function POST(request) {
 }
 
 export async function GET(request) {
-  const leads = await BotLeadsModel.find({});
+  const leads = await BotLeadsModel.find({}).sort({ createdAt: -1 });;
   return NextResponse.json({ leads }, { status: 200 });
 }
 

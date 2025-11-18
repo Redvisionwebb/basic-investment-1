@@ -8,20 +8,20 @@ import HomeHeading from "../heading/heading";
 const awardCards = [
   {
     id: 1,
-    title: "Certificate of Appreciation by Bajaj Finserv",
-    logo: "/images/awards/bajaj.png",
+    title: "Certificate of Appreciation",
+    logo: "/images/awards/awards.jpg",
     badge: "/images/awards/awards.png",
   },
   {
     id: 2,
-    title: "Certificate of Achievement by HDFC Life",
-    logo: "/images/awards/bajaj.png",
+    title: "Certificate of Achievement",
+    logo: "/images/awards/awards.jpg",
     badge: "/images/awards/awards.png",
   },
   {
     id: 3,
     title: "Top Wealth Advisor Award",
-    logo: "/images/awards/bajaj.png",
+    logo: "/images/awards/awards.jpg",
     badge: "/images/awards/awards.png",
   },
 ];
@@ -42,17 +42,15 @@ export default function AwardsSection() {
   return (
     <section className={`${styles.sectionWrapper} px-4`}>
       <div className="max-w-screen-xl mx-auto ">
-         <HomeHeading title={`Recognized for Excellence`} center="true" />
+         <HomeHeading title={`Honoured for Our Efforts`} center="true" />
         <div
           className={`flex flex-col md:flex-row items-center md:items-start p-6 md:p-12 rounded-xl ${styles.contentBox}`}
         >
           <div className="md:basis-2/5 w-full space-y-4 z-10 text-center md:text-left">
-            <h2 className={styles.leftHeading}>Achievements That Build Trust</h2>
+            <h2 className={styles.leftHeading}>Trusted by Thousands</h2>
             <p className={styles.leftDescription}>
-              Our consistent dedication to client success has earned us industry
-              awards and recognition. These honors reflect our commitment to
-              ethical practices, innovative strategies, and real results for every
-              investor.
+             We’re recognized for assisting clients with their investments. These acknowledgements reflect our commitment to honesty, reliability, and transparent practices.
+
             </p>
           </div>
 

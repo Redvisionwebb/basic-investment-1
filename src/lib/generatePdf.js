@@ -2,6 +2,163 @@ import jsPDF from "jspdf";
 import autoTable from "jspdf-autotable";
 import html2canvas from "html2canvas";
 
+export const generateCalculatorsPDF = async (
+    data,
+    title,
+    startDate,
+    endDate,
+    graphId,
+    barGraphId,
+    siteData
+) => {
+    console.log(data)
+    const doc = new jsPDF();
+    const websiteName = siteData?.websiteName || "";
+    const email = siteData?.email || "";
+    const mobile = siteData?.mobile || "";
+
+    // 🔹 Load logo
+    const logoImg = new Image();
+    logoImg.src = "/logo.png";
+    await new Promise((resolve) => {
+        logoImg.onload = resolve;
+        logoImg.onerror = resolve;
+    });
+
+    // 🔹 Header
+    doc.addImage(logoImg, "PNG", 14, 5, 35, 15);
+    doc.setLineWidth(0.3);
+    doc.line(14, 24, 200, 24);
+    doc.line(60, 0, 60, 24);
+    doc.setFont("helvetica", "bold");
+    doc.setFontSize(14);
+    doc.text(title, 14, 30);
+    doc.setFont("helvetica", "normal");
+    doc.setFontSize(10);
+    doc.text(`${websiteName}`, 70, 11);
+    doc.text(`${email} / ${mobile}`, 70, 16);
+    doc.setLineWidth(0.4);
+    doc.line(14, 38, 200, 38);
+
+    // 🔹 Section Heading
+    let yPosition = 47;
+    doc.setFontSize(11);
+    doc.setFont("helvetica", "bold");
+    doc.text("Investment Summary", 14, yPosition);
+    yPosition += 5;
+
+    // 🔹 Summary Boxes (auto layout)
+    const boxWidth = 85;
+    const boxHeight = 20;
+    const marginY = 10;
+    const startXLeft = 14;
+    const startXRight = 110;
+
+    const fields = (data.labels || []).map((label, index) => ({
+        label,
+        value:
+            [
+                data.totalInvestment,
+                data.futureValue,
+                data.sipInvestment,
+                data.lumpsumInvestment,
+                data.sipGrowth,
+                data.sipFutureValue,
+            ][index] || 0,
+    }));
+    console.log(fields)
+    const drawBox = (x, y, label, value) => {
+        doc.setDrawColor(0);
+        doc.setFillColor(255, 255, 255);
+        doc.roundedRect(x, y, boxWidth, boxHeight, 3, 3, "S");
+
+        doc.setTextColor(0, 0, 0);
+        doc.setFont("helvetica", "bold");
+        doc.setFontSize(9);
+        doc.text(label, x + 5, y + 7);
+
+        doc.setFontSize(12);
+        doc.setFont("helvetica", "bold");
+        doc.text(`Rs. ${Math.floor(value).toLocaleString("en-IN")}`, x + 5, y + 16);
+    };
+
+    // 🔹 Draw Boxes Dynamically
+    for (let i = 0; i < fields.length; i++) {
+        const x = i % 2 === 0 ? startXLeft : startXRight;
+        if (i > 0 && i % 2 === 0) yPosition += boxHeight + marginY;
+        drawBox(x, yPosition, fields[i].label, fields[i].value);
+    }
+
+    // Adjust yPosition for next section
+    yPosition += boxHeight + 15;
+
+    // 🔹 Graph Section
+    doc.setFont("helvetica", "bold");
+    doc.setFontSize(11);
+    doc.text("Graphical Analysis", 14, yPosition);
+    yPosition += 5;
+
+    const captureGraph = async (elementId, x, y) => {
+        const graphElement = document.getElementById(elementId);
+        if (!graphElement) return 0;
+
+        try {
+            const canvas = await html2canvas(graphElement, {
+                scale: 2,
+                useCORS: true,
+                backgroundColor: "#ffffff",
+            });
+            const imgData = canvas.toDataURL("image/png");
+            const imgWidth = 87;
+            const imgHeight = 53;
+            doc.addImage(imgData, "PNG", x, y, imgWidth, imgHeight);
+            return imgHeight;
+        } catch (err) {
+            console.error("Error capturing chart:", err);
+            return 0;
+        }
+    };
+
+    const leftGraphHeight = await captureGraph(graphId, 14, yPosition + 5);
+    const rightGraphHeight = await captureGraph(barGraphId, 110, yPosition + 5);
+    yPosition += Math.max(leftGraphHeight, rightGraphHeight) + 20;
+
+    // 🔹 Table Section
+    doc.setFont("helvetica", "bold");
+    doc.setFontSize(11);
+    doc.text("Calculation Details", 14, yPosition);
+    yPosition += 5;
+
+    const columns = ["Parameter", "Value"];
+    const rows = [
+        ["Expected Inflation Rate (%)", "5"],
+        ...fields.map((f) => [
+            f.label,
+            f.value?.toLocaleString("en-IN") || "N/A",
+        ]),
+    ];
+
+    autoTable(doc, {
+        head: [columns],
+        body: rows,
+        startY: yPosition,
+        theme: "grid",
+        headStyles: { fillColor: [240, 240, 240], textColor: 0, halign: "left" },
+        bodyStyles: { fillColor: [255, 255, 255], textColor: 0, halign: "left" },
+    });
+
+    // 🔹 Footer
+    doc.setFontSize(9);
+    doc.setTextColor(100, 100, 100);
+    doc.text(
+        "Note: This is an indicative calculation. Actual results may vary depending on market performance.",
+        14,
+        doc.internal.pageSize.height - 10
+    );
+
+    doc.save(`${title}.pdf`);
+};
+
 export const generatePDF = async (data, title, startDate, endDate, graphId, siteData) => {
     const doc = new jsPDF();
     const websiteName = siteData?.websiteName;
@@ -91,7 +248,7 @@ export const generatePDF = async (data, title, startDate, endDate, graphId, site
 
 
     const graphElement = document.getElementById(graphId);
-
+    console.log("graphElement", graphElement);
     let tableStartY = 40;
     // Default start position for table if no graph
     if (graphElement) {
@@ -173,6 +330,7 @@ export const generatePDF = async (data, title, startDate, endDate, graphId, site
 };
 
 export const generateSwpPDF = async (data, title, startDate, endDate, graphId, withdrawalAmount, siteData) => {
+    // console.log(data)
     const doc = new jsPDF();
     const websiteName = siteData?.websiteName;
     const email = siteData?.email;
@@ -180,7 +338,7 @@ export const generateSwpPDF = async (data, title, startDate, endDate, graphId, w
 
     // Load logo image
     const logoImg = new Image();
-    logoImg.src = "/logo1.png";
+    logoImg.src = "/logo.png";
 
     await new Promise((resolve) => {
         logoImg.onload = resolve;
@@ -255,6 +413,7 @@ export const generateSwpPDF = async (data, title, startDate, endDate, graphId, w
     doc.setFontSize(11);
     doc.text(`${email || ""} / ${mobile || ""}`, 70, 16);
     doc.text(`From: ${startDate} To: ${endDate}`, 14, 37);
+
     const graphElement = document.getElementById(graphId);
     let tableStartY = 40; // Default start position for table if no graph
     if (graphElement) {
@@ -294,7 +453,7 @@ export const generateSwpPDF = async (data, title, startDate, endDate, graphId, w
     } else {
         console.warn(`Graph element with ID ${graphId} not found`);
     }
-    // Add table
+
     const columns = [
         "Date",
         "Nav",
@@ -335,6 +494,7 @@ export const generateSwpPDF = async (data, title, startDate, endDate, graphId, w
 };
 
 export const generateSchemePDF = async (data, title, startDate, endDate, graphId, siteData = {}) => {
+    // console.log(data);
     try {
         // Validate input data
         if (!data || !title || !startDate || !endDate || !graphId) {
@@ -349,7 +509,7 @@ export const generateSchemePDF = async (data, title, startDate, endDate, graphId
 
         // Load logo image
         const logoImg = new Image();
-        logoImg.src = "/logo1.png";
+        logoImg.src = "/logo.png";
 
         await new Promise((resolve, reject) => {
             logoImg.onload = resolve;
@@ -527,20 +687,24 @@ export const generateSchemePDF = async (data, title, startDate, endDate, graphId
 };
 
 export const generateStpPDF = async (data, title, destinationTitle, startDate, endDate, graphId, siteData) => {
+    console.log('pdf', data, title, destinationTitle, startDate, endDate, graphId, siteData)
     if (!data) {
         console.error("Error: Data parameter is undefined. Cannot generate PDF with tables.");
         return;
     }
 
 
+
     const doc = new jsPDF();
+
+
     const websiteName = siteData?.websiteName || "Unknown Website";
     const email = siteData?.email || "N/A";
     const mobile = siteData?.mobile || "N/A";
 
     // Load logo image
     const logoImg = new Image();
-    logoImg.src = "/logo1.png";
+    logoImg.src = "/logo.png";
 
     await new Promise((resolve) => {
         logoImg.onload = resolve;
@@ -626,6 +790,7 @@ export const generateStpPDF = async (data, title, destinationTitle, startDate, e
 
     // Destination Fund Section
     const destinationData = data.investedScheme.DestinationFundValuation || {};
+
     if (Object.keys(destinationData).length > 0) {
         doc.setFontSize(8);
         // Set bold font for title

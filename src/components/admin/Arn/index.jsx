@@ -1,17 +1,20 @@
 'use client';
 
 import { useState, useEffect } from 'react';
-import AddArnModal from './arnModel';
+
 import axios from 'axios';
-import { FiTrash2 } from 'react-icons/fi';
+import { FiTrash2, FiEdit2 } from 'react-icons/fi';
 import { ToastContainer, toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 import { FaSpinner } from 'react-icons/fa';
 import Loader from '../common/Loader';
+import AddArnModal from './arnModel';
+import EditArnModal from './editArnModel';
 
 const ArnList = () => {
   const [arnData, setArnData] = useState([]);
-  const [showModal, setShowModal] = useState(false);
+  const [showAddModal, setShowAddModal] = useState(false);
+  const [editData, setEditData] = useState(null);
   const [loading, setLoading] = useState(true);
   const [deleting, setDeleting] = useState(false);
 
@@ -19,6 +22,7 @@ const ArnList = () => {
   const [showConfirm, setShowConfirm] = useState(false);
   const [deleteId, setDeleteId] = useState(null);
 
+  // 🔹 Fetch all ARNs
   const fetchArnData = async () => {
     setLoading(true);
     try {
@@ -36,13 +40,21 @@ const ArnList = () => {
     fetchArnData();
   }, []);
 
-  const handleAddClick = () => setShowModal(true);
-  const handleClose = () => {
-    setShowModal(false);
-    fetchArnData(); // Refresh after modal closes
+  // 🔹 Add Modal handlers
+  const handleAddClick = () => setShowAddModal(true);
+  const handleAddClose = () => {
+    setShowAddModal(false);
+    fetchArnData();
   };
 
-  // 🔹 Trigger confirm modal
+  // 🔹 Edit Modal handlers
+  const handleEditClick = (arn) => setEditData(arn);
+  const handleEditClose = () => {
+    setEditData(null);
+    fetchArnData();
+  };
+
+  // 🔹 Delete confirmation
   const confirmDelete = (id) => {
     setDeleteId(id);
     setShowConfirm(true);
@@ -70,21 +82,23 @@ const ArnList = () => {
 
   return (
     <div className="overflow-x-auto flex flex-col items-start w-full gap-5 rounded-md p-3 bg-white">
+      {/* Header */}
       <div className="flex justify-between items-center gap-5 w-full">
-        <h3 className="text-xl font-bold">All ARN List</h3>
+        <h2 className="text-xl font-bold">All ARN List</h2>
         <button
-          className="text-sm text-white bg-[var(--rv-admin-bg-color)] hover:bg-[var(--rv-admin-bg-color)] px-5 py-2 rounded-lg"
+          className="text-sm text-white bg-[#2367f8] hover:bg-[#1e56d9] px-5 py-2 rounded-lg"
           onClick={handleAddClick}
         >
-          Add ARN AUIN Number
+          Add ARN & EUIN
         </button>
       </div>
 
+      {/* Table */}
       <div className="overflow-x-auto w-full">
         {loading ? (
-          <div className="">
-            <Loader  />
-          </div>
+          <Loader />
+        ) : arnData.length === 0 ? (
+          <p className="text-gray-500 text-sm p-4">No ARN data found.</p>
         ) : (
           <div className="w-full">
             <table className="w-full border border-gray-300 text-left table-auto whitespace-nowrap">
@@ -92,39 +106,93 @@ const ArnList = () => {
                 <tr className="bg-gray-100">
                   <th className="border border-gray-300 px-4 py-2 font-semibold">SR No.</th>
                   <th className="border border-gray-300 px-4 py-2 font-semibold">ARN NO.</th>
+                  <th className="border border-gray-300 px-4 py-2 font-semibold">ARN Reg. Date</th>
+                  <th className="border border-gray-300 px-4 py-2 font-semibold">ARN Expiry</th>
                   <th className="border border-gray-300 px-4 py-2 font-semibold">EUIN NO.</th>
-                  <th className="border border-gray-300 px-4 py-2 font-semibold">Registration Date</th>
-                  <th className="border border-gray-300 px-4 py-2 font-semibold">Expiry Date</th>
-                  <th className="border border-gray-300 px-4 py-2 font-semibold">Action</th>
+                  <th className="border border-gray-300 px-4 py-2 font-semibold">EUIN Reg. Date</th>
+                  <th className="border border-gray-300 px-4 py-2 font-semibold">EUIN Expiry</th>
+                  <th className="border border-gray-300 px-4 py-2 font-semibold">Actions</th>
                 </tr>
               </thead>
               <tbody>
                 {arnData.map((item, arnIndex) =>
-                  item.euins.map((euinEntry, euinIndex) => (
-                    <tr key={`${item.arn}-${euinEntry.euin}`}>
+                  item.euins.length > 0 ? (
+                    item.euins.map((euinEntry, euinIndex) => (
+                      <tr key={`${item._id}-${euinEntry.euin}`}>
+                        <td className="border border-gray-300 px-4 py-2">
+                          {euinIndex === 0 ? arnIndex + 1 : ''}
+                        </td>
+                        <td className="border border-gray-300 px-4 py-2">
+                          {euinIndex === 0 ? item.arn : ''}
+                        </td>
+                        <td className="border border-gray-300 px-4 py-2">
+                          {euinIndex === 0
+                            ? new Date(item.registrationDate).toLocaleDateString()
+                            : ''}
+                        </td>
+                        <td className="border border-gray-300 px-4 py-2">
+                          {euinIndex === 0
+                            ? new Date(item.expiryDate).toLocaleDateString()
+                            : ''}
+                        </td>
+                        <td className="border border-gray-300 px-4 py-2">{euinEntry.euin}</td>
+                        <td className="border border-gray-300 px-4 py-2">
+                          {new Date(euinEntry.registrationDate).toLocaleDateString()}
+                        </td>
+                        <td className="border border-gray-300 px-4 py-2">
+                          {new Date(euinEntry.expiryDate).toLocaleDateString()}
+                        </td>
+                        <td className="border border-gray-300 px-4 py-2">
+                          {euinIndex === 0 && (
+                            <div className="flex gap-2">
+                              <button
+                                onClick={() => handleEditClick(item)}
+                                className="text-blue-600 border border-blue-600 rounded-md p-2 hover:bg-blue-50"
+                              >
+                                <FiEdit2 size={16} />
+                              </button>
+                              <button
+                                onClick={() => confirmDelete(item._id)}
+                                className="text-red-600 border border-red-600 rounded-md p-2 hover:bg-red-50"
+                              >
+                                <FiTrash2 size={16} />
+                              </button>
+                            </div>
+                          )}
+                        </td>
+                      </tr>
+                    ))
+                  ) : (
+                    <tr key={item._id}>
+                      <td className="border border-gray-300 px-4 py-2">{arnIndex + 1}</td>
+                      <td className="border border-gray-300 px-4 py-2">{item.arn}</td>
                       <td className="border border-gray-300 px-4 py-2">
-                        {euinIndex === 0 ? arnIndex + 1 : ''}
+                        {new Date(item.registrationDate).toLocaleDateString()}
                       </td>
                       <td className="border border-gray-300 px-4 py-2">
-                        {euinIndex === 0 ? item.arn : ''}
+                        {new Date(item.expiryDate).toLocaleDateString()}
                       </td>
-                      <td className="border border-gray-300 px-4 py-2">{euinEntry.euin}</td>
-                      <td className="border border-gray-300 px-4 py-2">
-                        {new Date(euinEntry.registrationDate).toLocaleDateString()}
-                      </td>
-                      <td className="border border-gray-300 px-4 py-2">
-                        {new Date(euinEntry.expiryDate).toLocaleDateString()}
+                      <td colSpan="3" className="border border-gray-300 px-4 py-2 text-gray-500 text-center">
+                        No EUINs
                       </td>
                       <td className="border border-gray-300 px-4 py-2">
-                        <button
-                          onClick={() => confirmDelete(item._id)}
-                          className="text-red-600 border border-red-600 rounded-md p-2 hover:bg-red-50"
-                        >
-                          <FiTrash2 size={16} />
-                        </button>
+                        <div className="flex gap-2">
+                          <button
+                            onClick={() => handleEditClick(item)}
+                            className="text-blue-600 border border-blue-600 rounded-md p-2 hover:bg-blue-50"
+                          >
+                            <FiEdit2 size={16} />
+                          </button>
+                          <button
+                            onClick={() => confirmDelete(item._id)}
+                            className="text-red-600 border border-red-600 rounded-md p-2 hover:bg-red-50"
+                          >
+                            <FiTrash2 size={16} />
+                          </button>
+                        </div>
                       </td>
                     </tr>
-                  ))
+                  )
                 )}
               </tbody>
             </table>
@@ -132,8 +200,13 @@ const ArnList = () => {
         )}
       </div>
 
-      {showModal && <AddArnModal onClose={handleClose} />}
+      {/* 🔹 Add Modal */}
+      {showAddModal && <AddArnModal onClose={handleAddClose} />}
 
+      {/* 🔹 Edit Modal */}
+      {editData && <EditArnModal arnData={editData} onClose={handleEditClose} />}
+
+      {/* 🔹 Delete Confirmation */}
       {showConfirm && (
         <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-2">
           <div className="bg-white p-4 rounded shadow-lg w-96">

@@ -30,7 +30,23 @@ export async function POST(req) {
       }
     }
 
-   uploaded = await saveImageToLocal("teams", file);
+ 
+        if (file && file.size > 1 * 1024 * 1024) {
+                     return NextResponse.json(
+                       { error: "File size exceeds 1 MB limit" },
+                       { status: 400 }
+                     );
+                   }
+                    if (file) {
+                     try {
+                            uploaded = await saveImageToLocal("teams", file);
+                     } catch (uploadError) {
+                       return NextResponse.json(
+                         { error: "Image upload failed" },
+                         { status: 500 }
+                       );
+                     }
+                   }
 
     const newMember = await TeamModel.create({
       name,
@@ -59,7 +75,7 @@ export async function POST(req) {
 export async function GET() {
   try {
     await ConnectDB();
-    const teams = await TeamModel.find({});
+    const teams = await TeamModel.find({}).sort({ createdAt: -1 });;
     return NextResponse.json(teams, { status: 200 });
   } catch (error) {
     console.error("Error fetching teams:", error);

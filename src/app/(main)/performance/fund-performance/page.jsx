@@ -1,17 +1,16 @@
-
-import InnerBanner from "@/components/innerBanner/InnerBanner";
 import FundCategoryTabs from "@/components/FundCategoryTabs/page";
+import InnerBanner from "@/components/innerBanner/InnerBanner";
 
 export default function MarketUpdate() {
 
   return (
-    <div className="">
-      <InnerBanner title="Fund Performance" subpages="Performance" />
-      <div className="px-4">
-        <div className="max-w-screen-xl mx-auto section ">
+    <>
+      <InnerBanner title="Fund Performance" />
+      <div className="section">
+        <div className="max-w-screen-xl mx-auto px-4">
           <FundCategoryTabs />
         </div>
       </div>
-    </div>
+    </>
   );
 }

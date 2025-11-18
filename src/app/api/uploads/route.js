@@ -29,32 +29,30 @@ export async function POST(req) {
   });
 }
 
-
 export async function GET(req) {
   const { searchParams } = new URL(req.url);
   const section = searchParams.get('section'); // e.g., 'blogs', 'testimonials'
   const filename = searchParams.get('filename'); // e.g., 'myimage.svg'
- 
   // Validate input
   if (!section || !filename) {
     return new Response("Invalid request", { status: 400 });
   }
- 
+
   // Construct full file path
   const filePath = path.join(process.cwd(), process.env.UPLOAD_URL, section, filename);
- 
+
   // Check if file exists
   if (!fs.existsSync(filePath)) {
     return new Response("Not found", { status: 404 });
   }
- 
+
   // Read the file
   const fileBuffer = fs.readFileSync(filePath);
- 
+
   // Determine Content-Type based on file extension
   let ext = path.extname(filename).toLowerCase();
   let contentType = 'application/octet-stream'; // fallback MIME type
- 
+
   if (ext === '.svg') {
     contentType = 'image/svg+xml';
   } else if (ext === '.jpg' || ext === '.jpeg') {
@@ -68,7 +66,6 @@ export async function GET(req) {
   } else if (ext === '.ico') {
     contentType = 'image/x-icon';
   }
- 
   // Return the file with the appropriate content-type
   return new Response(fileBuffer, {
     headers: {

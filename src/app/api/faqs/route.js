@@ -27,7 +27,7 @@ export async function POST(request) {
 export async function GET(request) {
     try {
         await ConnectDB();
-        const faq = await FaqsModel.find({});
+        const faq = await FaqsModel.find({}).sort({ createdAt: -1 });;
         return NextResponse.json(faq, { status: 200 });
     } catch (error) {
         console.error(error);

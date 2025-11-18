@@ -18,13 +18,13 @@ const DropdownUser = () => {
         href="#"
       >
         <div className="w-10 h-10 rounded-full border-gray-300 border flex items-center justify-center">
-          <FaUserCircle size={32} color="var(--rv-admin-bg-color)"/>
+          <FaUserCircle size={32} color="#2367f8"/>
         </div>
       </Link>
 
       {dropdownOpen && (
         <div
-          className={`absolute right-4 mt-2 flex w-[250px] z-[99999] p-4 flex-col gap-2 rounded-lg border-[0.5px] border-gray-300 bg-white shadow-default dark:border-dark-3 dark:bg-gray-dark`}
+          className={`absolute right-4 mt-2 flex w-[250px] p-4 flex-col gap-2 rounded-lg border-[0.5px] border-gray-300 bg-white shadow-default dark:border-dark-3 dark:bg-gray-dark`}
         >
           <div className="">
             <span className="">
@@ -32,7 +32,7 @@ const DropdownUser = () => {
             </span>
 
           </div>
-          <ul className="border-t py-2  border-gray-300">
+          <ul className="border-t py-2 border-b border-gray-300">
             <li >
               <Link
                 href="/admin/change-password"
@@ -56,7 +56,7 @@ const DropdownUser = () => {
           </ul>
           <div className="">
             <button
-              className="flex gap-2 items-center cursor-pointer"
+              className="flex gap-2 items-center"
               onClick={() => signOut({ callbackUrl: '/signin' })}>
               <BiLogOut />
               Logout

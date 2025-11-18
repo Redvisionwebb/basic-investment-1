@@ -10,7 +10,7 @@ const Tickers = () => {
     const [data, setData] = useState([]);
     const fetchData = async () => {
         try {
-            const response = await axios.get(`${process.env.NEXT_PUBLIC_DATA_API}/api/open-apis/tickers?apikey=${process.env.NEXT_PUBLIC_API_KEY}`);
+            const response = await axios.get(`${process.env.NEXT_PUBLIC_NEXTAUTH_URL}/api/open-apis/tickers`);
             if (response.status === 200) {
                 setData(response.data.data);
             }

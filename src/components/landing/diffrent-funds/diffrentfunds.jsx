@@ -90,7 +90,7 @@ const DiffrentFunds = () => {
     },
     {
       name: "Mutual Fund",
-      rate: 15,
+      rate: 14,
       type: "compound",
       icon: "/icons/mutualfund.png",
       fallbackIcon: <LineChart size={20} />,
@@ -107,7 +107,7 @@ const DiffrentFunds = () => {
     <section className={`${styles.diffrentFunds} px-4`}>
       <div className={` max-w-screen-xl mx-auto section `}>
         <div className={`${styles.container} ${styles.innerDiffrance}`}>
-          <HomeHeading title={`Returns That Make a Difference`} center="true" />
+          <HomeHeading title={`Learn How Assets Shape Your Portfolio`} center="true" />
           {/* Input Controls */}
           <div className={styles.controlsGrid}>
             {/* Monthly Amount */}
@@ -216,11 +216,12 @@ const DiffrentFunds = () => {
 
           {/* Summary */}
           <p className={styles.note}>
-            If you build a personalized plan with a certified Mutual Fund
+            {/* If you build a personalized plan with a certified Mutual Fund
             Distributor (MFD), your expected returns could reach up to 15%
             annually turning ₹{formatINR(monthly)}/month into nearly ₹
             {formatINR(calculateCompoundInterest(monthly, years, 15))} in {years}{" "}
-            years.
+            years. */}
+            Even small monthly investments like ₹{formatINR(monthly)}/month may compound into a significant corpus like 14% over time. A certified MFD can assist in structuring investments over time. Past performance of funds may help you understand historical trends, but future returns are not guaranteed.
           </p>
 
           <div className={styles.btnWrap}>

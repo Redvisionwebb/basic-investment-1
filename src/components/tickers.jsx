@@ -9,8 +9,8 @@ import { Carousel, CarouselContent } from './ui/carousel';
 const Tickers = () => {
     const [data, setData] = useState([]);
     const fetchData = async () => {
-        try {
-            const response = await axios.get(`${process.env.NEXT_PUBLIC_DATA_API}/api/open-apis/tickers?apikey=${process.env.NEXT_PUBLIC_API_KEY}`);
+     try {
+            const response = await axios.get(`${process.env.NEXT_PUBLIC_NEXTAUTH_URL}/api/open-apis/tickers`);
             if (response.status === 200) {
                 setData(response.data.data);
             }
@@ -39,7 +39,7 @@ const Tickers = () => {
                         {data.map((item, index) => (
                             <div key={index} className="md:basis-1/6 lg:basis-1/6">
                                 <div
-                                    className="px-3 py-1 flex items-center gap-2 thirdbgcolor border-r border-white w-64"
+                                    className="px-3 py-1 flex items-center gap-2 thirdbgcolor border-r border-white "
                                 >
                                     <span className="font-bold text-white text-sm whitespace-nowrap">{item?.indexName}</span>
                                     <span className="font-semibold text-gray-100 text-xs">{item?.figure}</span>

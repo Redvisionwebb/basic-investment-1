@@ -122,7 +122,7 @@ const DataTableDemo = () => {
                                 setCategorytitle(cate.title);
                                 setDialogOpen(true);
                             }}
-                            className="text-[var(--rv-admin-bg-color)] border border-[var(--rv-admin-bg-color)] rounded-md p-2"
+                            className="text-[#2367f8] border border-[#2367f8] rounded-md p-2"
                         >
                             <FiEdit2 size={16} />
                         </button>
@@ -214,7 +214,7 @@ const DataTableDemo = () => {
                 <h1 className='font-bold text-2xl '>All Categories</h1>
                 <Dialog open={dialogOpen} onOpenChange={setDialogOpen}>
                     <DialogTrigger asChild>
-                        <Button className="bg-[var(--rv-admin-bg-color)] text-white hover:bg-[var(--rv-admin-bg-color)]" onClick={() => {
+                        <Button className="bg-[#2367f8] text-white hover:bg-[#2367f8]" onClick={() => {
                             setDialogOpen(true);
                             setCategorytitle("");
                             setEditCategoryId("");
@@ -238,7 +238,7 @@ const DataTableDemo = () => {
                             />
                         </div>
                         <DialogFooter>
-                            <Button className="bg-[var(--rv-admin-bg-color)] text-white hover:bg-[var(--rv-admin-bg-color)]" type="submit" onClick={editCategoryId ? handleUpdate : handleSubmit}>
+                            <Button className="bg-[#2367f8] text-white hover:bg-[#2367f8]" type="submit" onClick={editCategoryId ? handleUpdate : handleSubmit}>
                                 {editCategoryId ? "Update Category" : "Save Post"}
                             </Button>
                         </DialogFooter>

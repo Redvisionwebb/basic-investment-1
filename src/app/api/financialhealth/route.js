@@ -51,7 +51,7 @@ export async function GET(request) {
     if (questions.length === 0) {
       // First-time fetch and save to DB
       const response = await axios.get(
-        `${process.env.NEXT_PUBLIC_DATA_API}/api/open-apis/risk-questions?apikey=${process.env.NEXT_PUBLIC_API_KEY}`
+        `${process.env.NEXT_PUBLIC_DATA_API}/api/open-apis/health-questions?apikey=${process.env.NEXT_PUBLIC_API_KEY}`
       );
 
       const fetchedQuestions = response.data.map((item) => ({
@@ -66,7 +66,7 @@ export async function GET(request) {
 
     // DB has data but all status = false → fetch from API but DO NOT save
     const response = await axios.get(
-      `${process.env.NEXT_PUBLIC_DATA_API}/api/open-apis/risk-questions?apikey=${process.env.NEXT_PUBLIC_API_KEY}`
+      `${process.env.NEXT_PUBLIC_DATA_API}/api/open-apis/health-questions?apikey=${process.env.NEXT_PUBLIC_API_KEY}`
     );
 
     return NextResponse.json(response.data, { status: 200 });

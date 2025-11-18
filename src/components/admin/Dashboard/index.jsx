@@ -10,22 +10,24 @@ import { GrServices } from "react-icons/gr";
 import { SiGoogleads } from "react-icons/si";
 import Link from "next/link";
 
-const stats = [
-  { name: "Total Services", icon: <GrServices color="var(--rv-admin-bg-color)" />, value: "10", route: "/admin/services" },
-  { name: "Total Posts", icon: <MdAddchart color="var(--rv-admin-bg-color)" />, value: "5", route: "/admin/manage-posts/manage" },
-  { name: "Testimonials", icon: <BiMessageAdd color="var(--rv-admin-bg-color)" />, value: "3", route: "/admin/manage-testimonials/manage" },
-  { name: "FAQs", icon: <FaQuestion color="var(--rv-admin-bg-color)" />, value: "6", route: "/admin/faqs" },
-  { name: "Awards", icon: <FaAward color="var(--rv-admin-bg-color)" />, value: "6", route: "/admin/manage-awards/manage" },
-  { name: "New Leads", icon: <SiGoogleads color="var(--rv-admin-bg-color)" />, value: "205", route: "/admin/manage-leads/manage" },
-];
+
 
 const quickActions = [
-  { title: "Create New Post", route: "/admin/manage-posts/add-post", desc: "Add a new blog post or article", icon: <MdAddchart color="var(--rv-admin-bg-color)" /> },
-  { title: "Add Testimonial", route: "/admin/manage-testimonials/add-testimonial", desc: "Feature customer feedback", icon: <BiMessageAdd color="var(--rv-admin-bg-color)" /> },
-  { title: "Add Award", route: "/admin/manage-awards/add-awards", desc: "Showcase achievements", icon: <FaAward color="var(--rv-admin-bg-color)" /> },
+  { title: "Create New Post", route: "/admin/manage-posts/add-post", desc: "Add a new blog post or article", icon: <MdAddchart color="#2367f8" /> },
+  { title: "Add Testimonial", route: "/admin/manage-testimonials/add-testimonial", desc: "Feature customer feedback", icon: <BiMessageAdd color="#2367f8" /> },
+  { title: "Add Award", route: "/admin/manage-awards/add-awards", desc: "Showcase achievements", icon: <FaAward color="#2367f8" /> },
 ];
 
-const Dashboard = ({ session }) => {
+const Dashboard = ({ session,blogscount,testiomonialscount,faqscount,awardscount,activeServicescount,leadscount }) => {
+const stats = [
+  { name: "Total Services", icon: <GrServices color="#2367f8" />, value: activeServicescount ?? 0, route: "/admin/services" },
+  { name: "Total Posts", icon: <MdAddchart color="#2367f8" />, value: blogscount ?? 0, route: "/admin/manage-posts/manage" },
+  { name: "Testimonials", icon: <BiMessageAdd color="#2367f8" />, value: testiomonialscount ?? 0, route: "/admin/manage-testimonials/manage" },
+  { name: "FAQs", icon: <FaQuestion color="#2367f8" />, value: faqscount ?? 0, route: "/admin/faqs" },
+  { name: "Awards", icon: <FaAward color="#2367f8" />, value: awardscount ?? 0, route: "/admin/manage-awards/manage" },
+  { name: "New Leads", icon: <SiGoogleads color="#2367f8" />, value: leadscount ?? 0, route: "/admin/manage-leads/manage" },
+];
+
   const router = useRouter();
   const pathname = usePathname(); // ✅ current path
   const user = session;
@@ -86,26 +88,26 @@ const Dashboard = ({ session }) => {
               <p className="text-gray-500">{profile.websiteName}</p>
             </div>
             <div className="flex items-center gap-2">
-              <Mail size={20} color="var(--rv-admin-bg-color)" />
+              <Mail size={20} color="#2367f8" />
               {profile.email}
             </div>
             <div className="flex items-center gap-2">
-              <Phone size={20} color="var(--rv-admin-bg-color)" />
+              <Phone size={20} color="#2367f8" />
               {profile.mobile}
             </div>
             <div className="flex items-center gap-2">
-              <MapPin size={20} color="var(--rv-admin-bg-color)" />
+              <MapPin size={20} color="#2367f8" />
               {profile.address}
             </div>
             <div className="flex items-center gap-2">
-              <Globe size={20} color="var(--rv-admin-bg-color)" />
-              <Link
+              <Globe size={20} color="#2367f8" />
+              <a
                 href={profile.siteurl}
                 target="_blank"
                 className="text-blue-600 hover:underline"
               >
                 {profile.siteurl}
-              </Link>
+              </a>
             </div>
           </div>
         </div>

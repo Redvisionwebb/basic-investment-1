@@ -19,8 +19,24 @@ export async function POST(req) {
     if (!file || !name || !presentedBy || !date) {
       return NextResponse.json({ error: 'Missing required fields' }, { status: 400 });
     }
+     if (file && file.size > 1 * 1024 * 1024) {
+                     return NextResponse.json(
+                       { error: "File size exceeds 1 MB limit" },
+                       { status: 400 }
+                     );
+                   }
+                    if (file) {
+                     try {
+                            uploaded = await saveImageToLocal('awards', file);
+                     } catch (uploadError) {
+                       return NextResponse.json(
+                         { error: "Image upload failed" },
+                         { status: 500 }
+                       );
+                     }
+                   }
 
-    uploaded = await saveImageToLocal('awards', file);
+    
 
     await AwardModel.create({
       name,

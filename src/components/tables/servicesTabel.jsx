@@ -56,7 +56,7 @@ export default function ServicesTable({ services, onDelete }) {
 
     try {
       const res = await axios.delete(
-        `${process.env.NEXT_PUBLIC_DATA_API}/api/admin/services/${selectedId}`
+        `${process.env.NEXT_PUBLIC_NEXTAUTH_URL}/api/admin/services/${selectedId}`
       );
 
       if (res.status === 200) {

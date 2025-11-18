@@ -27,14 +27,12 @@ export default function TeamSection({ aboutteamdata }) {
       <div className={styles.topSection}>
         <div className="max-w-screen-md mx-auto text-center ">
           <HomeHeading
-            title={`Meet the Experts Who Stand <br /> by You`}
+            title={`Your Partners in the Investment Process`}
             center="true"
             className="text-white"
           />
           <p className={styles.subtext}>
-            Lorem ipsum dolor sit amet, consectetuer adipiscing elit, sed diam
-            nonummy nibh euismod tincidunt ut laoreet dolore magna aliquam erat
-            volutpat.
+            The strength of our services lies in the people who design and deliver them. Their focus is always on creating value and building lasting confidence for every investor we serve.
           </p>
         </div>
       </div>

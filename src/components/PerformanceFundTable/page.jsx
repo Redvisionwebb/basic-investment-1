@@ -4,22 +4,49 @@ import Image from "next/image";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
 import CryptoJS from "crypto-js";
+import TopFundskeleton from "../skeletons/topFundskeleton";
+import axios from "axios";
+import { Dialog, DialogContent, DialogHeader, DialogTitle } from "../ui/dialog";
+import { Input } from "../ui/input";
+import { Button } from "../ui/button";
 
 export default function MutualFundTable({ performanceData, schemeName }) {
   const [searchQuery, setSearchQuery] = useState("");
+  const [roboUser, setRoboUser] = useState(null);
+  const [errorMessage, setErrorMessage] = useState("");
+  const [investAmount, setInvestAmount] = useState("");
+  const [showInvestPopup, setShowInvestPopup] = useState(false);
+  const [selectedFund, setSelectedFund] = useState(null); // instead of showInvestPopup
   const [sortBy, setSortBy] = useState("");
   const [fundList, setFundList] = useState(performanceData);
   const [filteredFunds, setFilteredFunds] = useState([]);
+  const [isConfirmed, setIsConfirmed] = useState(false);
   const router = useRouter();
   const SECRET_KEY = process.env.NEXT_PUBLIC_SECRET_KEY;
 
+  useEffect(() => {
+    const fetchRoboUser = async () => {
+      try {
+        const res = await axios.get(
+          `${process.env.NEXT_PUBLIC_NEXTAUTH_URL}/api/robo`
+        );
+        if (res.data.success) {
+          setRoboUser(res.data.data);
+        } else {
+          console.warn("No Robo User found.");
+        }
+      } catch (error) {
+        console.error("Error fetching Robo User:", error);
+      }
+    };
+    fetchRoboUser();
+  }, []);
   // Set fund list from performanceData
   useEffect(() => {
     if (performanceData && Array.isArray(performanceData)) {
       setFundList(performanceData);
     }
   }, [performanceData]);
-  // console.log(fundList)
 
   // Apply search and sorting
   useEffect(() => {
@@ -36,15 +63,23 @@ export default function MutualFundTable({ performanceData, schemeName }) {
     } else if (sortBy === "returns") {
       const getReturnValue = (fund) => {
         return parseFloat(
-          fund?.five_year !== "0.00" ? fund.five_year :
-            fund?.three_year !== "0.00" ? fund.three_year :
-              fund?.one_year !== "0.00" ? fund.one_year :
-                fund?.nine_month !== "0.00" ? fund.nine_month :
-                  fund?.six_month !== "0.00" ? fund.six_month :
-                    fund?.three_month !== "0.00" ? fund.three_month :
-                      fund?.one_month !== "0.00" ? fund.one_month :
-                        fund?.one_week !== "0.00" ? fund.one_week :
-                          "0"
+          fund?.five_year !== "0.00"
+            ? fund.five_year
+            : fund?.three_year !== "0.00"
+            ? fund.three_year
+            : fund?.one_year !== "0.00"
+            ? fund.one_year
+            : fund?.nine_month !== "0.00"
+            ? fund.nine_month
+            : fund?.six_month !== "0.00"
+            ? fund.six_month
+            : fund?.three_month !== "0.00"
+            ? fund.three_month
+            : fund?.one_month !== "0.00"
+            ? fund.one_month
+            : fund?.one_week !== "0.00"
+            ? fund.one_week
+            : "0"
         );
       };
 
@@ -52,15 +87,23 @@ export default function MutualFundTable({ performanceData, schemeName }) {
     } else if (sortBy === "nav") {
       const getNavValue = (fund) => {
         return parseFloat(
-          fund?.fiveyear_navEndDate !== "0.00" ? fund.fiveyear_navEndDate :
-            fund?.threeyear_navEndDate !== "0.00" ? fund.threeyear_navEndDate :
-              fund?.one_year !== "0.00" ? fund.one_year :
-                fund?.nine_month !== "0.00" ? fund.nine_month :
-                  fund?.six_month !== "0.00" ? fund.six_month :
-                    fund?.three_month !== "0.00" ? fund.three_month :
-                      fund?.onemonth_navEndDate !== "0.00" ? fund.onemonth_navEndDate :
-                        fund?.oneweek_navEndDate !== "0.00" ? fund.oneweek_navEndDate :
-                          "0"
+          fund?.fiveyear_navEndDate !== "0.00"
+            ? fund.fiveyear_navEndDate
+            : fund?.threeyear_navEndDate !== "0.00"
+            ? fund.threeyear_navEndDate
+            : fund?.one_year !== "0.00"
+            ? fund.one_year
+            : fund?.nine_month !== "0.00"
+            ? fund.nine_month
+            : fund?.six_month !== "0.00"
+            ? fund.six_month
+            : fund?.three_month !== "0.00"
+            ? fund.three_month
+            : fund?.onemonth_navEndDate !== "0.00"
+            ? fund.onemonth_navEndDate
+            : fund?.oneweek_navEndDate !== "0.00"
+            ? fund.oneweek_navEndDate
+            : "0"
         );
       };
 
@@ -69,7 +112,6 @@ export default function MutualFundTable({ performanceData, schemeName }) {
 
     setFilteredFunds(result);
   }, [searchQuery, sortBy, fundList]);
-
 
   const handleSelectFunds = (fund) => {
     const dataToStore = {
@@ -85,9 +127,67 @@ export default function MutualFundTable({ performanceData, schemeName }) {
 
     localStorage.setItem("encryptedFundPerormanceData", encrypted);
 
-    router.push("/performance/fund-performance/fund-details");
+    window.location.href = "/performance/fund-performance/fund-details";
   };
 
+  const handleInvestSubmit = async (pcode) => {
+    try {
+      const res = await axios.post(
+        `${process.env.NEXT_PUBLIC_NEXTAUTH_URL}/api/robo/get-minimum-amount`,
+        {
+          schemeCode: pcode,
+          arn_id: roboUser?.arnId,
+        }
+      );
+
+      const minAmount = res?.data?.data?.data[pcode] || 0;
+      const enteredAmount = parseFloat(investAmount);
+
+      if (!enteredAmount || enteredAmount <= 0) {
+        setErrorMessage("Please enter a valid investment amount.");
+        return;
+      }
+
+      if (enteredAmount < minAmount) {
+        setErrorMessage(`Minimum investment amount is ₹${minAmount}.`);
+        return;
+      }
+
+      const funds = [
+        {
+          pcode,
+          allocation: "100",
+          allocationAmount: enteredAmount,
+        },
+      ];
+
+      const investmentData = {
+        arnid: roboUser?.arnId,
+        arnnumber: roboUser?.arnNumber,
+        totalAmount: enteredAmount,
+        funds,
+      };
+
+      localStorage.setItem("investmentData", JSON.stringify(investmentData));
+      setShowInvestPopup(false);
+      setInvestAmount("");
+      router.push("/login");
+    } catch (error) {
+      console.error("Error fetching minimum amount:", error);
+      alert("Failed to fetch minimum investment amount. Please try again.");
+    }
+  };
+
+  const openInvestPopup = (fund) => {
+    setSelectedFund(fund);
+    setInvestAmount("");
+    setErrorMessage("");
+  };
+
+  // Close popup
+  const closeInvestPopup = () => {
+    setSelectedFund(null);
+  };
   return (
     <div className="max-w-screen-xl mx-auto section">
       {/* Filters */}
@@ -112,15 +212,17 @@ export default function MutualFundTable({ performanceData, schemeName }) {
       </div>
 
       {/* Fund List */}
-      <div className="bg-[var(--rv-third)] shadow rounded  overflow-hidden">
+      <div className="bg-[var(--rv-primary)] text-[var(--rv-white)] shadow rounded  overflow-hidden">
         {filteredFunds.length > 0 ? (
           filteredFunds.map((fund, idx) => (
             <div
               key={idx}
-              onClick={() => handleSelectFunds(fund)}
-              className="flex flex-col md:flex-row justify-between items-center border-b border-[var(--rv-primary)] gap-4 p-4 hover:bg-[var(--rv-primary)] text-[var(--rv-black)] hover:text-[var(--rv-white)]  cursor-pointer"
+              className="flex flex-col md:flex-row justify-between items-center border-b border-[var(--rv-ternary)] gap-4 p-4 hover:bg-[var(--rv-ternary)] cursor-pointer"
             >
-              <div className="flex items-center gap-3 w-full md:w-1/2">
+              <div
+                className="flex items-center gap-3 w-full md:w-1/2"
+                onClick={() => handleSelectFunds(fund)}
+              >
                 {/* <Image
                   src={fund.logo || "/default-logo.png"}
                   alt="Logo"
@@ -130,89 +232,97 @@ export default function MutualFundTable({ performanceData, schemeName }) {
                 /> */}
                 <div>
                   <p className="font-semibold">{fund.funddes}</p>
-                  <p className="text-sm text-gray-700">
-                    {fund.schemeCategory}
-                  </p>
+                  <p className="text-sm text-gray-400">{fund.schemeCategory}</p>
                 </div>
               </div>
-
               <div className="grid grid-cols-2 md:grid-cols-4 gap-2 items-center text-center w-full md:w-1/2">
-                <div className="md:text-right">
-                  <p className="text-sm text-gray-700">Corpus</p>
-                  <p className="font-medium text-gray-600">
+                <div
+                  className="md:text-right"
+                  onClick={() => handleSelectFunds(fund)}
+                >
+                  <p className="text-sm text-gray-400">Corpus</p>
+                  <p className="font-medium text-gray-200">
                     ₹{fund?.Corpus} Cr
                   </p>
                 </div>
-                <div className="md:text-right">
-                  {fund?.fiveyear_navEndDate &&
+                <div
+                  className="md:text-right"
+                  onClick={() => handleSelectFunds(fund)}
+                >
+                  {(fund?.fiveyear_navEndDate &&
                     fund.fiveyear_navEndDate !== "0.00" && (
                       <div>
-                        <p className="text-sm text-gray-700">NAV</p>
-                        <p className="font-medium text-gray-600">
+                        <p className="text-sm text-gray-400">NAV</p>
+                        <p className="font-medium text-gray-200">
                           ₹{fund?.fiveyear_navEndDate}
                         </p>
                       </div>
-                    ) || (fund?.threeyear_navEndDate &&
-                      fund.threeyear_navEndDate !== "0.00" && (
-                        <div>
-                          <p className="text-sm text-gray-700">NAV</p>
-                          <p className="text-lg font-medium text-gray-600">
-                            ₹ {fund?.threeyear_navEndDate}
-                          </p>
-                        </div>
-                      ))
-                    || (fund?.oneyear_navEndDate
-                      &&
-                      fund.oneyear_navEndDate !== "0.00" && (
-                        <div>
-                          <p className="text-sm text-gray-700">NAV</p>
-                          <p className="text-lg font-medium text-gray-600">
-                            ₹ {fund?.oneyear_navEndDate}
-                          </p>
-                        </div>
-                      )) || (/* Add six_month check here if available */
-                      fund?.sixmonth_navEndDate &&
-                      fund.sixmonth_navEndDate !== "0.00" && (
-                        <div>
-                          <h3 className="text-sm text-gray-700">NAV</h3>
-                          <p className="text-lg font-medium text-gray-600">
-                            ₹ {fund?.sixmonth_navEndDate}
-                          </p>
-                        </div>
-                      ))
-                    || (/* Add six_month check here if available */
-                      fund?.three_month - navEndDate &&
-                      fund.three_month - navEndDate !== "0.00" && (
-                        <div>
-                          <h3 className="text-sm text-gray-700">NAV: 6 Month Data</h3>
-                          <p className="text-lg font-medium text-gray-600">
-                            ₹ {fund?.three_month - navEndDate}
-                          </p>
-                        </div>
-                      ))
-                    || (/* Add six_month check here if available */
-                      fund?.onemonth_navEndDate &&
-                      fund.onemonth_navEndDate !== "0.00" && (
-                        <div>
-                          <h3 className="text-sm text-gray-700">NAV: 6 Month Data</h3>
-                          <p className="text-lg font-medium text-gray-600">
-                            ₹ {fund?.onemonth_navEndDate}
-                          </p>
-                        </div>
-                      ))
-                    || (/* Add six_month check here if available */
-                      fund?.oneweek_navEndDate &&
+                    )) ||
+                  (fund?.threeyear_navEndDate &&
+                    fund.threeyear_navEndDate !== "0.00" && (
+                      <div>
+                        <p className="text-sm text-gray-400">NAV</p>
+                        <p className="text-lg font-medium text-gray-200">
+                          ₹ {fund?.threeyear_navEndDate}
+                        </p>
+                      </div>
+                    )) ||
+                  (fund?.oneyear_navEndDate &&
+                    fund.oneyear_navEndDate !== "0.00" && (
+                      <div>
+                        <p className="text-sm text-gray-400">NAV</p>
+                        <p className="text-lg font-medium text-gray-200">
+                          ₹ {fund?.oneyear_navEndDate}
+                        </p>
+                      </div>
+                    )) /* Add six_month check here if available */ ||
+                  (fund?.sixmonth_navEndDate &&
+                    fund.sixmonth_navEndDate !== "0.00" && (
+                      <div>
+                        <h3 className="text-sm text-gray-400">NAV</h3>
+                        <p className="text-lg font-medium text-gray-200">
+                          ₹ {fund?.sixmonth_navEndDate}
+                        </p>
+                      </div>
+                    )) /* Add six_month check here if available */ ||
+                  (fund?.three_month &&
+                    fund.three_month !== "0.00" && (
+                      <div>
+                        <h3 className="text-sm text-gray-400">
+                          NAV: 6 Month Data
+                        </h3>
+                        <p className="text-lg font-medium text-gray-200">
+                          ₹ {fund?.three_month}
+                        </p>
+                      </div>
+                    )) /* Add six_month check here if available */ ||
+                  (fund?.onemonth_navEndDate &&
+                    fund.onemonth_navEndDate !== "0.00" && (
+                      <div>
+                        <h3 className="text-sm text-gray-400">
+                          NAV: 6 Month Data
+                        </h3>
+                        <p className="text-lg font-medium text-gray-200">
+                          ₹ {fund?.onemonth_navEndDate}
+                        </p>
+                      </div>
+                    )) /* Add six_month check here if available */ ||
+                    (fund?.oneweek_navEndDate &&
                       fund.oneweek_navEndDate !== "0.00" && (
                         <div>
-                          <h3 className="text-sm text-gray-700">NAV: 6 Month Data</h3>
-                          <p className="text-lg font-medium text-gray-600">
+                          <h3 className="text-sm text-gray-400">
+                            NAV: 6 Month Data
+                          </h3>
+                          <p className="text-lg font-medium text-gray-200">
                             ₹ {fund?.oneweek_navEndDate}
                           </p>
                         </div>
                       ))}
-
                 </div>
-                <div className="md:text-right">
+                <div
+                  className="md:text-right"
+                  onClick={() => handleSelectFunds(fund)}
+                >
                   {(() => {
                     const {
                       five_year,
@@ -259,7 +369,7 @@ export default function MutualFundTable({ performanceData, schemeName }) {
 
                     return (
                       <>
-                        <p className="text-sm text-gray-700">
+                        <p className="text-sm text-gray-400">
                           {label} CAGR returns
                         </p>
                         <p className="font-medium text-green-600">{value}%</p>
@@ -268,24 +378,94 @@ export default function MutualFundTable({ performanceData, schemeName }) {
                   })()}
                 </div>
                 <div className="md:text-right">
-                  <Link href="/contact-us" className="">
+                  {roboUser ? (
                     <button
-
-                      className="bg-[var(--rv-secondary)]  text-[var(--rv-white)]  font-bold px-6 py-2 rounded-lg   transition-all"
+                      onClick={() => openInvestPopup(fund)}
+                      className="
+    bg-[var(--rv-secondary)]
+    text-[var(--rv-primary)] hover:bg-[var(--rv-primary)] hover:text-[var(--rv-secondary)]
+    font-bold px-2 py-2 rounded-lg transition-all
+  "
                     >
-                      Invest
+                      Purchase Now
                     </button>
-                  </Link>
+                  ) : (
+                    <Link href="/login" className="">
+                      <button className="bg-[var(--rv-secondary)]  text-[var(--rv-white)]  font-bold px-6 py-2 rounded-lg   transition-all">
+                        Purchase Now
+                      </button>
+                    </Link>
+                  )}
                 </div>
+
+                {selectedFund && (
+                  <div className="fixed inset-0 z-[9999] flex items-center justify-center bg-black/30">
+                    <div className="bg-white text-black rounded-lg shadow-xl max-w-md w-full px-7 py-6 relative">
+                      <button
+                        onClick={closeInvestPopup}
+                        className="absolute top-3 right-3 text-gray-500 hover:text-gray-700 text-2xl"
+                      >
+                        &times;
+                      </button>
+
+                      <h2 className="text-xl font-bold mb-3">
+                        {selectedFund?.funddes}
+                      </h2>
+                      <p className="text-start mb-2 font-medium">
+                        Enter Lumpsum Amount
+                      </p>
+
+                      <input
+                        type="number"
+                        min={1}
+                        value={investAmount}
+                        onChange={(e) => setInvestAmount(e.target.value)}
+                        placeholder="Enter amount"
+                        className="border rounded-lg w-full p-2 mb-3 focus:outline-none focus:ring-2 focus:ring-[var(--rv-primary)]"
+                      />
+                          {errorMessage && (
+                        <p className="text-red-600 text-sm mb-2">
+                          {errorMessage}
+                        </p>
+                      )}
+
+
+                        <div className="flex items-start gap-2 mb-2">
+                        <input
+                            id="disclaimerCheckbox"
+                            type="checkbox"
+                            className="mt-1 w-4 h-4 text-[var(--rv-primary)] border-gray-300 rounded focus:ring-[var(--rv-primary)]"
+                            checked={isConfirmed}
+                            onChange={(e) => setIsConfirmed(e.target.checked)}
+                        />
+                        <label
+                            htmlFor="disclaimerCheckbox"
+                            className="text-start text-sm text-gray-700 leading-snug"
+                        >
+                            I understand this is factual information only and I am investing at my own discretion.
+                            <br />
+                            This transaction is execution-only, and the distributor has not provided investment advice.
+                        </label>
+                    </div>
+
+                  
+                     <button
+  onClick={() => handleInvestSubmit(selectedFund.pcode)}
+  disabled={!isConfirmed}
+  className={`btn btn-secondary ${
+    !isConfirmed ? "opacity-50 cursor-not-allowed" : ""
+  }`}
+>
+  Purchase
+</button>
+                    </div>
+                  </div>
+                )}
               </div>
-
-
             </div>
           ))
         ) : (
-          <div className="p-4 text-center text-gray-500">
-            No funds match your search.
-          </div>
+          <TopFundskeleton />
         )}
       </div>
     </div>

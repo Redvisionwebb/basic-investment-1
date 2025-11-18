@@ -20,7 +20,7 @@ const SubmitHandler = ({ steps, sitedata }) => {
 
         const sendLead = async () => {
             try {
-                await axios.post('/api/bot/leads', leadData);
+                await axios.post(`${process.env.NEXT_PUBLIC_NEXTAUTH_URL}/api/bot/leads`, leadData);
                 submitted.current = true;
 
                 const whatsappText =

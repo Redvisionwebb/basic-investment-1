@@ -7,7 +7,7 @@ import Link from "next/link";
 const comparisons = [
   {
     left: "Do-it-yourself – fund selection, tracking, rebalancing",
-    right: "Expert guidance from MFDs at every step.",
+    right: "MFD assists throughout investments.",
     icon: "/icons/guidance.svg",
   },
   {

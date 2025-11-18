@@ -115,9 +115,9 @@ const TeamTable = () => {
       cell: ({ row }) => (
         <div className="flex flex-col gap-1">
           {row.original.socialMedia?.map((sm, idx) => (
-            <Link key={idx} href={sm.link} target="_blank" rel="noopener noreferrer" className="text-blue-600 underline">
+            <a key={idx} href={sm.link} target="_blank" rel="noopener noreferrer" className="text-blue-600 underline">
               {sm.name}
-            </Link>
+            </a>
           )) || "-"}
         </div>
       ),
@@ -133,7 +133,7 @@ const TeamTable = () => {
           <div className="flex items-center gap-3">
             <button
               onClick={() => router.push(`/admin/manage-aboutus/teams/edit/${member._id}`)}
-              className="text-[var(--rv-admin-bg-color)] border border-[var(--rv-admin-bg-color)] rounded-md p-2"
+              className="text-[#2367f8] border border-[#2367f8] rounded-md p-2"
             >
               <FiEdit2 size={16} />
             </button>
@@ -163,7 +163,7 @@ const TeamTable = () => {
       <div className="flex justify-between ">
         <h2 className="text-2xl font-bold">Manage Team Members</h2>
         <Link href="/admin/manage-aboutus/teams/add">
-          <Button className="text-white bg-[var(--rv-admin-bg-color)] hover:bg-[var(--rv-admin-bg-color)]">Add New Member</Button>
+          <Button className="text-white bg-[#2367f8] hover:bg-[#2367f8]">Add New Member</Button>
         </Link>
       </div>
       <div className="w-full">

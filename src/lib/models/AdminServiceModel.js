@@ -4,6 +4,7 @@ const AdminServiceSchema = new mongoose.Schema({
     superServiceId: { type: String, required: true }, // link to superadmin service
     versionSlug: { type: String, required: true },
     name: String,
+    link: String,
     description: String,
     metaTitle: String,
     metaDescription: String,

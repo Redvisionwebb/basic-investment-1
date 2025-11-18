@@ -28,7 +28,7 @@ const ChangePasswordPage = () => {
 
     try {
       const response = await axios.post(
-        `/api/change-password`,
+        `${process.env.NEXT_PUBLIC_NEXTAUTH_URL}/api/change-password`,
         {
           oldPassword: data.oldPassword,
           newPassword: data.newPassword,
@@ -40,9 +40,15 @@ const ChangePasswordPage = () => {
       );
 
       if (response.data.ok) {
-        toast.success("✅ Password changed successfully");
+        // toast.success("✅ Password changed successfully");
         reset();
-        router.push("/admin");
+          toast.success("✅ Password changed successfully", {
+        onClose: () => {
+          // Redirect only after toast is fully closed
+          router.push("/admin");
+        },
+        autoClose: 3000, // optional: shorter toast duration (3s)
+      });
       } else {
         toast.error(response.data.error || "❌ Failed to change password");
       }
@@ -79,7 +85,7 @@ const ChangePasswordPage = () => {
                 onClick={() => setShowOld(!showOld)}
                 className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-500"
               >
-                {showOld ? <FaEyeSlash /> : <FaEye />}
+                {showOld ? <FaEye /> : <FaEyeSlash />}
               </button>
             </div>
           </div>
@@ -101,7 +107,7 @@ const ChangePasswordPage = () => {
                 onClick={() => setShowNew(!showNew)}
                 className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-500"
               >
-                {showNew ? <FaEyeSlash /> : <FaEye />}
+                {showNew ? <FaEye /> : <FaEyeSlash />}
               </button>
             </div>
           </div>
@@ -123,7 +129,7 @@ const ChangePasswordPage = () => {
                 onClick={() => setShowConfirm(!showConfirm)}
                 className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-500"
               >
-                {showConfirm ? <FaEyeSlash /> : <FaEye />}
+                {showConfirm ? <FaEye /> : <FaEyeSlash />}
               </button>
             </div>
           </div>
@@ -132,7 +138,7 @@ const ChangePasswordPage = () => {
           <button
             type="submit"
             disabled={loading}
-            className="w-full bg-[var(--rv-admin-bg-color)] hover:bg-[var(--rv-admin-bg-color)] text-white font-medium py-2 rounded-lg transition-all"
+            className="w-full bg-[#2367f8] hover:bg-[#2367f8]/90 text-white font-medium py-2 rounded-lg transition-all"
           >
             {loading ? "Changing..." : "Change Password"}
           </button>

@@ -76,6 +76,13 @@ export async function PUT(req, { params }) {
     const image = formData.get("image");
     const link = formData.get("link");
     const file = formData.get('image');
+          // Validate file size (1 MB = 1 * 1024 * 1024 bytes)
+    if (file && file.size > 1 * 1024 * 1024) {
+      return NextResponse.json(
+        { error: "File size exceeds 1 MB limit" },
+        { status: 400 }
+      );
+    }
 
     // Find the existing advertisement
     const advertisement = await AdvertisementModel.findById(id);

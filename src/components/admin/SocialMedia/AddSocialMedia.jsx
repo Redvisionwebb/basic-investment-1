@@ -89,7 +89,7 @@ const AddSocialModal = ({ onClose, onSuccess, editData }) => {
             </button>
             <button
               type="submit"
-              className="bg-[var(--rv-admin-bg-color)] text-white hover:bg-[var(--rv-admin-bg-color)] rounded-md px-4 py-2">
+              className="bg-[#2367f8] text-white hover:bg-[#2367f8] rounded-md px-4 py-2">
               {editData ? 'Update' : 'Save'}
             </button>
           </div>

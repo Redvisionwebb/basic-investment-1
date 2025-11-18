@@ -20,10 +20,27 @@ export async function POST(req) {
     const title = formData.get("title");
     const videoUrl = formData.get("videoUrl");
     const embedUrl = formData.get("embedUrl");
-   uploaded = await saveImageToLocal("video", file);
+    if (file && file.size > 1 * 1024 * 1024) {
+          return NextResponse.json(
+            { error: "File size exceeds 1 MB limit" },
+            { status: 400 }
+          );
+        }
+         if (file) {
+          try {
+               uploaded = await saveImageToLocal("video", file);
+          } catch (uploadError) {
+            return NextResponse.json(
+              { error: "Image upload failed" },
+              { status: 500 }
+            );
+          }
+        }
+
    
 
-    await VideoModel.create({
+  if(file){
+      await VideoModel.create({
       image: {
         url: uploaded.url,
         public_id: uploaded.filename,
@@ -32,6 +49,13 @@ export async function POST(req) {
       videoUrl,
       embedUrl,
     });
+  }else{
+      await VideoModel.create({
+      title,
+      videoUrl,
+      embedUrl,
+    });
+  }
     return NextResponse.json(
       { message: "Data Added successfully" },
       { status: 201 }

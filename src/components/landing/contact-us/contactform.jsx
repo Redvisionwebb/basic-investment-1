@@ -44,10 +44,10 @@ export default function ContactForm({
     };
 
     try {
-      const res = await axios.post("/api/leads", formData);
+      const res = await axios.post(`${process.env.NEXT_PUBLIC_NEXTAUTH_URL}/api/leads`, formData);
       if (res.status === 201) {
-        await axios.post("/api/email", emailData);
-        await axios.post("/api/email", senderData);
+        await axios.post(`${process.env.NEXT_PUBLIC_NEXTAUTH_URL}/api/email`, emailData);
+        await axios.post(`${process.env.NEXT_PUBLIC_NEXTAUTH_URL}/api/email`, senderData);
         setSubmitted(true);
         setFormData({
           username: "",

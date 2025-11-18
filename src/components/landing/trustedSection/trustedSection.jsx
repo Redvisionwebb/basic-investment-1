@@ -6,16 +6,16 @@ import HomeHeading from "../heading/heading";
 
 const accordionData = [
   {
-    title: "First Field Title",
-    content: "This is the description for the first field.",
+    title: "Easy Investment Access",
+    content: "Invest in mutual funds through SIPs or lump sum quickly and securely through our platform.",
   },
   {
-    title: "Second Field Title",
-    content: "This is the description for the second field.",
+    title: "Transparent Processes",
+    content: "Stay informed with clear updates, statements, and reports about your investments.",
   },
   {
-    title: "Third Field Title",
-    content: "This is the description for the third field.",
+    title: "Track Your Progress",
+    content: "Monitor your investments easily and see how your portfolio grows over time.",
   },
 ];
 
@@ -35,10 +35,7 @@ export default function TrustedSection() {
              <HomeHeading title={`Your Trusted
               <br /> Financial Partners`} />
             <p className={styles.description}>
-              We believe every investor should understand their financial
-              journey. That’s why we focus on educating, empowering, and guiding
-              with full transparency and integrity — earning the trust of
-              hundreds of clients.
+              Investing doesn’t have to be complicated. By keeping everything simple, transparent, and reliable, we help clients feel confident and comfortable in their financial journey.
             </p>
 
             <div className={styles.accordion}>

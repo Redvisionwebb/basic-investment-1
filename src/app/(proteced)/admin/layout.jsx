@@ -10,7 +10,7 @@ export default function RootLayout({ children }) {
   }, []);
 
   return (
-    <div>
+    <div className="overflow-hidden">
       {loading ? <Loader /> : children}
     </div>
   );

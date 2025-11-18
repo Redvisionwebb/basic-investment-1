@@ -7,12 +7,11 @@
 }
 
 .spinner>div {
-    background-color: var(--rv-admin-bg-color);
+    background-color: #2366f8b0;
     height: 100%;
     position: absolute;
     width: 100%;
     border: 4px solid #ffff;
-    opacity: 0.5;
 }
 
 .spinner div:nth-of-type(1) {

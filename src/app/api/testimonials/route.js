@@ -22,8 +22,23 @@ export async function POST(req) {
       return NextResponse.json({ error: 'Missing required fields' }, { status: 400 });
     }
 
-    uploaded = await saveImageToLocal("testimonials", file);
-
+   
+     if (file && file.size > 1 * 1024 * 1024) {
+                  return NextResponse.json(
+                    { error: "File size exceeds 1 MB limit" },
+                    { status: 400 }
+                  );
+                }
+                 if (file) {
+                  try {
+                       uploaded = await saveImageToLocal("testimonials", file);
+                  } catch (uploadError) {
+                    return NextResponse.json(
+                      { error: "Image upload failed" },
+                      { status: 500 }
+                    );
+                  }
+                }
     // await fs.unlink(tempFilePath);
 
     await TestimonialModel.create({
@@ -51,7 +66,7 @@ export async function POST(req) {
 
 export async function GET(req, res) {
     try {
-        const testimonial = await TestimonialModel.find({}); // Fetch all blogs
+        const testimonial = await TestimonialModel.find({}).sort({ createdAt: -1 });; // Fetch all blogs
         return NextResponse.json(testimonial, { status: 200 });
     } catch (error) {
         console.error('Error fetching blogs:', error);

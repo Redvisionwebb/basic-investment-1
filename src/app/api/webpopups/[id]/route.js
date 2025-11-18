@@ -5,7 +5,7 @@ import { deleteFileIfExists, saveImageToLocal } from "@/lib/functions";
 import axios from "axios";
 
 export async function DELETE(req, { params }) {
-  const { id } = params;
+  const { id } = await params;
 
   try {
     await ConnectDB();
@@ -61,28 +61,50 @@ export async function GET(req, { params }) {
 }
 
 export async function PUT(req, { params }) {
-  const { id } = params; // Extract popup ID from params
+  const { id } = params; // no need for await here
   try {
     const formData = await req.formData();
     const file = formData.get("image");
     const title = formData.get("title");
 
-    if (!file) {
-      return NextResponse.json({ error: "No file provided" }, { status: 400 });
-    }
+    const updateData = {};
 
-    const uploadData = await saveImageToLocal('popups', file);
+    // Handle image upload if provided
+    if (file && file.name) {
+      // Validate file size (1 MB = 1 * 1024 * 1024 bytes)
+      if (file.size > 1 * 1024 * 1024) {
+        return NextResponse.json(
+          { error: "File size exceeds 1 MB limit" },
+          { status: 400 }
+        );
+      }
 
-    await PopupsModel.findByIdAndUpdate(id, {
-      image: {
+      const uploadData = await saveImageToLocal("popups", file);
+      updateData.image = {
         url: uploadData.url,
         public_id: uploadData.filename,
-      },
-      title,
-    });
+      };
+    }
+
+    // Handle title update if provided
+    if (title) {
+      updateData.title = title;
+    }
+
+    // If nothing to update
+    if (Object.keys(updateData).length === 0) {
+      return NextResponse.json(
+        { error: "No data provided for update" },
+        { status: 400 }
+      );
+    }
+
+    // Update document
+    await PopupsModel.findByIdAndUpdate(id, updateData);
+
     return NextResponse.json(
-      { message: "Data Aded successfully" },
-      { status: 201 }
+      { message: "Popup updated successfully" },
+      { status: 200 }
     );
   } catch (error) {
     console.error("Error updating popup:", error);
@@ -92,3 +114,4 @@ export async function PUT(req, { params }) {
     );
   }
 }
+

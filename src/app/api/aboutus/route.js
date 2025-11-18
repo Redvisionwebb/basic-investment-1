@@ -7,13 +7,28 @@ import { saveImageToLocal } from "@/lib/functions";
 export async function POST(req) {
   try {
     await ConnectDB();
-
+    let  uploaded = null;
     const formData = await req.formData();
     const title = formData.get("title");
     const description = formData.get("description");
     const file = formData.get("image");
-
-    let uploaded = await saveImageToLocal("aboutus", file);
+      // Validate file size (1 MB = 1 * 1024 * 1024 bytes)
+    if (file && file.size > 1 * 1024 * 1024) {
+      return NextResponse.json(
+        { error: "File size exceeds 1 MB limit" },
+        { status: 400 }
+      );
+    }
+     if (file) {
+      try {
+        uploaded = await saveImageToLocal("aboutus", file);
+      } catch (uploadError) {
+        return NextResponse.json(
+          { error: "Image upload failed" },
+          { status: 500 }
+        );
+      }
+    }
     const existing = await AboutUsModel.findOne();
 
     if (existing) {

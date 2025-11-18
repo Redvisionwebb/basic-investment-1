@@ -9,7 +9,7 @@ import axios from "axios";
 export default function ServiceCards() {
   const [services, setServices] = useState([]);
   const fetchservice = async () => {
-    const res = await axios.get("/api/services");
+    const res = await axios.get(`${process.env.NEXT_PUBLIC_NEXTAUTH_URL}/api/services`);
     if (res.status === 200) {
       const data = res.data;
       setServices(data)

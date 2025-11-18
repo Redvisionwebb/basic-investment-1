@@ -32,11 +32,9 @@ export default function ServicesSection({ services }) {
     <section className={`${styles.ServiceSection} px-4`}>
       <div className="max-w-screen-xl mx-auto ">
         <div className="text-center">
-          <HomeHeading title={`Grow Smarter with Our Services`} center="true" />
+          <HomeHeading title={`Discover Our Products and Services`} center="true" />
           <p className=" max-w-2xl mx-auto">
-            Lorem ipsum dolor sit amet, consectetuer adipiscing elit, sed diam
-            nonummy nibh euismod tincidunt ut laoreet dolore magna aliquam erat
-            volutpat.
+            Your goals deserve more than just plans; they deserve the right support. Our products and services make investing simple, and tracking progress seamless, so you can grow wealth with confidence.
           </p>
         </div>
 

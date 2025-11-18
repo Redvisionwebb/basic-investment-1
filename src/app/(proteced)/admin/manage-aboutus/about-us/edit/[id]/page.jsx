@@ -15,7 +15,6 @@ import Link from "next/link";
 import dynamic from "next/dynamic";
 import { useParams, useRouter } from "next/navigation";
 import DefaultLayout from "@/components/admin/Layouts/DefaultLaout";
-import Image from "next/image";
 
 const JoditEditor = dynamic(() => import("jodit-react"), { ssr: false });
 
@@ -53,32 +52,93 @@ export function AboutUsForm({ aboutId }) {
         }
     }, [aboutId]);
 
-    const onSubmit = async (data) => {
-        setLoading(true);
-        const formData = new FormData();
-        formData.append('title', data.title);
-        formData.append('description', description);
-        if (selectedImage) formData.append('image', selectedImage);
+const onSubmit = async (data) => {
+  setLoading(true);
+  form.clearErrors(); // Clear any previous errors
 
-        try {
-            const response = await axios.put(`${process.env.NEXT_PUBLIC_NEXTAUTH_URL}/api/aboutus/${aboutId}`, formData, {
-                headers: { 'Content-Type': 'multipart/form-data' },
-            });
+  try {
+    // 🧩 Image size validation (1MB max)
+    if (selectedImage && selectedImage.size > 1024 * 1024) {
+      form.setError("image", {
+        type: "manual",
+        message: "Image size exceeds more than 1MB.",
+      });
+      toast({
+        variant: "destructive",
+        title: "File Too Large",
+        description: "Please upload an image smaller than 1MB.",
+      });
+      setLoading(false);
+      return;
+    }
 
-            if (response.status === 200) {
-                toast.success("About Us updated successfully ✅");
-                form.reset();
-                router.push("/admin/manage-aboutus/about-us/manage");
-            } else {
-                toast.error("Update failed ❌");
-            }
-        } catch (error) {
-            console.error('Error:', error);
-            toast.error("An unexpected error occurred ❌");
-        } finally {
-            setLoading(false);
+    const formData = new FormData();
+    if (data.title) formData.append("title", data.title);
+    if (description) formData.append("description", description);
+    if (selectedImage) formData.append("image", selectedImage);
+
+    const response = await axios.put(
+      `${process.env.NEXT_PUBLIC_NEXTAUTH_URL}/api/aboutus/${aboutId}`,
+      formData,
+      { headers: { "Content-Type": "multipart/form-data" } }
+    );
+
+    if (response.status === 200) {
+      toast({
+        title: "✅ About Us updated successfully",
+      });
+      form.reset();
+      setSelectedImage(null);
+      router.push("/admin/manage-aboutus/about-us/manage");
+    } else {
+      toast({
+        variant: "destructive",
+        title: "Update failed",
+        description: "Unexpected server response.",
+      });
+    }
+  } catch (error) {
+    console.error("❌ Error:", error);
+
+    if (axios.isAxiosError(error)) {
+      if (error.response) {
+        const { status, data } = error.response;
+        if (status === 400) {
+          form.setError("image", {
+            type: "manual",
+            message: "Image size exceeds more than 1MB.",
+          });
+          toast({
+            variant: "destructive",
+            title: "Upload Error",
+            description: data?.message || "Image size exceeds more than 1MB.",
+          });
+        } else {
+          toast({
+            variant: "destructive",
+            title: `Error ${status}`,
+            description: data?.message || "Something went wrong while updating.",
+          });
         }
-    };
+      } else {
+        toast({
+          variant: "destructive",
+          title: "Network Error",
+          description: "Unable to reach the server. Please try again later.",
+        });
+      }
+    } else {
+      toast({
+        variant: "destructive",
+        title: "Unexpected Error",
+        description: error.message || "An unexpected error occurred.",
+      });
+    }
+  } finally {
+    setLoading(false);
+  }
+};
+
 
     return (
         <>
@@ -125,10 +185,7 @@ export function AboutUsForm({ aboutId }) {
                                     {previousImage && (
                                         <div className="mt-4">
                                             <p className="text-sm text-gray-500">Previous Image:</p>
-                                            <Image src={previousImage}
-                                                width={100}
-                                                height={100}
-                                                alt="Previous" className="max-w-sm rounded border-gray-400 border h-auto w-40" />
+                                            <img src={previousImage} alt="Previous" className="max-w-sm rounded border-gray-400 border h-auto w-40" />
                                         </div>
                                     )}
                                 </FormItem>
@@ -148,7 +205,7 @@ export function AboutUsForm({ aboutId }) {
                     </div>
 
                     <Button
-                        className="text-white bg-[var(--rv-admin-bg-color)] hover:bg-[var(--rv-admin-bg-color)] flex items-center justify-center gap-2"
+                        className="text-white bg-[#2367f8] hover:bg-[#2367f8] flex items-center justify-center gap-2"
                         type="submit"
                         disabled={loading}
                     >
@@ -178,7 +235,7 @@ const EditAboutUs = () => {
                         Edit About Us
                     </h1>
                     <Link href="/admin/manage-aboutus/about-us/manage">
-                        <Button className="text-white bg-[var(--rv-admin-bg-color)] hover:bg-[var(--rv-admin-bg-color)]">All Entries</Button>
+                        <Button className="text-white bg-[#2367f8] hover:bg-[#2367f8]">All Entries</Button>
                     </Link>
                 </div>
                 <AboutUsForm aboutId={aboutId} />

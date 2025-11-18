@@ -21,7 +21,24 @@ export async function POST(req) {
       return NextResponse.json({ error: "No file provided" }, { status: 400 });
     }
 
-    uploaded = await saveImageToLocal("innerpagebanner", file);
+    
+            if (file && file.size > 1 * 1024 * 1024) {
+                     return NextResponse.json(
+                       { error: "File size exceeds 1 MB limit" },
+                       { status: 400 }
+                     );
+                   }
+                    if (file) {
+                     try {
+                            uploaded = await saveImageToLocal("innerpagebanner", file);
+
+                     } catch (uploadError) {
+                       return NextResponse.json(
+                         { error: "Image upload failed" },
+                         { status: 500 }
+                       );
+                     }
+                   }
 
     await InnerBannerPageModel.create({
       image: {
@@ -47,7 +64,7 @@ export async function POST(req) {
 export async function GET(req, res) {
   try {
     await ConnectDB(); // Ensure DB connection
-    const innerpagebanner = await InnerBannerPageModel.find({}); // Fetch all blogs
+    const innerpagebanner = await InnerBannerPageModel.find({}).sort({ createdAt: -1 });; // Fetch all blogs
     return NextResponse.json(innerpagebanner, { status: 200 });
   } catch (error) {
     console.error("Error fetching inner page banner:", error);

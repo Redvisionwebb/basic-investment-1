@@ -3,6 +3,7 @@ import { NextResponse } from "next/server";
 import axios from "axios";
 import { ConnectDB } from "@/lib/db/ConnectDB";
 import AdminServiceModel from "@/lib/models/AdminServiceModel";
+import { slugify } from "@/lib/functions";
 
 export async function POST(req) {
   await ConnectDB();
@@ -12,6 +13,14 @@ export async function POST(req) {
     if (!version) {
       return NextResponse.json({ error: "Invalid input" }, { status: 400 });
     }
+
+    // Get existing services with updateServices: true to exclude them from operations
+    const existingServicesWithUpdateFlag = await AdminServiceModel.find({
+      versionSlug: version,
+      updateServices: true
+    }).select('superServiceId');
+
+    const excludedServiceIds = existingServicesWithUpdateFlag.map(s => s.superServiceId);
 
     // fetch full version from superadmin
     const res = await axios.get(
@@ -23,19 +32,21 @@ export async function POST(req) {
       return NextResponse.json({ error: "Version not found" }, { status: 404 });
     }
 
-    // 🔥 filter only selected
+    // 🔥 filter only selected services, but exclude those with updateServices: true
     const selectedServices = superVersion.services.filter((s) =>
-      services.includes(s._id.toString())
+      services.includes(s._id.toString()) && !excludedServiceIds.includes(s._id.toString())
     );
-    // save in local admin DB
+
+    // save in local admin DB (only for services without updateServices: true)
     for (const srv of selectedServices) {
-      console.log("Saving service:", srv);
+
       await AdminServiceModel.findOneAndUpdate(
         { superServiceId: srv._id },
         {
           superServiceId: srv._id,
           versionSlug: version,
           name: srv.name,
+          link: slugify(srv.name),
           description: srv.description,
           metaTitle: srv.metaTitle,
           metaDescription: srv.metaDescription,
@@ -54,6 +65,7 @@ export async function POST(req) {
       );
     }
 
+    // Delete services that are not in the selected list and don't have updateServices: true
     await AdminServiceModel.deleteMany({
       versionSlug: version,
       superServiceId: { $nin: services },

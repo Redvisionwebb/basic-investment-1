@@ -4,7 +4,7 @@ import { ConnectDB } from '@/lib/db/ConnectDB';
 
 import PopupsModel from '@/lib/models/PopupsModel';
 import axios from 'axios';
-import { deleteFileIfExists } from '@/lib/functions';
+import { deleteFileIfExists, saveImageToLocal } from '@/lib/functions';
 
 // // Connect to the database
 const LoadDB = async () => {
@@ -26,7 +26,23 @@ export async function POST(req) {
         }
 
 
-    uploaded = await saveImageToLocal("webpopups", file);
+          if (file && file.size > 1 * 1024 * 1024) {
+                  return NextResponse.json(
+                    { error: "File size exceeds 1 MB limit" },
+                    { status: 400 }
+                  );
+                }
+                 if (file) {
+                  try {
+                       uploaded = await saveImageToLocal("webpopups", file);
+                  } catch (uploadError) {
+                    return NextResponse.json(
+                      { error: "Image upload failed" },
+                      { status: 500 }
+                    );
+                  }
+                }
+    
         await PopupsModel.create(
             {
                image: {

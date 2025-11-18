@@ -1,6 +1,6 @@
 import ContactReusableForm from "@/components/landing/contactSectionPage/Contactreusableform";
 import InnerBanner from "@/components/innerBanner/InnerBanner";
-import { getSiteData } from "@/lib/functions";
+import { getServiceData, getSiteData } from "@/lib/functions";
 import { MapPin, Phone, Mail } from "lucide-react";
 import Link from "next/link";
 import style from "./Contactus.module.css";
@@ -8,7 +8,7 @@ import SectionHeading from "@/components/sectionHeading/sectionHeading";
 
 export default async function ContactUs() {
   const sitedata = await getSiteData();
-
+  const services=await getServiceData();
   return (
     <div>
       <InnerBanner title="Contact Us" />
@@ -19,7 +19,7 @@ export default async function ContactUs() {
             <div className="md:w-1/2 w-full bg-[var(--rv-bg-primary-light)] p-5 md:p-8 rounded-xl">
               <h2>Get in Touch With Us</h2>
               <p className="text-lg">Lorem ipsum dolor sit amet, consectetuer adipiscing elit, sed diam nonummy nibh euismod tincidunt.</p>
-              <ContactReusableForm sitedata={sitedata} />
+              <ContactReusableForm services={services} sitedata={sitedata} />
             </div>
 
 
@@ -41,10 +41,10 @@ export default async function ContactUs() {
                   <div>
                     <h3 className="font-semibold text-lg text-[var(--rv-primary)]">Call Us</h3>
                     <Link
-                      href={`tel:${sitedata.mobile}`}
+                      href={`tel:${sitedata?.mobile}`}
                       className="hover:underline text-gray-700 block"
                     >
-                      {sitedata.mobile}
+                      {sitedata?.mobile}
                     </Link>
                   </div>
                 </div>
@@ -56,10 +56,10 @@ export default async function ContactUs() {
                   <div>
                     <h3 className="font-semibold text-lg text-[var(--rv-primary)]">Mail Us</h3>
                     <Link
-                      href={`mailto:${sitedata.email}`}
+                      href={`mailto:${sitedata?.email}`}
                       className="hover:underline text-gray-700 block"
                     >
-                      {sitedata.email}
+                      {sitedata?.email}
                     </Link>
                   </div>
                 </div>
@@ -73,19 +73,19 @@ export default async function ContactUs() {
                       Visit Our Office
                     </h3>
                     <a
-                      href={sitedata.mapurl}
+                      href={sitedata?.mapurl||""}
                       target="_blank"
                       rel="noopener noreferrer"
                       className="hover:underline text-gray-700 block"
                     >
-                      {sitedata.address}
+                      {sitedata?.address}
                     </a>
                   </div>
                 </div>
               </div>
               <div className="w-full h-96  overflow-hidden shadow-md">
                 <iframe
-                  src={sitedata?.iframe}
+                  src={sitedata?.iframe||""}
                   width="100%"
                   height="100%"
                   style={{ border: 0 }}

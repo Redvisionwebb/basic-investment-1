@@ -1,10 +1,10 @@
 "use client";
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import styles from "./Contact.module.css";
 import axios from "axios";
-import HCaptcha from "@hcaptcha/react-hcaptcha";
+import { useRouter } from "next/navigation";
 
-export default function ContactReusableForm({ sitedata }) {
+export default function ContactReusableForm({ sitedata, services }) {
   const [formData, setFormData] = useState({
     username: "",
     mobile: "",
@@ -14,7 +14,22 @@ export default function ContactReusableForm({ sitedata }) {
   });
   const [loading, setLoading] = useState(false);
   const [submitted, setSubmitted] = useState(false);
-  const [hcaptchaToken, setHcaptchaToken] = useState("");
+  const [captcha, setCaptcha] = useState("");
+  const [userCaptcha, setUserCaptcha] = useState("");
+  const router = useRouter();
+  // Generate captcha on mount
+  useEffect(() => {
+    refreshCaptcha();
+  }, []);
+
+  const refreshCaptcha = () => {
+    const randomString = Math.random()
+      .toString(36)
+      .substring(2, 8)
+      .toUpperCase();
+    setCaptcha(randomString);
+    setUserCaptcha("");
+  };
 
   const handleChange = (e) => {
     const { name, value } = e.target;
@@ -24,32 +39,75 @@ export default function ContactReusableForm({ sitedata }) {
   const handleSubmit = async (e) => {
     e.preventDefault();
 
-    if (!hcaptchaToken) {
-      alert("Please complete the captcha verification.");
+    if (userCaptcha !== captcha) {
+      toast.error("Captcha does not match. Please try again.");
+      refreshCaptcha();
       return;
     }
 
+    if (loading) return;
     setLoading(true);
 
-    const emailContent = "We’re excited to help you reach your financial goals.";
-    const emailData = {
-      to: formData.email,
+    const emaildata = {
+      user: formData?.username,
+      to: formData?.email,
       subject: "Thank You for Your Enquiry!",
-      text: `Dear ${formData.username},\n\nWe sincerely appreciate your interest and the time you took to fill out our enquiry form. We have received your details, and our team will be in touch with you soon.\n\n${emailContent}`,
+      html: `<h4>Dear ${formData?.username},</h4>
+        <p>
+          We sincerely appreciate your interest and the time you took to fill out our enquiry form.
+          We have received your details, and our team will be in touch with you soon.
+        </p>
+        <p>If you have any urgent queries, feel free to reach us directly.</p>
+        <div class="footer">
+          <p>Best Regards,<br />${sitedata?.websiteName} Team</p>
+          <p>&copy; ${new Date().getFullYear()} ${
+        sitedata?.websiteName
+      }. All rights reserved.</p>
+        </div>`,
     };
 
-    const senderData = {
+    const senderdata = {
+      user: sitedata?.websiteName,
       to: sitedata?.email,
-      subject: "New Enquiry Received",
-      text: `New Enquiry:\n\nName: ${formData.username}\nEmail: ${formData.email}\nMobile: ${formData.mobile}\nService: ${formData.service}\nMessage: ${formData.message}`,
+      subject: "New Enquiry",
+      html: `
+        <p><strong>New Enquiry Details:</strong></p>
+        <table border="1" cellpadding="10" cellspacing="0" style="border-collapse: collapse; width: 100%;">
+          <tr><th>Field</th><th>Details</th></tr>
+          <tr><td>User Name</td><td>${formData?.username}</td></tr>
+          <tr><td>Email</td><td>${formData?.email}</td></tr>
+          <tr><td>Mobile Number</td><td>${formData?.mobile}</td></tr>
+          <tr><td>Service</td><td>${formData?.service}</td></tr>
+          <tr><td>Message</td><td>${formData?.message}</td></tr>
+        </table>
+        <br>
+        <p>Regards</p>
+        <p><strong>${sitedata?.websiteName} Team</strong></p>
+      `,
     };
 
     try {
-      const res = await axios.post("/api/leads", formData);
+      // Save Lead
+      const res = await axios.post(
+        `${process.env.NEXT_PUBLIC_NEXTAUTH_URL}/api/leads`,
+        formData
+      );
+
       if (res.status === 201) {
-        await axios.post("/api/email", emailData);
-        await axios.post("/api/email", senderData);
-        setSubmitted(true);
+        // Send Emails
+        await Promise.all([
+          axios.post(
+            `${process.env.NEXT_PUBLIC_NEXTAUTH_URL}/api/email`,
+            emaildata
+          ),
+          axios.post(
+            `${process.env.NEXT_PUBLIC_NEXTAUTH_URL}/api/email`,
+            senderdata
+          ),
+        ]);
+
+        router.push("/thankyou");
+
         setFormData({
           username: "",
           mobile: "",
@@ -57,25 +115,14 @@ export default function ContactReusableForm({ sitedata }) {
           service: "",
           message: "",
         });
-        setHcaptchaToken("");
-      } else {
-        alert("Submission failed. Try again.");
       }
-    } catch (error) {
-      console.error("Error submitting form:", error);
-      alert("Something went wrong. Please try again.");
+    } catch (err) {
+      console.error(err);
+      alert("Submission failed. Try again.");
     } finally {
       setLoading(false);
     }
   };
-
-  if (submitted) {
-    return (
-      <p className="text-green-600 font-semibold">
-        Thank you! Your message has been sent.
-      </p>
-    );
-  }
 
   return (
     <form className={styles.form} onSubmit={handleSubmit}>
@@ -109,11 +156,13 @@ export default function ContactReusableForm({ sitedata }) {
           className={`${styles.input} text-gray-700`}
           required
         >
-          <option value="" className="text-gray-200">Select Service</option>
-          <option value="Mutual Funds">Mutual Funds</option>
-          <option value="SIP">SIP</option>
-          <option value="Tax Planning">Tax Planning</option>
-          <option value="Wealth Management">Wealth Management</option>
+          <option value="">Select Service</option>
+
+          {services?.map((item) => (
+            <option key={item._id} value={item.name}>
+              {item.name}
+            </option>
+          ))}
         </select>
       </div>
 
@@ -138,11 +187,25 @@ export default function ContactReusableForm({ sitedata }) {
         required
       ></textarea>
 
-      <div className="my-3">
-        <HCaptcha
-          sitekey={process.env.NEXT_PUBLIC_RECAPTCHA_SITE_KEY}
-          onVerify={setHcaptchaToken}
+      <div className="flex items-center gap-3 my-4 md:flex-row flex-col">
+        <div className="px-4 py-2 font-bold text-xl bg-gray-200 rounded-md select-none tracking-widest">
+          {captcha}
+        </div>
+        <input
+          type="text"
+          value={userCaptcha}
+          onChange={(e) => setUserCaptcha(e.target.value.toUpperCase())}
+          placeholder="Enter Captcha"
+          className={styles.input}
+          required
         />
+        <button
+          type="button"
+          onClick={refreshCaptcha}
+          className="px-3 py-2 bg-gray-300 rounded-md text-sm"
+        >
+          Refresh
+        </button>
       </div>
 
       <div className="flex items-center justify-center">
@@ -151,7 +214,9 @@ export default function ContactReusableForm({ sitedata }) {
           className={`${styles.submitButton} `}
           disabled={loading}
         >
-          {loading ? "Sending..." : (
+          {loading ? (
+            "Sending..."
+          ) : (
             <>
               <span>S</span>
               <span>e</span>

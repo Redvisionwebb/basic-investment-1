@@ -25,6 +25,27 @@ const LoginPage = () => {
   const router = useRouter();
   const cardRef = useRef(null);
 
+  // Floating card animation
+  useEffect(() => {
+    let floatValue = 0;
+    let floatDirection = 1;
+    let animationFrame;
+
+    const floatCard = () => {
+      floatValue += 0.02 * floatDirection;
+      if (floatValue > 3) floatDirection = -1;
+      if (floatValue < -3) floatDirection = 1;
+
+      if (cardRef.current) {
+        cardRef.current.style.transform = `translateY(${floatValue}px)`;
+      }
+      animationFrame = requestAnimationFrame(floatCard);
+    };
+
+    floatCard();
+    return () => cancelAnimationFrame(animationFrame);
+  }, []);
+
   // Handle login submit
   async function handleSubmit(e) {
     e.preventDefault();
@@ -76,14 +97,13 @@ const LoginPage = () => {
     setForgotLoading(true);
 
     try {
-      const res = await fetch("/api/forgot-password", {
+      const res = await fetch(`${process.env.NEXT_PUBLIC_NEXTAUTH_URL}/api/forgot-password`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ identifier: forgotEmail }),
       });
 
       const data = await res.json();
-      console.log(data)
       if (data.ok) {
         toast.success(
           `Password reset link sent to ${data.maskedEmail} ✅`
@@ -108,7 +128,7 @@ const LoginPage = () => {
         className="sphere absolute w-[250px] h-[250px] top-[10%] left-[25%] rounded-full opacity-80 animate-[float_15s_infinite_ease-in-out]"
         style={{
           background:
-            "radial-gradient(circle at 30% 30%, var(--rv-admin-bg-color) 0%, var(--rv-admin-bg-color) 100%)",
+            "radial-gradient(circle at 30% 30%, #2367f8 0%, #2367f8 100%)",
         }}
       />
       <div
@@ -133,7 +153,7 @@ const LoginPage = () => {
         className="relative z-10 w-[90%] max-w-[450px] p-6 rounded-2xl border border-white/10 shadow-[0_0px_20px_rgba(31,38,135,0.2)] bg-black/30 backdrop-blur-md"
       >
         <div className="text-center mb-8">
-          <h1 className="text-4xl font-bold bg-[var(--rv-admin-bg-color)] bg-clip-text text-transparent mb-2">
+          <h1 className="text-4xl font-bold bg-[#2367f8] bg-clip-text text-transparent mb-2">
             Welcome Back
           </h1>
           <p className="text-white opacity-80">Sign in to your account</p>
@@ -193,14 +213,14 @@ const LoginPage = () => {
             <label className="flex items-center text-white text-sm opacity-80 cursor-pointer">
               <input
                 type="checkbox"
-                className="w-4 h-4 mr-2 rounded border border-white/30 bg-transparent checked:bg-gradient-to-r checked:from-[var(--rv-admin-bg-color)] checked:to-[var(--rv-admin-bg-color)]"
+                className="w-4 h-4 mr-2 rounded border border-white/30 bg-transparent checked:bg-gradient-to-r checked:from-[#2367f8] checked:to-[#2367f8]"
               />
               Remember me
             </label>
             <button
               type="button"
               onClick={() => setForgotModalOpen(true)}
-              className="text-white text-sm opacity-80 cursor-pointer hover:opacity-100 hover:text-[var(--rv-admin-bg-color)] transition"
+              className="text-white text-sm opacity-80 hover:opacity-100 hover:text-[#2367f8] transition"
             >
               Forgot password?
             </button>
@@ -210,7 +230,7 @@ const LoginPage = () => {
           <button
             type="submit"
             disabled={loading}
-            className="w-full py-3 rounded-full  bg-[var(--rv-admin-bg-color)] cursor-pointer text-white font-semibold tracking-wider hover:translate-y-[-2px] shadow-lg transition flex items-center justify-center gap-2"
+            className="w-full py-3 rounded-full bg-gradient-to-r from-[#2367f8] to-[#2367f8] text-white font-semibold tracking-wider hover:translate-y-[-2px] shadow-lg transition flex items-center justify-center gap-2"
           >
             {loading ? (
               <>
@@ -280,7 +300,7 @@ const LoginPage = () => {
               <button
                 type="submit"
                 disabled={forgotLoading}
-                className="w-full py-3 rounded-full bg-gradient-to-r from-[var(--rv-admin-bg-color)] to-[var(--rv-admin-bg-color)] text-white font-semibold tracking-wider hover:translate-y-[-2px] shadow-lg transition"
+                className="w-full py-3 rounded-full bg-gradient-to-r from-[#2367f8] to-[#2367f8] text-white font-semibold tracking-wider hover:translate-y-[-2px] shadow-lg transition"
               >
                 {forgotLoading ? "Sending..." : "Send Reset Link"}
               </button>

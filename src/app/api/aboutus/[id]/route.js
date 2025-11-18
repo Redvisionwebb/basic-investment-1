@@ -35,6 +35,13 @@ export async function PUT(req, { params }) {
     const description = formData.get('description');
     const image = formData.get('image');
     const file = formData.get('image');
+      // Validate file size (1 MB = 1 * 1024 * 1024 bytes)
+    if (file && file.size > 1 * 1024 * 1024) {
+      return NextResponse.json(
+        { error: "File size exceeds 1 MB limit" },
+        { status: 400 }
+      );
+    }
 
 
     const about = await AboutUsModel.findById(id);
@@ -52,7 +59,16 @@ export async function PUT(req, { params }) {
           console.warn("Image file not found or already deleted:", publicId);
         }
       }
-      const uploadData = await saveImageToLocal('aboutus', file);
+      let uploadData = null;
+    
+      try {
+        uploadData = await saveImageToLocal("aboutus", file);
+      } catch (uploadError) {
+        return NextResponse.json(
+          { error: "Image upload failed" },
+          { status: 500 }
+        );
+      }
       // Update the testimonial with the new image data
       about.image = {
         url: uploadData.url,

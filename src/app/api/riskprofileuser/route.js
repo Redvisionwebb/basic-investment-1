@@ -11,6 +11,6 @@ LoadDB()
 
 
 export async function GET(request) {
-    const users = await RiskUsersModel.find({});
+    const users = await RiskUsersModel.find({}).sort({ createdAt: -1 });;
     return NextResponse.json(users, { status: 200 })
 }
